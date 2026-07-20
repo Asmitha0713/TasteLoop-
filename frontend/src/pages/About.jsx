@@ -1,78 +1,75 @@
-import { useState } from 'react'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
-import FoodCard from '../components/FoodCard.jsx'
-import CookCard from '../components/CookCard.jsx'
-import { categories, foods, cooks } from '../data/sampleData.js'
+import SteamDivider from '../components/SteamDivider.jsx'
 
-export default function Browse() {
-  const [active, setActive] = useState('All')
+const values = [
+  { title: 'Trust First', text: 'Every cook is verified before their first listing goes live, so you always know who made your meal.' },
+  { title: 'Fair to Cooks', text: 'Home cooks keep the majority of every order — TasteLoop takes a small, transparent service fee.' },
+  { title: 'Real Food', text: 'No factory kitchens. Every dish is prepared in a home kitchen, in small batches, the same day.' },
+  { title: 'Community Over Scale', text: 'We grow one neighbourhood at a time, so quality never gets diluted for the sake of speed.' },
+]
 
-  const filtered = active === 'All' ? foods : foods.filter((f) => f.category === active)
-
+export default function About() {
   return (
     <div className="page">
       <Navbar />
 
       <main className="page-content">
         <section style={styles.hero}>
-          <div className="container">
-            <span className="eyebrow">Browse Foods</span>
-            <h1 style={styles.h1}>What are you craving today?</h1>
+          <div className="container" style={styles.heroInner}>
+            <span className="eyebrow">About TasteLoop</span>
+            <h1 style={styles.h1}>Bringing the neighbourhood kitchen back to the table.</h1>
+            <p style={styles.heroText}>
+              TasteLoop started with a simple idea: the best meals aren't made
+              in a commercial kitchen, they're made by someone who genuinely
+              loves cooking. We built a marketplace where that person can be
+              found — and paid fairly — by the people around them.
+            </p>
+          </div>
+        </section>
 
-            <div style={styles.searchBar}>
-              <span style={{ opacity: 0.5 }}>🔍</span>
-              <input placeholder="Search dishes or cooks…" style={styles.searchInput} />
-              <button className="btn btn-forest btn-sm">Search</button>
+        <div style={{ color: 'var(--color-surface)' }}><SteamDivider /></div>
+
+        <section className="container" style={styles.missionSection}>
+          <div className="grid-2" style={styles.missionGrid}>
+            <div className="card" style={styles.missionCard}>
+              <span className="stitched">Our Mission</span>
+              <h3 style={{ marginTop: 14 }}>Make real home cooking accessible again</h3>
+              <p style={{ margin: 0 }}>
+                We connect people craving an honest, home-cooked meal with
+                talented cooks in their own neighbourhood — cutting out
+                commercial kitchens and delivery-app markups along the way.
+              </p>
             </div>
+            <div className="card" style={styles.missionCard}>
+              <span className="stitched" style={{ background: 'var(--color-mustard-tint)', color: 'var(--color-mustard-dark)' }}>
+                Our Vision
+              </span>
+              <h3 style={{ marginTop: 14 }}>A home kitchen on every street, earning what it's worth</h3>
+              <p style={{ margin: 0 }}>
+                We imagine a future where cooking well is a viable livelihood
+                for anyone, anywhere — not just those who can afford a
+                commercial storefront.
+              </p>
+            </div>
+          </div>
+        </section>
 
-            <div style={styles.categoryRow}>
-              <button
-                className="stitched"
-                style={{
-                  ...styles.categoryPill,
-                  background: active === 'All' ? 'var(--color-forest)' : 'var(--color-forest-tint)',
-                  color: active === 'All' ? '#fff8ee' : 'var(--color-forest)',
-                }}
-                onClick={() => setActive('All')}
-              >
-                🍽️ All
-              </button>
-              {categories.map((c) => (
-                <button
-                  key={c.name}
-                  className="stitched"
-                  style={{
-                    ...styles.categoryPill,
-                    background: active === c.name ? 'var(--color-forest)' : 'var(--color-forest-tint)',
-                    color: active === c.name ? '#fff8ee' : 'var(--color-forest)',
-                  }}
-                  onClick={() => setActive(c.name)}
-                >
-                  {c.emoji} {c.name}
-                </button>
+        <section style={styles.valuesSection}>
+          <div className="container">
+            <div style={styles.sectionHead}>
+              <span className="eyebrow">What guides us</span>
+              <h2>Our Values</h2>
+            </div>
+            <div className="grid-4" style={styles.valuesGrid}>
+              {values.map((v, i) => (
+                <div key={v.title} className="card" style={styles.valueCard}>
+                  <span style={styles.valueNumber}>0{i + 1}</span>
+                  <h4 style={{ margin: '14px 0 8px' }}>{v.title}</h4>
+                  <p style={{ fontSize: 13.5, margin: 0 }}>{v.text}</p>
+                </div>
               ))}
             </div>
-          </div>
-        </section>
-
-        <section className="container" style={styles.section}>
-          <div style={styles.sectionHeadRow}>
-            <h2 style={{ margin: 0 }}>Popular Near You</h2>
-            <span style={styles.count}>{filtered.length} dishes</span>
-          </div>
-          <div className="grid-3" style={styles.foodGrid}>
-            {filtered.map((f) => <FoodCard key={f.id} food={f} />)}
-          </div>
-          {filtered.length === 0 && (
-            <p style={styles.empty}>No dishes in this category yet — check back soon.</p>
-          )}
-        </section>
-
-        <section className="container" style={{ ...styles.section, paddingBottom: 80 }}>
-          <h2>Top Home Cooks</h2>
-          <div className="grid-3" style={styles.cookGrid}>
-            {cooks.map((c) => <CookCard key={c.id} cook={c} />)}
           </div>
         </section>
       </main>
@@ -85,35 +82,22 @@ export default function Browse() {
 const styles = {
   hero: {
     background: 'linear-gradient(180deg, var(--color-mustard-tint) 0%, var(--color-bg) 100%)',
-    padding: '56px 0 40px',
+    padding: '72px 0 56px',
   },
-  h1: { fontSize: 36, margin: '14px 0 24px' },
-  searchBar: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 10,
-    background: 'var(--color-surface)',
-    border: '1.5px solid var(--color-border-strong)',
-    borderRadius: 'var(--radius-pill)',
-    padding: '8px 8px 8px 20px',
-    maxWidth: 520,
-    boxShadow: 'var(--shadow-card)',
-    marginBottom: 22,
+  heroInner: { maxWidth: 680 },
+  h1: { fontSize: 42, margin: '16px 0 18px' },
+  heroText: { fontSize: 16.5 },
+  missionSection: { padding: '48px 0 60px' },
+  missionGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 },
+  missionCard: { padding: '32px 28px' },
+  valuesSection: { background: 'var(--color-surface-alt)', padding: '64px 0' },
+  sectionHead: { marginBottom: 32, maxWidth: 520 },
+  valuesGrid: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 },
+  valueCard: { padding: '26px 22px' },
+  valueNumber: {
+    fontFamily: 'var(--font-display)',
+    fontSize: 24,
+    color: 'var(--color-mustard-dark)',
+    fontWeight: 700,
   },
-  searchInput: {
-    flex: 1,
-    border: 'none',
-    outline: 'none',
-    background: 'transparent',
-    fontFamily: 'var(--font-body)',
-    fontSize: 14.5,
-  },
-  categoryRow: { display: 'flex', gap: 10, flexWrap: 'wrap' },
-  categoryPill: { border: 'none', cursor: 'pointer', padding: '9px 16px', fontSize: 13 },
-  section: { padding: '48px 0 20px' },
-  sectionHeadRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 22 },
-  count: { fontSize: 13, color: 'var(--color-ink-faint)', fontWeight: 600 },
-  foodGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 },
-  cookGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20, marginTop: 22 },
-  empty: { color: 'var(--color-ink-faint)', fontStyle: 'italic' },
 }
