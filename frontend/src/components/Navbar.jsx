@@ -13,8 +13,7 @@ export default function Navbar() {
     <header style={styles.header}>
       <div className="container" style={styles.bar}>
         <Link to="/" style={styles.logo}>
-          <img src="/logo.png" alt="TasteLoop" style={styles.logoImg} />
-          TasteLoop
+          <img src="/logo.jpeg" alt="TasteLoop" style={styles.logoImg} />
         </Link>
 
         <nav style={styles.nav} className="hide-mobile">
@@ -68,8 +67,10 @@ const styles = {
     color: 'var(--color-ink)',
   },
   logoImg: {
-    height: 38,
+    display: 'block',
+    height: 54,
     width: 'auto',
+    borderRadius: 6,
   },
   nav: {
     display: 'flex',
