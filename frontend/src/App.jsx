@@ -1,14 +1,36 @@
+import { Navigate, Route, Routes } from 'react-router-dom'
 import './App.css'
-import Landing from '../src/pages/Landing'
+import About from './pages/About.jsx'
+import Browse from './pages/Browse.jsx'
+import ChooseRole from './pages/chooseRole.jsx'
+import FoodDetails from './pages/FoodDetails.jsx'
+import Landing from './pages/Landing.jsx'
+import Login from './pages/Login.jsx'
+import Register from './pages/Register.jsx'
+import Cart from './pages/Cart.jsx'
+import Checkout from './pages/Checkout.jsx'
+import CustomerDashboard from './pages/CustomerDashboard.jsx'
+import OrderConfirmation from './pages/OrderConfirmation.jsx'
+import OrderHistory from './pages/OrderHistory.jsx'
+import SearchFilter from './pages/SearchFilter.jsx'
 
-function App() {
-
+export default function App() {
   return (
-    <>
-      <h1>Vite + React   </h1>
-      <Landing />
-    </>
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/browse" element={<Browse />} />
+      <Route path="/food/:id" element={<FoodDetails />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/choose-role" element={<ChooseRole />} />
+      <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+      <Route path="/search" element={<SearchFilter />} />
+      <Route path="/cart" element={<Cart />} />
+      <Route path="/checkout" element={<Checkout />} />
+      <Route path="/order-confirmation" element={<OrderConfirmation />} />
+      <Route path="/orders" element={<OrderHistory />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
-
-export default App

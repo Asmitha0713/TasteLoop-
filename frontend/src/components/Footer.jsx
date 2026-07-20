@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="container footer-grid" style={styles.grid}>
         <div style={styles.brandCol}>
           <div style={styles.logo}>
-            <img src="/logo.png" alt="TasteLoop" style={styles.logoImg} /> TasteLoop
+            <img src="/logo.jpeg" alt="TasteLoop" style={styles.logoImg} />
           </div>
           <p style={styles.tag}>
             Delicious homemade food, made with love. Connecting home cooks
@@ -92,8 +92,10 @@ const styles = {
     gap: 8,
   },
   logoImg: {
-    height: 32,
+    display: 'block',
+    height: 54,
     width: 'auto',
+    borderRadius: 6,
   },
   tag: {
     color: '#c9bda6',
