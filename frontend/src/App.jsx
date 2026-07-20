@@ -1,122 +1,71 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { Routes, Route } from 'react-router-dom'
 
-function App() {
-  const [count, setCount] = useState(0)
+// Public flow
+import Landing from './pages/Landing.jsx'
+import About from './pages/About.jsx'
+import Browse from './pages/Browse.jsx'
+import FoodDetails from './pages/FoodDetails.jsx'
+import Login from './pages/Login.jsx'
+import Register from './pages/Register.jsx'
+import ChooseRole from './pages/ChooseRole.jsx'
 
+// Customer flow
+import CustomerDashboard from './pages/customer/CustomerDashboard.jsx'
+import SearchFilter from './pages/customer/SearchFilter.jsx'
+import Cart from './pages/customer/Cart.jsx'
+import Checkout from './pages/customer/Checkout.jsx'
+import OrderConfirmation from './pages/customer/OrderConfirmation.jsx'
+import OrderHistory from './pages/customer/OrderHistory.jsx'
+import CustomerProfile from './pages/customer/CustomerProfile.jsx'
+
+// Home Cook flow
+import CookDashboard from './pages/cook/CookDashboard.jsx'
+import AddFood from './pages/cook/AddFood.jsx'
+import ManageFoods from './pages/cook/ManageFoods.jsx'
+import CookOrders from './pages/cook/CookOrders.jsx'
+import Earnings from './pages/cook/Earnings.jsx'
+import CookProfile from './pages/cook/CookProfile.jsx'
+
+// Admin flow
+import AdminDashboard from './pages/admin/AdminDashboard.jsx'
+import ManageUsers from './pages/admin/ManageUsers.jsx'
+import AdminManageFoods from './pages/admin/AdminManageFoods.jsx'
+import Reports from './pages/admin/Reports.jsx'
+
+export default function App() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <Routes>
+      {/* Public flow */}
+      <Route path="/" element={<Landing />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/browse" element={<Browse />} />
+      <Route path="/food/:id" element={<FoodDetails />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/choose-role" element={<ChooseRole />} />
 
-      <div className="ticks"></div>
+      {/* Customer flow */}
+      <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+      <Route path="/customer/search" element={<SearchFilter />} />
+      <Route path="/customer/cart" element={<Cart />} />
+      <Route path="/customer/checkout" element={<Checkout />} />
+      <Route path="/customer/order-confirmation" element={<OrderConfirmation />} />
+      <Route path="/customer/orders" element={<OrderHistory />} />
+      <Route path="/customer/profile" element={<CustomerProfile />} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      {/* Home Cook flow */}
+      <Route path="/cook/dashboard" element={<CookDashboard />} />
+      <Route path="/cook/add-food" element={<AddFood />} />
+      <Route path="/cook/manage-foods" element={<ManageFoods />} />
+      <Route path="/cook/orders" element={<CookOrders />} />
+      <Route path="/cook/earnings" element={<Earnings />} />
+      <Route path="/cook/profile" element={<CookProfile />} />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      {/* Admin flow */}
+      <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      <Route path="/admin/users" element={<ManageUsers />} />
+      <Route path="/admin/foods" element={<AdminManageFoods />} />
+      <Route path="/admin/reports" element={<Reports />} />
+    </Routes>
   )
 }
-
-export default App
