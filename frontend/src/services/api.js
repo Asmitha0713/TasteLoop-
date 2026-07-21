@@ -11,11 +11,31 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+let refreshRequest = null
+
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const original = error.config
+    const refreshToken = localStorage.getItem('tasteloop-refresh-token')
+    if (error.response?.status === 401 && refreshToken && !original?._retried && !original?.url?.includes('/auth/refresh')) {
+      original._retried = true
+      try {
+        refreshRequest ||= axios.post(`${api.defaults.baseURL}/auth/refresh`, { refresh_token: refreshToken })
+        const { data } = await refreshRequest
+        localStorage.setItem('tasteloop-token', data.access_token)
+        localStorage.setItem('tasteloop-refresh-token', data.refresh_token)
+        original.headers.Authorization = `Bearer ${data.access_token}`
+        return api(original)
+      } catch {
+        // The shared cleanup below handles an expired or revoked refresh token.
+      } finally {
+        refreshRequest = null
+      }
+    }
     if (error.response?.status === 401) {
       localStorage.removeItem('tasteloop-token')
+      localStorage.removeItem('tasteloop-refresh-token')
       localStorage.removeItem('tasteloop-user')
       if (window.location.pathname !== '/login') {
         window.location.replace(`/login?from=${encodeURIComponent(window.location.pathname)}`)
@@ -35,6 +55,7 @@ export const apiError = (error) => {
 
 export const saveSession = (data) => {
   localStorage.setItem('tasteloop-token', data.access_token)
+  localStorage.setItem('tasteloop-refresh-token', data.refresh_token)
   localStorage.setItem('tasteloop-user', JSON.stringify(data.user))
 }
 

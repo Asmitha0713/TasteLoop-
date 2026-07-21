@@ -84,6 +84,8 @@ class RegisterData(BaseModel):
     access_token: str
     token_type: str = "bearer"
     expires_in: int
+    refresh_token: str
+    refresh_expires_in: int
 
 
 class RegisterResponse(BaseModel):
@@ -141,3 +143,17 @@ class ResetPasswordRequest(BaseModel):
         if self.password != self.confirm_password:
             raise ValueError("Password and confirm password do not match")
         return self
+
+
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str = Field(min_length=32, max_length=2000)
+
+
+class TokenPairResponse(BaseModel):
+    success: bool = True
+    message: str = "Token refreshed successfully"
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
+    expires_in: int
+    refresh_expires_in: int

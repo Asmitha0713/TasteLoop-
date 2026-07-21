@@ -6,6 +6,8 @@ All protected endpoints use `Authorization: Bearer <access_token>`.
 
 - `POST /api/auth/register` — register a Customer or Home Cook
 - `POST /api/auth/login` — sign in with email or phone
+- `POST /api/auth/refresh` — rotate a refresh token and issue a new token pair
+- `POST /api/auth/logout` — revoke a refresh token
 - `POST /api/auth/forgot-password` — request a single-use password reset token
 - `POST /api/auth/reset-password` — set a new password with the reset token
 - `GET /api/auth/me` — current authenticated user

@@ -1,6 +1,7 @@
 from datetime import UTC, datetime, timedelta
 import hashlib
 import secrets
+from uuid import uuid4
 
 import bcrypt
 import jwt
@@ -35,6 +36,29 @@ def decode_access_token(token: str) -> dict:
     if payload.get("type") != "access" or not payload.get("sub"):
         raise ValueError("Invalid access token")
     return payload
+
+
+def create_refresh_token(user_id: str, role: str) -> tuple[str, str, datetime, int]:
+    expires_in = settings.refresh_token_expire_days * 24 * 60 * 60
+    expires_at = datetime.now(UTC) + timedelta(seconds=expires_in)
+    token_id = uuid4().hex
+    payload = {"sub": user_id, "role": role, "jti": token_id, "type": "refresh", "exp": expires_at}
+    token = jwt.encode(payload, settings.jwt_secret, algorithm=settings.jwt_algorithm)
+    return token, token_id, expires_at, expires_in
+
+
+def decode_refresh_token(token: str) -> dict:
+    try:
+        payload = jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
+    except InvalidTokenError as error:
+        raise ValueError("Invalid or expired refresh token") from error
+    if payload.get("type") != "refresh" or not payload.get("sub") or not payload.get("jti"):
+        raise ValueError("Invalid refresh token")
+    return payload
+
+
+def hash_token(token: str) -> str:
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()
 
 
 def create_password_reset_token() -> tuple[str, str]:
