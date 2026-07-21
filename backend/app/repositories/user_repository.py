@@ -1,4 +1,5 @@
 from pymongo.database import Database
+from bson import ObjectId
 
 
 class UserRepository:
@@ -20,6 +21,11 @@ class UserRepository:
 
     def find_by_email(self, email: str):
         return self.collection.find_one({"email": email})
+
+    def find_by_id(self, user_id: str):
+        if not ObjectId.is_valid(user_id):
+            return None
+        return self.collection.find_one({"_id": ObjectId(user_id)})
 
     def set_password_reset(self, user_id, token_hash: str, expires_at):
         return self.collection.update_one(

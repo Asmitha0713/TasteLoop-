@@ -40,6 +40,11 @@ class FakeRepository:
         self.user.pop("password_reset_expires_at", None)
 
 
+class FakeTokenRepository:
+    def revoke_all(self, _user_id):
+        pass
+
+
 @pytest.fixture(autouse=True)
 def debug_password_reset(monkeypatch):
     monkeypatch.setattr(auth_module, "settings", SimpleNamespace(
@@ -52,7 +57,7 @@ def debug_password_reset(monkeypatch):
 
 def test_forgot_and_reset_password():
     repository = FakeRepository()
-    service = AuthService(repository)
+    service = AuthService(repository, FakeTokenRepository())
     response = service.forgot_password(ForgotPasswordRequest(email="Customer@Example.com"))
 
     assert response.reset_token
@@ -76,6 +81,6 @@ def test_forgot_and_reset_password():
 
 
 def test_unknown_email_uses_generic_response():
-    response = AuthService(FakeRepository()).forgot_password(ForgotPasswordRequest(email="missing@example.com"))
+    response = AuthService(FakeRepository(), FakeTokenRepository()).forgot_password(ForgotPasswordRequest(email="missing@example.com"))
     assert response.success is True
     assert response.reset_token is None

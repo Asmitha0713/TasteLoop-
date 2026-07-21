@@ -1,18 +1,27 @@
 from datetime import UTC, datetime, timedelta
 
 from fastapi import HTTPException, status
+from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
 from app.core.config import settings
-from app.core.security import create_access_token, create_password_reset_token, hash_password, hash_password_reset_token, verify_password
+from app.core.security import create_access_token, create_password_reset_token, create_refresh_token, decode_refresh_token, hash_password, hash_password_reset_token, hash_token, verify_password
 from app.integrations.email import send_password_reset_email
 from app.repositories.user_repository import UserRepository
-from app.schemas.auth import ForgotPasswordRequest, ForgotPasswordResponse, LoginRequest, LoginResponse, RegisterData, RegisterRequest, RegisterResponse, ResetPasswordRequest, UserResponse
+from app.repositories.token_repository import TokenRepository
+from app.schemas.auth import ForgotPasswordRequest, ForgotPasswordResponse, LoginRequest, LoginResponse, RefreshTokenRequest, RegisterData, RegisterRequest, RegisterResponse, ResetPasswordRequest, TokenPairResponse, UserResponse
 
 
 class AuthService:
-    def __init__(self, repository: UserRepository):
+    def __init__(self, repository: UserRepository, token_repository: TokenRepository):
         self.repository = repository
+        self.token_repository = token_repository
+
+    def _issue_token_pair(self, user_id: str, role: str) -> tuple[str, int, str, int]:
+        access_token, expires_in = create_access_token(user_id, role)
+        refresh_token, token_id, refresh_expires_at, refresh_expires_in = create_refresh_token(user_id, role)
+        self.token_repository.create(ObjectId(user_id), token_id, hash_token(refresh_token), refresh_expires_at)
+        return access_token, expires_in, refresh_token, refresh_expires_in
 
     def register(self, payload: RegisterRequest) -> RegisterResponse:
         existing_user = self.repository.find_by_email_or_phone(payload.email, payload.phone_number)
@@ -41,7 +50,7 @@ class AuthService:
             ) from error
 
         user_id = str(result.inserted_id)
-        access_token, expires_in = create_access_token(user_id, payload.role.value)
+        access_token, expires_in, refresh_token, refresh_expires_in = self._issue_token_pair(user_id, payload.role.value)
         user = UserResponse(
             id=user_id,
             full_name=payload.full_name,
@@ -53,7 +62,7 @@ class AuthService:
         )
         return RegisterResponse(
             message="Account registered successfully",
-            data=RegisterData(user=user, access_token=access_token, expires_in=expires_in),
+            data=RegisterData(user=user, access_token=access_token, expires_in=expires_in, refresh_token=refresh_token, refresh_expires_in=refresh_expires_in),
         )
 
     def login(self, payload: LoginRequest) -> LoginResponse:
@@ -63,7 +72,7 @@ class AuthService:
         if user_document.get("account_status") != "active":
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account is not active")
         user_id = str(user_document["_id"])
-        access_token, expires_in = create_access_token(user_id, user_document["role"])
+        access_token, expires_in, refresh_token, refresh_expires_in = self._issue_token_pair(user_id, user_document["role"])
         user = UserResponse(
             id=user_id,
             full_name=user_document["full_name"],
@@ -73,7 +82,26 @@ class AuthService:
             account_status=user_document["account_status"],
             created_at=user_document["created_at"].isoformat(),
         )
-        return LoginResponse(data=RegisterData(user=user, access_token=access_token, expires_in=expires_in))
+        return LoginResponse(data=RegisterData(user=user, access_token=access_token, expires_in=expires_in, refresh_token=refresh_token, refresh_expires_in=refresh_expires_in))
+
+    def refresh(self, payload: RefreshTokenRequest) -> TokenPairResponse:
+        try:
+            claims = decode_refresh_token(payload.refresh_token)
+        except ValueError as error:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(error)) from error
+        user = self.repository.find_by_id(claims["sub"])
+        if user is None or user.get("account_status") != "active":
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
+        consumed = self.token_repository.consume(user["_id"], claims["jti"], hash_token(payload.refresh_token))
+        if consumed is None:
+            self.token_repository.revoke_all(user["_id"])
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token has expired, was revoked, or was already used")
+        access_token, expires_in, refresh_token, refresh_expires_in = self._issue_token_pair(str(user["_id"]), user["role"])
+        return TokenPairResponse(access_token=access_token, refresh_token=refresh_token, expires_in=expires_in, refresh_expires_in=refresh_expires_in)
+
+    def logout(self, payload: RefreshTokenRequest) -> dict:
+        self.token_repository.revoke(hash_token(payload.refresh_token))
+        return {"success": True, "message": "Logged out successfully"}
 
     def forgot_password(self, payload: ForgotPasswordRequest) -> ForgotPasswordResponse:
         if not settings.password_reset_debug and (not settings.smtp_host or not settings.smtp_from_email):
@@ -111,6 +139,7 @@ class AuthService:
                 detail="Password reset token is invalid or expired",
             )
         self.repository.reset_password(user["_id"], hash_password(payload.password), now)
+        self.token_repository.revoke_all(user["_id"])
         return {"success": True, "message": "Password reset successfully. You can now log in."}
 
     @staticmethod

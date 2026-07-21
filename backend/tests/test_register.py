@@ -34,6 +34,16 @@ class FakeUsers:
 class FakeDatabase:
     def __init__(self):
         self.users = FakeUsers()
+        self.refresh_tokens = FakeRefreshTokens()
+
+
+class FakeRefreshTokens:
+    def __init__(self):
+        self.tokens = []
+
+    def insert_one(self, token):
+        self.tokens.append(token)
+        return InsertResult()
 
 
 def valid_payload(**changes):
