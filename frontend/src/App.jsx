@@ -21,6 +21,7 @@ import AdminDashboard from './pages/AdminDashboard.jsx'
 import AdminUsers from './pages/AdminUsers.jsx'
 import AdminFoods from './pages/AdminFoods.jsx'
 import AdminReports from './pages/AdminReports.jsx'
+import CustomerProfile from './pages/CustomerProfile.jsx'
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/choose-role" element={<ChooseRole />} />
       <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+      <Route path="/customer/profile" element={<CustomerProfile />} />
       <Route path="/search" element={<SearchFilter />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/checkout" element={<Checkout />} />
