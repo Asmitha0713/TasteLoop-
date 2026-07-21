@@ -22,7 +22,7 @@ const roles = [
     text: 'Turn your kitchen into a source of income. List your dishes and start earning.',
     points: ['List dishes in minutes', 'Set your own prices & hours', 'Get paid straight to your account'],
     cta: 'Continue as Home Cook',
-    to: '/cook/dashboard',
+    to: '/cook/foods',
     accent: 'var(--color-chili)',
     accentTint: '#f6dcd0',
   },
