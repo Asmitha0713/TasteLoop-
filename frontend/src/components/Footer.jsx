@@ -37,7 +37,7 @@ export default function Footer() {
           <ul style={styles.list}>
             <li><Link to="/choose-role">Become a Home Cook</Link></li>
             <li><Link to="/cook/foods">Cook Dashboard</Link></li>
-            <li><Link to="/cook/add-food">Add Food</Link></li>
+            <li><Link to="/cook/earnings">Earnings</Link></li>
           </ul>
         </div>
 
