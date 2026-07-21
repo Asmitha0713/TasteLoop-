@@ -17,6 +17,10 @@ import AddFood from './pages/AddFood.jsx'
 import ManageFoods from './pages/ManageFoods.jsx'
 import Earnings from './pages/Earnings.jsx'
 import CookProfile from './pages/CookProfile.jsx'
+import AdminDashboard from './pages/AdminDashboard.jsx'
+import AdminUsers from './pages/AdminUsers.jsx'
+import AdminFoods from './pages/AdminFoods.jsx'
+import AdminReports from './pages/AdminReports.jsx'
 
 export default function App() {
   return (
@@ -40,6 +44,11 @@ export default function App() {
       <Route path="/cook/foods/:id/edit" element={<AddFood />} />
       <Route path="/cook/earnings" element={<Earnings />} />
       <Route path="/cook/profile" element={<CookProfile />} />
+      <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+      <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      <Route path="/admin/users" element={<AdminUsers />} />
+      <Route path="/admin/foods" element={<AdminFoods />} />
+      <Route path="/admin/reports" element={<AdminReports />} />
       <Route path="/addfood" element={<Navigate to="/cook/add-food" replace />} />
       <Route path="/managefoods" element={<Navigate to="/cook/foods" replace />} />
       <Route path="/cookfoods" element={<Navigate to="/cook/foods" replace />} />
