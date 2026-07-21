@@ -13,7 +13,8 @@ export default function Navbar() {
     <header style={styles.header}>
       <div className="container" style={styles.bar}>
         <Link to="/" style={styles.logo}>
-          <img src="/logo.jpeg" alt="TasteLoop home" style={styles.logoImg} />
+          <img src="/tasteloop-logo.png" alt="TasteLoop home" style={styles.logoImg} />
+          <span>TasteLoop</span>
         </Link>
 
         <nav style={styles.nav} className="hide-mobile">
@@ -68,7 +69,7 @@ const styles = {
   },
   logoImg: {
     display: 'block',
-    width: 'clamp(130px, 15vw, 190px)',
+    width: 58,
     height: 58,
     objectFit: 'contain',
   },

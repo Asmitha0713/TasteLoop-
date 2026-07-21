@@ -1,12 +1,22 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
-import { foodDetail } from '../data/sampleData.js'
+import api, { apiError } from '../services/api.js'
 
 export default function FoodDetails() {
   const [qty, setQty] = useState(1)
-  const food = foodDetail
+  const [food, setFood] = useState(null)
+  const [message, setMessage] = useState('')
+  const { id } = useParams()
+  const navigate = useNavigate()
+  useEffect(() => { api.get(`/foods/${id}`).then(({ data }) => setFood(data.data)).catch((error) => setMessage(apiError(error))) }, [id])
+  const addToCart = async () => {
+    try { await api.post('/cart/items', { food_id: id, quantity: qty }); navigate('/cart') }
+    catch (error) { setMessage(apiError(error)) }
+  }
+
+  if (!food) return <div className="page"><Navbar /><main className="page-content"><div className="container" style={styles.wrap}>{message || 'Loading dish…'}</div></main><Footer /></div>
 
   return (
     <div className="page">
@@ -25,8 +35,8 @@ export default function FoodDetails() {
               <span className="stitched">{food.category}</span>
               <h1 style={styles.title}>{food.name}</h1>
               <p style={styles.cook}>
-                by <strong>{food.cook}</strong> · <span style={styles.rating}>★ {food.rating}</span>{' '}
-                <span style={{ color: 'var(--color-ink-faint)' }}>({food.reviews} reviews)</span>
+                by <strong>{food.cook_name || food.cook?.kitchen_name || food.cook?.full_name}</strong> · <span style={styles.rating}>★ {food.rating}</span>{' '}
+                <span style={{ color: 'var(--color-ink-faint)' }}>({food.review_count || 0} reviews)</span>
               </p>
 
               <p style={styles.description}>{food.description}</p>
@@ -34,7 +44,7 @@ export default function FoodDetails() {
               <div style={styles.ingredientsBox}>
                 <h4 style={{ margin: '0 0 10px' }}>Ingredients</h4>
                 <div style={styles.ingredientTags}>
-                  {food.ingredients.map((ing) => (
+                  {(food.ingredients || []).map((ing) => (
                     <span key={ing} style={styles.ingredientTag}>{ing}</span>
                   ))}
                 </div>
@@ -64,8 +74,9 @@ export default function FoodDetails() {
                   </button>
                 </div>
 
-                <button className="btn btn-primary">Add to Cart</button>
+                <button className="btn btn-primary" onClick={addToCart}>Add to Cart</button>
               </div>
+              {message && <p style={{ color: 'var(--color-chili)' }}>{message}</p>}
             </div>
           </div>
         </div>

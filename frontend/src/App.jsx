@@ -22,6 +22,11 @@ import AdminUsers from './pages/AdminUsers.jsx'
 import AdminFoods from './pages/AdminFoods.jsx'
 import AdminReports from './pages/AdminReports.jsx'
 import CustomerProfile from './pages/CustomerProfile.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
+
+const customer = (element) => <ProtectedRoute roles={['customer']}>{element}</ProtectedRoute>
+const cook = (element) => <ProtectedRoute roles={['home_cook']}>{element}</ProtectedRoute>
+const admin = (element) => <ProtectedRoute roles={['admin']}>{element}</ProtectedRoute>
 
 export default function App() {
   return (
@@ -33,24 +38,24 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/choose-role" element={<ChooseRole />} />
-      <Route path="/customer/dashboard" element={<CustomerDashboard />} />
-      <Route path="/customer/profile" element={<CustomerProfile />} />
+      <Route path="/customer/dashboard" element={customer(<CustomerDashboard />)} />
+      <Route path="/customer/profile" element={customer(<CustomerProfile />)} />
       <Route path="/search" element={<SearchFilter />} />
-      <Route path="/cart" element={<Cart />} />
-      <Route path="/checkout" element={<Checkout />} />
-      <Route path="/order-confirmation" element={<OrderConfirmation />} />
-      <Route path="/orders" element={<OrderHistory />} />
+      <Route path="/cart" element={customer(<Cart />)} />
+      <Route path="/checkout" element={customer(<Checkout />)} />
+      <Route path="/order-confirmation" element={customer(<OrderConfirmation />)} />
+      <Route path="/orders" element={customer(<OrderHistory />)} />
       <Route path="/cook/dashboard" element={<Navigate to="/cook/foods" replace />} />
-      <Route path="/cook/foods" element={<ManageFoods />} />
-      <Route path="/cook/add-food" element={<AddFood />} />
-      <Route path="/cook/foods/:id/edit" element={<AddFood />} />
-      <Route path="/cook/earnings" element={<Earnings />} />
-      <Route path="/cook/profile" element={<CookProfile />} />
+      <Route path="/cook/foods" element={cook(<ManageFoods />)} />
+      <Route path="/cook/add-food" element={cook(<AddFood />)} />
+      <Route path="/cook/foods/:id/edit" element={cook(<AddFood />)} />
+      <Route path="/cook/earnings" element={cook(<Earnings />)} />
+      <Route path="/cook/profile" element={cook(<CookProfile />)} />
       <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-      <Route path="/admin/dashboard" element={<AdminDashboard />} />
-      <Route path="/admin/users" element={<AdminUsers />} />
-      <Route path="/admin/foods" element={<AdminFoods />} />
-      <Route path="/admin/reports" element={<AdminReports />} />
+      <Route path="/admin/dashboard" element={admin(<AdminDashboard />)} />
+      <Route path="/admin/users" element={admin(<AdminUsers />)} />
+      <Route path="/admin/foods" element={admin(<AdminFoods />)} />
+      <Route path="/admin/reports" element={admin(<AdminReports />)} />
       <Route path="/addfood" element={<Navigate to="/cook/add-food" replace />} />
       <Route path="/managefoods" element={<Navigate to="/cook/foods" replace />} />
       <Route path="/cookfoods" element={<Navigate to="/cook/foods" replace />} />

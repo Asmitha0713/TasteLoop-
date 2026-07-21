@@ -1,37 +1,40 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import AdminLayout from '../components/AdminLayout.jsx'
-import { adminUsers } from '../data/adminData.js'
+import api, { apiError } from '../services/api.js'
 
 export default function AdminUsers() {
-  const [users, setUsers] = useState(adminUsers)
+  const [users, setUsers] = useState([])
   const [query, setQuery] = useState('')
   const [role, setRole] = useState('All roles')
   const [status, setStatus] = useState('All statuses')
   const [showAddUser, setShowAddUser] = useState(false)
-  const [newUser, setNewUser] = useState({ name: '', email: '', role: 'Customer', status: 'Active' })
+  const [newUser, setNewUser] = useState({ name: '', email: '', phone: '', password: '', role: 'Customer', status: 'Active' })
   const [error, setError] = useState('')
   const visible = useMemo(() => users.filter(u =>
     (role === 'All roles' || u.role === role) &&
     (status === 'All statuses' || u.status === status) &&
     `${u.name} ${u.email}`.toLowerCase().includes(query.toLowerCase())
   ), [users, query, role, status])
-  const changeStatus = (id, status) => setUsers(current => current.map(user => user.id === id ? {...user, status} : user))
+  const display = user => ({ ...user, name: user.full_name, role: user.role === 'home_cook' ? 'Home Cook' : user.role === 'admin' ? 'Admin' : 'Customer', status: user.account_status === 'pending_approval' ? 'Pending' : user.account_status[0].toUpperCase() + user.account_status.slice(1), joined: new Date(user.created_at).toLocaleDateString(), avatar: user.full_name.split(/\s+/).slice(0,2).map(part=>part[0]).join('').toUpperCase(), color: '#dfece4' })
+  useEffect(() => { api.get('/admin/users').then(({data}) => setUsers(data.data.map(display))).catch(requestError => setError(apiError(requestError))) }, [])
+  const changeStatus = async (id, status) => {
+    try { await api.patch(`/admin/users/${id}/status`, { account_status: status === 'Pending' ? 'pending_approval' : status.toLowerCase() }); setUsers(current => current.map(user => user.id === id ? {...user, status} : user)) }
+    catch (requestError) { setError(apiError(requestError)) }
+  }
 
   const addUser = (event) => {
     event.preventDefault()
-    if (!newUser.name.trim() || !newUser.email.trim()) {
-      setError('Name and email are required.')
+    if (!newUser.name.trim() || !newUser.email.trim() || !newUser.phone.trim() || !newUser.password) {
+      setError('Name, email, phone and password are required.')
       return
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newUser.email)) {
       setError('Enter a valid email address.')
       return
     }
-    const initials = newUser.name.trim().split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase()
-    setUsers(current => [{ ...newUser, id: Date.now(), joined: '21 Jul 2026', avatar: initials, color: '#dfece4' }, ...current])
-    setNewUser({ name: '', email: '', role: 'Customer', status: 'Active' })
-    setError('')
-    setShowAddUser(false)
+    api.post('/admin/users', { full_name: newUser.name, email: newUser.email, phone_number: newUser.phone, password: newUser.password, role: newUser.role === 'Home Cook' ? 'home_cook' : 'customer', account_status: newUser.status === 'Pending' ? 'pending_approval' : newUser.status.toLowerCase() }).then(({data}) => {
+      setUsers(current => [display(data.data), ...current]); setNewUser({ name: '', email: '', phone: '', password: '', role: 'Customer', status: 'Active' }); setError(''); setShowAddUser(false)
+    }).catch(requestError => setError(apiError(requestError)))
   }
 
   return <AdminLayout title="Manage users" eyebrow="Community management" action={<button className="btn btn-primary" onClick={() => setShowAddUser(true)}>＋ Add User</button>}>
@@ -45,6 +48,8 @@ export default function AdminUsers() {
         <form onSubmit={addUser}>
           <label className="food-field"><span>Full name *</span><input autoFocus value={newUser.name} onChange={e => { setNewUser(current => ({ ...current, name: e.target.value })); setError('') }} placeholder="e.g. Amal Perera" /></label>
           <label className="food-field"><span>Email address *</span><input type="email" value={newUser.email} onChange={e => { setNewUser(current => ({ ...current, email: e.target.value })); setError('') }} placeholder="amal@example.com" /></label>
+          <label className="food-field"><span>Phone number *</span><input value={newUser.phone} onChange={e => setNewUser(current => ({ ...current, phone: e.target.value }))} placeholder="0771234567" /></label>
+          <label className="food-field"><span>Temporary password *</span><input type="password" value={newUser.password} onChange={e => setNewUser(current => ({ ...current, password: e.target.value }))} placeholder="StrongPass@123" /></label>
           <div className="form-grid admin-modal-grid"><label className="food-field"><span>Role</span><select value={newUser.role} onChange={e => setNewUser(current => ({ ...current, role: e.target.value }))}><option>Customer</option><option>Home Cook</option></select></label><label className="food-field"><span>Status</span><select value={newUser.status} onChange={e => setNewUser(current => ({ ...current, status: e.target.value }))}><option>Active</option><option>Pending</option><option>Suspended</option></select></label></div>
           {error && <p className="admin-form-error">{error}</p>}
           <div className="form-actions"><button type="button" className="btn btn-secondary" onClick={() => setShowAddUser(false)}>Cancel</button><button type="submit" className="btn btn-primary">Add User</button></div>

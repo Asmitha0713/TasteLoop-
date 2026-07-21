@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import CookNav from '../components/CookNav.jsx'
-import { getCookFoods, saveCookFoods } from '../data/cookFoods.js'
+import api, { apiError } from '../services/api.js'
 import './CookFoods.css'
 
 const emptyForm = { name: '', category: '', price: '', portions: '', description: '', ingredients: '', prepTime: '', available: true }
@@ -9,13 +9,16 @@ const emptyForm = { name: '', category: '', price: '', portions: '', description
 export default function AddFood() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const [form, setForm] = useState(() => {
-    if (!id) return emptyForm
-    const food = getCookFoods().find((item) => item.id === Number(id))
-    return food ? { ...emptyForm, ...food, price: String(food.price), portions: String(food.portions), available: food.status === 'Available' } : emptyForm
-  })
+  const [form, setForm] = useState(emptyForm)
   const [errors, setErrors] = useState({})
   const [preview, setPreview] = useState('')
+  useEffect(() => {
+    if (!id) return
+    api.get('/foods/mine/list').then(({ data }) => {
+      const food = data.data.find((item) => item.id === id)
+      if (food) setForm({ ...emptyForm, ...food, price: String(food.price), portions: String(food.portions), prepTime: food.prep_time || '', ingredients: (food.ingredients || []).join(', ') })
+    }).catch((error) => setErrors({ form: apiError(error) }))
+  }, [id])
 
   const update = (event) => {
     const { name, value, checked, type } = event.target
@@ -28,7 +31,7 @@ export default function AddFood() {
     if (file) setPreview(URL.createObjectURL(file))
   }
 
-  const submit = (event) => {
+  const submit = async (event) => {
     event.preventDefault()
     const nextErrors = {}
     if (!form.name.trim()) nextErrors.name = 'Please enter a food name.'
@@ -38,10 +41,12 @@ export default function AddFood() {
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length) return
 
-    const foods = getCookFoods()
-    const food = { ...form, id: id ? Number(id) : Date.now(), price: Number(form.price), portions: Number(form.portions), status: form.available ? 'Available' : 'Unavailable', emoji: '🍽️', color: '#f4dfb8' }
-    saveCookFoods(id ? foods.map((item) => item.id === Number(id) ? { ...item, ...food } : item) : [food, ...foods])
-    navigate('/cook/foods', { state: { message: id ? 'Food updated successfully.' : 'Food added successfully.' } })
+    const payload = { name: form.name, category: form.category, price: Number(form.price), portions: Number(form.portions), description: form.description, ingredients: form.ingredients.split(',').map((item) => item.trim()).filter(Boolean), prep_time: form.prepTime ? Number(form.prepTime) : null, available: form.available }
+    try {
+      if (id) await api.patch(`/foods/${id}`, payload)
+      else await api.post('/foods', payload)
+      navigate('/cook/foods', { state: { message: id ? 'Food updated and submitted for approval.' : 'Food submitted for approval.' } })
+    } catch (error) { setErrors({ form: apiError(error) }) }
   }
 
   return (
@@ -51,6 +56,7 @@ export default function AddFood() {
           <div className="cook-breadcrumb"><Link to="/cook/foods">My Foods</Link><span>›</span><span>{id ? 'Edit Food' : 'Add New Food'}</span></div>
           <div className="cook-heading"><div><span className="eyebrow">Kitchen menu</span><h1>{id ? 'Edit your food' : 'Add a new food'}</h1><p>Share a little about the meal and how many portions are ready.</p></div></div>
           <form className="food-form" onSubmit={submit} noValidate>
+            {errors.form && <p className="form-error">{errors.form}</p>}
             <section className="card form-section">
               <div className="section-title"><span>01</span><div><h2>Food details</h2><p>Tell customers what makes this meal special.</p></div></div>
               <div className="form-grid">

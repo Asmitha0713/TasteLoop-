@@ -7,7 +7,7 @@ const roles = [
   {
     id: 'customer',
     title: "I'm a Customer",
-    emoji: '🧑‍🍳',
+    emoji: '👥',
     text: 'Browse dishes from home cooks near you and get a real home-cooked meal delivered.',
     points: ['Order from trusted home kitchens', 'Track your order in real time', 'Save favourite cooks & dishes'],
     cta: 'Continue as Customer',

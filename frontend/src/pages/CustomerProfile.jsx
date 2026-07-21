@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CustomerNav from '../components/CustomerNav.jsx'
 import Footer from '../components/Footer.jsx'
 import './CustomerProfile.css'
+import api, { apiError } from '../services/api.js'
 
 const initialProfile = {
   name: 'Ayesha Fernando',
@@ -13,27 +14,26 @@ const initialProfile = {
 }
 
 export default function CustomerProfile() {
-  const [profile, setProfile] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('tasteloop-customer-profile')) || initialProfile } catch { return initialProfile }
-  })
+  const [profile, setProfile] = useState(initialProfile)
   const [draft, setDraft] = useState(profile)
   const [editing, setEditing] = useState(false)
   const [saved, setSaved] = useState(false)
   const [preferences, setPreferences] = useState({ vegetarian: false, halal: true, mild: true, notifications: true })
+  const [error, setError] = useState('')
+  const display = data => ({ name: data.full_name || '', email: data.email || '', phone: data.phone_number || '', address: data.address || '', city: data.city || '', note: data.delivery_note || '' })
+  useEffect(() => { api.get('/profile').then(({ data }) => { const next = display(data.data); setProfile(next); setDraft(next); setPreferences(data.data.preferences || preferences) }).catch(requestError => setError(apiError(requestError))) }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const update = (event) => setDraft(current => ({ ...current, [event.target.name]: event.target.value }))
-  const save = (event) => {
+  const save = async (event) => {
     event.preventDefault()
-    setProfile(draft)
-    setEditing(false)
-    setSaved(true)
-    try { localStorage.setItem('tasteloop-customer-profile', JSON.stringify(draft)) } catch { /* Retain changes for this session. */ }
-    window.setTimeout(() => setSaved(false), 2500)
+    try { const { data } = await api.patch('/profile', { full_name: draft.name, email: draft.email, phone_number: draft.phone, address: draft.address, city: draft.city, delivery_note: draft.note, preferences }); setProfile(display(data.data)); setEditing(false); setSaved(true); window.setTimeout(() => setSaved(false), 2500) }
+    catch (requestError) { setError(apiError(requestError)) }
   }
 
   return <div className="page customer-profile-page"><CustomerNav />
     <main className="page-content customer-profile-main"><div className="container customer-profile-container">
       {saved && <div className="success-banner">✓ Your profile has been updated.</div>}
+      {error && <div className="success-banner">{error}</div>}
       <div className="customer-profile-heading"><div><span className="eyebrow">Your TasteLoop account</span><h1>My profile</h1><p>Manage your personal details, delivery address and food preferences.</p></div>{!editing && <button className="btn btn-primary" onClick={() => { setDraft(profile); setEditing(true) }}>✎ Edit Profile</button>}</div>
 
       <div className="customer-profile-grid">
