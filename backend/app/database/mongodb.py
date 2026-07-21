@@ -47,6 +47,7 @@ def connect_database() -> None:
     database.refresh_tokens.create_index([("token_hash", ASCENDING)], unique=True)
     database.refresh_tokens.create_index([("expires_at", ASCENDING)], expireAfterSeconds=0)
     database.refresh_tokens.create_index([("user_id", ASCENDING), ("revoked_at", ASCENDING)])
+    database.addresses.create_index([("customer_id", ASCENDING), ("updated_at", DESCENDING)])
     database.foods.create_index([("cook_id", ASCENDING)])
     database.foods.create_index([("moderation_status", ASCENDING), ("available", ASCENDING)])
     database.orders.create_index([("customer_id", ASCENDING), ("created_at", ASCENDING)])

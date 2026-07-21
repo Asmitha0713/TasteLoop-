@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes.auth import router as auth_router
+from app.api.routes.addresses import router as addresses_router
 from app.api.routes.admin import router as admin_router
 from app.api.routes.cart import router as cart_router
 from app.api.routes.cook import router as cook_router
@@ -32,6 +33,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(auth_router)
+app.include_router(addresses_router)
 app.include_router(profiles_router)
 app.include_router(foods_router)
 app.include_router(marketplace_router)

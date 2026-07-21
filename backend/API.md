@@ -32,6 +32,12 @@ All protected endpoints use `Authorization: Bearer <access_token>`.
 
 ## Customer cart and orders
 
+- `POST /api/addresses` — create a saved delivery address
+- `GET /api/addresses` — list the current customer's delivery addresses
+- `GET /api/addresses/{address_id}` — fetch one owned delivery address
+- `PATCH /api/addresses/{address_id}` — update an owned delivery address or make it default
+- `DELETE /api/addresses/{address_id}` — delete an owned delivery address
+
 - `GET /api/cart` — expanded cart and subtotal
 - `POST /api/cart/items` — add a food and quantity
 - `PATCH /api/cart/items/{food_id}` — change quantity

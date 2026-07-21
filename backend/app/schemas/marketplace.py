@@ -114,3 +114,45 @@ class ReportUpdate(BaseModel):
 class ReviewCreate(BaseModel):
     rating: int = Field(ge=1, le=5)
     comment: str = Field(default="", max_length=1000)
+
+
+class DeliveryAddressCreate(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    label: str = Field(default="Home", min_length=1, max_length=40)
+    recipient_name: str = Field(min_length=2, max_length=100)
+    phone_number: str = Field(min_length=9, max_length=20)
+    address_line: str = Field(min_length=5, max_length=250)
+    city: str = Field(min_length=2, max_length=100)
+    landmark: str | None = Field(default=None, max_length=200)
+    delivery_note: str | None = Field(default=None, max_length=300)
+    is_default: bool = False
+
+    @field_validator("phone_number")
+    @classmethod
+    def normalize_phone_number(cls, value: str) -> str:
+        normalized = "".join(character for character in value if character not in " -()")
+        digits = normalized[1:] if normalized.startswith("+") else normalized
+        if not digits.isdigit() or not 9 <= len(digits) <= 15:
+            raise ValueError("Enter a valid phone number with 9 to 15 digits")
+        return normalized
+
+
+class DeliveryAddressUpdate(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    label: str | None = Field(default=None, min_length=1, max_length=40)
+    recipient_name: str | None = Field(default=None, min_length=2, max_length=100)
+    phone_number: str | None = Field(default=None, min_length=9, max_length=20)
+    address_line: str | None = Field(default=None, min_length=5, max_length=250)
+    city: str | None = Field(default=None, min_length=2, max_length=100)
+    landmark: str | None = Field(default=None, max_length=200)
+    delivery_note: str | None = Field(default=None, max_length=300)
+    is_default: bool | None = None
+
+    @field_validator("phone_number")
+    @classmethod
+    def normalize_phone_number(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        return DeliveryAddressCreate.normalize_phone_number(value)
