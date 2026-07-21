@@ -13,6 +13,8 @@ import CustomerDashboard from './pages/CustomerDashboard.jsx'
 import OrderConfirmation from './pages/OrderConfirmation.jsx'
 import OrderHistory from './pages/OrderHistory.jsx'
 import SearchFilter from './pages/SearchFilter.jsx'
+import AddFood from './pages/AddFood.jsx'
+import ManageFoods from './pages/ManageFoods.jsx'
 
 export default function App() {
   return (
@@ -30,6 +32,13 @@ export default function App() {
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/order-confirmation" element={<OrderConfirmation />} />
       <Route path="/orders" element={<OrderHistory />} />
+      <Route path="/cook/dashboard" element={<Navigate to="/cook/foods" replace />} />
+      <Route path="/cook/foods" element={<ManageFoods />} />
+      <Route path="/cook/add-food" element={<AddFood />} />
+      <Route path="/cook/foods/:id/edit" element={<AddFood />} />
+      <Route path="/addfood" element={<Navigate to="/cook/add-food" replace />} />
+      <Route path="/managefoods" element={<Navigate to="/cook/foods" replace />} />
+      <Route path="/cookfoods" element={<Navigate to="/cook/foods" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

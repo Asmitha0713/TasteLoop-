@@ -36,8 +36,8 @@ export default function Footer() {
           <h4 style={styles.heading}>For Home Cooks</h4>
           <ul style={styles.list}>
             <li><Link to="/choose-role">Become a Home Cook</Link></li>
-            <li><Link to="/cook/dashboard">Cook Dashboard</Link></li>
-            <li><Link to="/cook/earnings">Earnings</Link></li>
+            <li><Link to="/cook/foods">Cook Dashboard</Link></li>
+            <li><Link to="/cook/add-food">Add Food</Link></li>
           </ul>
         </div>
 
