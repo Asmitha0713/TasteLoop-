@@ -86,12 +86,7 @@ export default function Login() {
                 <span style={styles.dividerLine} />
               </div>
 
-              <div style={styles.socialRow}>
-                <button type="button" className="btn btn-secondary btn-block btn-sm">🟢 Google</button>
-                <button type="button" className="btn btn-secondary btn-block btn-sm">🔵 Facebook</button>
-                <button type="button" className="btn btn-secondary btn-block btn-sm">⚫ Apple</button>
-              </div>
-
+             
               <p style={styles.footNote}>
                 New to TasteLoop?{' '}
                 <Link to="/register" style={styles.link}>Create an account</Link>
