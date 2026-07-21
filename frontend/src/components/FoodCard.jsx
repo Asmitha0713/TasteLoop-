@@ -7,7 +7,7 @@ export default function FoodCard({ food }) {
       <div style={styles.body}>
         <div style={styles.meta}><span className="stitched">{food.category}</span><span>★ {food.rating}</span></div>
         <h3 style={styles.title}>{food.name}</h3>
-        <p style={styles.cook}>by {food.cook}</p>
+        <p style={styles.cook}>by {food.cook || food.cook_name}</p>
         <div style={styles.bottom}><strong>Rs {food.price}</strong><Link className="btn btn-primary btn-sm" to={`/food/${food.id}`}>View dish</Link></div>
       </div>
     </article>

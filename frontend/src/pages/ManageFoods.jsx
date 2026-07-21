@@ -1,24 +1,35 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import CookNav from '../components/CookNav.jsx'
-import { getCookFoods, saveCookFoods } from '../data/cookFoods.js'
+import api, { apiError } from '../services/api.js'
 import './CookFoods.css'
 
 export default function ManageFoods() {
   const location = useLocation()
-  const [foods, setFoods] = useState(getCookFoods)
+  const [foods, setFoods] = useState([])
+  const [error, setError] = useState('')
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState('All')
   const visible = useMemo(() => foods.filter((food) => (filter === 'All' || food.status === filter) && food.name.toLowerCase().includes(query.toLowerCase())), [foods, query, filter])
 
-  const commit = (next) => { setFoods(next); saveCookFoods(next) }
-  const toggle = (id) => commit(foods.map((food) => food.id === id ? { ...food, status: food.status === 'Available' ? 'Unavailable' : 'Available' } : food))
-  const remove = (id, name) => { if (window.confirm(`Remove “${name}” from your menu?`)) commit(foods.filter((food) => food.id !== id)) }
+  const display = (food) => ({ ...food, status: food.portions === 0 ? 'Sold out' : food.available ? 'Available' : 'Unavailable' })
+  useEffect(() => { api.get('/foods/mine/list').then(({ data }) => setFoods(data.data.map(display))).catch((requestError) => setError(apiError(requestError))) }, [])
+  const toggle = async (id) => {
+    const food = foods.find((item) => item.id === id)
+    try { const { data } = await api.patch(`/foods/${id}`, { available: food.status !== 'Available' }); setFoods((current) => current.map((item) => item.id === id ? display(data.data) : item)) }
+    catch (requestError) { setError(apiError(requestError)) }
+  }
+  const remove = async (id, name) => {
+    if (!window.confirm(`Remove “${name}” from your menu?`)) return
+    try { await api.delete(`/foods/${id}`); setFoods((current) => current.filter((food) => food.id !== id)) }
+    catch (requestError) { setError(apiError(requestError)) }
+  }
 
   return (
     <div className="page cook-page"><CookNav />
       <main className="page-content cook-main"><div className="container">
         {location.state?.message && <div className="success-banner">✓ {location.state.message}</div>}
+        {error && <div className="success-banner">{error}</div>}
         <div className="manage-heading"><div><span className="eyebrow">Your kitchen</span><h1>Manage foods</h1><p>Update your menu, stock and availability in one place.</p></div><Link to="/cook/add-food" className="btn btn-primary">＋ Add New Food</Link></div>
         <div className="food-stats">
           <div className="card"><span>Menu items</span><strong>{foods.length}</strong></div>

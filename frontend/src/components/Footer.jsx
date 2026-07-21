@@ -6,7 +6,8 @@ export default function Footer() {
       <div className="container footer-grid" style={styles.grid}>
         <div style={styles.brandCol}>
           <div style={styles.logo}>
-            <img src="/logo.jpeg" alt="TasteLoop" style={styles.logoImg} />
+            <img src="/tasteloop-logo.png" alt="TasteLoop" style={styles.logoImg} />
+            <span>TasteLoop</span>
           </div>
           <p style={styles.tag}>
             Delicious homemade food, made with love. Connecting home cooks

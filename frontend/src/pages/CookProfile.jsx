@@ -1,27 +1,30 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CookNav from '../components/CookNav.jsx'
 import './CookFoods.css'
+import api, { apiError } from '../services/api.js'
 
 const initialProfile = { name: 'Nadeesha Perera', kitchen: 'Nadeesha’s Kitchen', email: 'nadeesha@example.com', phone: '077 123 4567', location: 'Kilinochchi', specialty: 'Traditional Sri Lankan', bio: 'I make comforting Sri Lankan meals using family recipes, fresh produce and spices ground in my own kitchen.' }
 
 export default function CookProfile() {
-  const [profile, setProfile] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('tasteloop-cook-profile')) || initialProfile } catch { return initialProfile }
-  })
+  const [profile, setProfile] = useState(initialProfile)
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(profile)
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState('')
+  const display = data => ({ name: data.full_name || '', kitchen: data.kitchen_name || '', email: data.email || '', phone: data.phone_number || '', location: data.location || '', specialty: data.specialty || '', bio: data.bio || '' })
+  useEffect(() => { api.get('/profile').then(({ data }) => { const next = display(data.data); setProfile(next); setDraft(next) }).catch(requestError => setError(apiError(requestError))) }, [])
   const update = (e) => setDraft((current) => ({ ...current, [e.target.name]: e.target.value }))
-  const save = (e) => {
-    e.preventDefault(); setProfile(draft); setEditing(false); setSaved(true)
-    try { localStorage.setItem('tasteloop-cook-profile', JSON.stringify(draft)) } catch { /* Keep the current session usable. */ }
-    window.setTimeout(() => setSaved(false), 2500)
+  const save = async (e) => {
+    e.preventDefault()
+    try { const { data } = await api.patch('/profile', { full_name: draft.name, kitchen_name: draft.kitchen, email: draft.email, phone_number: draft.phone, location: draft.location, specialty: draft.specialty, bio: draft.bio }); setProfile(display(data.data)); setEditing(false); setSaved(true); window.setTimeout(() => setSaved(false), 2500) }
+    catch (requestError) { setError(apiError(requestError)) }
   }
 
   return (
     <div className="page cook-page"><CookNav />
       <main className="page-content cook-main"><div className="container profile-container">
         {saved && <div className="success-banner">✓ Your profile has been updated.</div>}
+        {error && <div className="success-banner">{error}</div>}
         <div className="manage-heading"><div><span className="eyebrow">Your public presence</span><h1>Home cook profile</h1><p>Keep your kitchen story and contact information up to date.</p></div>{!editing && <button className="btn btn-primary" onClick={() => { setDraft(profile); setEditing(true) }}>✎ Edit Profile</button>}</div>
 
         <div className="profile-layout">

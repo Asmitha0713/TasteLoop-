@@ -1,22 +1,34 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import CustomerNav from '../components/CustomerNav.jsx'
 import Footer from '../components/Footer.jsx'
-import { cartItems } from '../data/customerData.js'
+import api, { apiError } from '../services/api.js'
 
 export default function Cart() {
-  const [items, setItems] = useState(cartItems)
+  const [items, setItems] = useState([])
+  const [error, setError] = useState('')
+  useEffect(() => { api.get('/cart').then(({ data }) => setItems(data.data.items)).catch((requestError) => setError(apiError(requestError))) }, [])
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const updateQty = (id, amount) => setItems((current) => current.map((item) => item.id === id ? { ...item, quantity: Math.max(1, item.quantity + amount) } : item))
+  const updateQty = async (id, amount) => {
+    const item = items.find((row) => row.id === id)
+    const quantity = Math.max(1, item.quantity + amount)
+    try { const { data } = await api.patch(`/cart/items/${id}`, { quantity }); setItems(data.data.items) }
+    catch (requestError) { setError(apiError(requestError)) }
+  }
+  const remove = async (id) => {
+    try { const { data } = await api.delete(`/cart/items/${id}`); setItems(data.data.items) }
+    catch (requestError) { setError(apiError(requestError)) }
+  }
 
   return (
     <div className="page"><CustomerNav /><main className="page-content"><section className="container" style={styles.wrap}>
       <span className="eyebrow">Your basket</span><h1 style={styles.h1}>Cart</h1>
+      {error && <p style={{ color: 'var(--color-chili)' }}>{error}</p>}
       <div className="cart-layout" style={styles.layout}>
         <div>
           <div style={styles.cookLine}><span>Order from</span><strong>Nadeesha’s Kitchen</strong><span className="stitched">★ 4.9</span></div>
           <div className="card" style={styles.list}>{items.map((item, index) => <div style={{ ...styles.item, borderTop: index ? '1px solid var(--color-border)' : 0 }} key={item.id}>
-            <div style={{ ...styles.image, background: item.color }}>{item.emoji}</div><div style={{ flex: 1 }}><h3 style={styles.name}>{item.name}</h3><p style={styles.meta}>{item.category} · Made fresh today</p><button onClick={() => setItems((current) => current.filter((x) => x.id !== item.id))} style={styles.remove}>Remove</button></div>
+            <div style={{ ...styles.image, background: item.color }}>{item.emoji}</div><div style={{ flex: 1 }}><h3 style={styles.name}>{item.name}</h3><p style={styles.meta}>{item.category} · Made fresh today</p><button onClick={() => remove(item.id)} style={styles.remove}>Remove</button></div>
             <div style={styles.right}><div style={styles.stepper}><button onClick={() => updateQty(item.id, -1)}>−</button><strong>{item.quantity}</strong><button onClick={() => updateQty(item.id, 1)}>+</button></div><strong style={styles.price}>Rs {item.price * item.quantity}</strong></div>
           </div>)}</div>
           <div style={styles.note}><label htmlFor="note">Note for the cook</label><textarea id="note" placeholder="Allergies, spice preference, or delivery notes…" style={styles.textarea} /></div>

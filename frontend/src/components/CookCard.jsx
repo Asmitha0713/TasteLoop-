@@ -5,7 +5,7 @@ export default function CookCard({ cook }) {
       <div>
         <h3 style={styles.name}>{cook.name}</h3>
         <p style={styles.specialty}>{cook.specialty}</p>
-        <span style={styles.rating}>★ {cook.rating} · {cook.orders} orders</span>
+        <span style={styles.rating}>★ {cook.rating || 0} · {cook.orders || 0} orders</span>
       </div>
     </article>
   )

@@ -2,14 +2,31 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import CustomerNav from '../components/CustomerNav.jsx'
 import Footer from '../components/Footer.jsx'
+import api, { apiError } from '../services/api.js'
 
 export default function Checkout() {
   const navigate = useNavigate()
   const [payment, setPayment] = useState('cash')
-  const submit = (event) => { event.preventDefault(); navigate('/order-confirmation') }
+  const [error, setError] = useState('')
+  const submit = async (event) => {
+    event.preventDefault()
+    const form = event.currentTarget
+    try {
+      const { data } = await api.post('/orders', {
+        full_name: form.querySelector('#name').value,
+        phone_number: form.querySelector('#phone').value,
+        address: form.querySelector('#address').value,
+        city: form.querySelector('#city').value,
+        landmark: form.querySelector('#landmark').value || null,
+        payment_method: payment,
+      })
+      navigate('/order-confirmation', { state: { order: data.data } })
+    } catch (requestError) { setError(apiError(requestError)) }
+  }
   return (
     <div className="page"><CustomerNav /><main className="page-content"><form onSubmit={submit} className="container" style={styles.wrap}>
       <Link to="/cart" style={styles.back}>← Back to cart</Link><span className="eyebrow">Almost there</span><h1 style={styles.h1}>Checkout</h1>
+      {error && <p style={{ color: 'var(--color-chili)' }}>{error}</p>}
       <div className="checkout-layout" style={styles.layout}><div>
         <section className="card" style={styles.section}><div style={styles.sectionHead}><span style={styles.number}>1</span><div><h2 style={styles.title}>Delivery details</h2><p style={styles.sub}>Where should we bring your meal?</p></div></div><div className="grid-2" style={styles.formGrid}><div className="field"><label htmlFor="name">Full name</label><input id="name" defaultValue="Ayesha Fernando" required /></div><div className="field"><label htmlFor="phone">Phone number</label><input id="phone" defaultValue="074 062 5386" required /></div><div className="field" style={{ gridColumn: '1 / -1' }}><label htmlFor="address">Delivery address</label><input id="address" defaultValue="No. 18, Station Road, Kilinochchi" required /></div><div className="field"><label htmlFor="city">City</label><input id="city" defaultValue="Kilinochchi" required /></div><div className="field"><label htmlFor="landmark">Nearby landmark</label><input id="landmark" placeholder="Optional" /></div></div></section>
         <section className="card" style={styles.section}><div style={styles.sectionHead}><span style={styles.number}>2</span><div><h2 style={styles.title}>Delivery time</h2><p style={styles.sub}>Choose when you would like it.</p></div></div><div className="grid-2" style={styles.optionGrid}><label style={styles.option}><input type="radio" name="time" defaultChecked /> <span><strong>As soon as possible</strong><small>35–45 minutes</small></span></label><label style={styles.option}><input type="radio" name="time" /> <span><strong>Schedule for later</strong><small>Choose a time</small></span></label></div></section>

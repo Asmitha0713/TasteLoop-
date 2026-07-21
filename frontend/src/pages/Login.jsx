@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
+import api, { apiError, saveSession } from '../services/api.js'
 
 export default function Login() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [form, setForm] = useState({ identifier: '', password: '' })
   const [errors, setErrors] = useState({})
   const [submitting, setSubmitting] = useState(false)
@@ -19,18 +21,25 @@ export default function Login() {
     return next
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const next = validate()
     setErrors(next)
     if (Object.keys(next).length > 0) return
 
-    // Backend: Login API + JWT issuance would be wired in here.
     setSubmitting(true)
-    setTimeout(() => {
+    try {
+      const { data } = await api.post('/auth/login', form)
+      saveSession(data.data)
+      const role = data.data.user.role
+      const roleHome = role === 'admin' ? '/admin/dashboard' : role === 'home_cook' ? '/cook/foods' : '/customer/dashboard'
+      const returnTo = location.state?.from || new URLSearchParams(location.search).get('from')
+      navigate(returnTo || roleHome, { replace: true })
+    } catch (error) {
+      setErrors({ form: apiError(error) })
+    } finally {
       setSubmitting(false)
-      navigate('/')
-    }, 700)
+    }
   }
 
   return (
@@ -46,6 +55,7 @@ export default function Login() {
               <p style={styles.sub}>Pick up where you left off — order, cook, or check your kitchen.</p>
 
               <form onSubmit={handleSubmit} noValidate>
+                {errors.form && <p style={styles.error}>{errors.form}</p>}
                 <div className="field">
                   <label htmlFor="identifier">Email or phone number</label>
                   <input

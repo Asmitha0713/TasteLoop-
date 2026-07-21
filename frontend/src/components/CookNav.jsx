@@ -11,7 +11,7 @@ export default function CookNav() {
   return (
     <header className="cook-nav">
       <div className="container cook-nav__bar">
-        <Link to="/" className="cook-nav__logo"><img src="/logo.jpeg" alt="TasteLoop" /></Link>
+        <Link to="/" className="cook-nav__logo"><img src="/tasteloop-logo.png" alt="TasteLoop" /><span>TasteLoop</span></Link>
         <nav className="cook-nav__links" aria-label="Cook navigation">
           {links.map((link) => <NavLink key={link.to} to={link.to} className={({ isActive }) => `cook-nav__link${isActive ? ' active' : ''}`}>{link.label}</NavLink>)}
         </nav>

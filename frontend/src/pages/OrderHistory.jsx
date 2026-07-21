@@ -1,14 +1,18 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CustomerNav from '../components/CustomerNav.jsx'
 import Footer from '../components/Footer.jsx'
-import { orders } from '../data/customerData.js'
+import api, { apiError } from '../services/api.js'
 
 export default function OrderHistory() {
   const [tab, setTab] = useState('All')
+  const [orders, setOrders] = useState([])
+  const [error, setError] = useState('')
+  useEffect(() => { api.get('/orders').then(({ data }) => setOrders(data.data.map(order => ({ ...order, date: new Date(order.created_at).toLocaleDateString(), cook: order.items[0]?.cook_name || 'Home Cook', items: order.items.map(item => `${item.quantity} × ${item.name}`).join(', '), emoji: order.items[0]?.emoji || '🍽️', color: order.items[0]?.color || '#f4dfb8', status: order.status[0].toUpperCase() + order.status.slice(1).replaceAll('_', ' ') })))).catch(requestError => setError(apiError(requestError))) }, [])
   const shown = tab === 'All' ? orders : orders.filter((order) => tab === 'Active' ? order.status === 'Preparing' : order.status !== 'Preparing')
   return (
     <div className="page"><CustomerNav /><main className="page-content"><section className="container" style={styles.wrap}>
       <span className="eyebrow">Your meals</span><div style={styles.heading}><div><h1 style={styles.h1}>Order history</h1><p style={styles.lead}>Track current orders or revisit a meal you loved.</p></div><button className="btn btn-primary">Browse food</button></div>
+      {error && <p style={{ color: 'var(--color-chili)' }}>{error}</p>}
       <div style={styles.tabs}>{['All', 'Active', 'Past orders'].map((name) => <button key={name} onClick={() => setTab(name)} style={{ ...styles.tab, color: tab === name ? 'var(--color-forest)' : 'var(--color-ink-faint)', borderColor: tab === name ? 'var(--color-forest)' : 'transparent' }}>{name}</button>)}</div>
       <div style={styles.list}>{shown.map((order) => <article className="card order-history-row" style={styles.order} key={order.id}><div style={{ ...styles.image, background: order.color }}>{order.emoji}</div><div style={styles.info}><div style={styles.orderTop}><div><h3 style={styles.name}>{order.cook}</h3><p style={styles.meta}>#{order.id} · {order.date}</p></div><span style={{ ...styles.status, ...statusColors[order.status] }}>{order.status}</span></div><p style={styles.items}>{order.items}</p><div style={styles.bottom}><strong style={styles.total}>Rs {order.total}</strong><div style={styles.actions}>{order.status === 'Preparing' ? <button className="btn btn-primary btn-sm">Track order</button> : <><button className="btn btn-secondary btn-sm">View details</button>{order.status === 'Delivered' && <button className="btn btn-primary btn-sm">Order again</button>}</>}</div></div></div></article>)}</div>
       {!shown.length && <div className="card" style={styles.empty}>No orders in this section yet.</div>}

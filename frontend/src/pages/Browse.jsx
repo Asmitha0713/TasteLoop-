@@ -1,14 +1,39 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
 import FoodCard from '../components/FoodCard.jsx'
 import CookCard from '../components/CookCard.jsx'
-import { categories, foods, cooks } from '../data/sampleData.js'
+import api, { apiError } from '../services/api.js'
 
 export default function Browse() {
   const [active, setActive] = useState('All')
+  const [query, setQuery] = useState('')
+  const [foods, setFoods] = useState([])
+  const [categories, setCategories] = useState([])
+  const [cooks, setCooks] = useState([])
+  const [error, setError] = useState('')
 
-  const filtered = active === 'All' ? foods : foods.filter((f) => f.category === active)
+  const loadFoods = async () => {
+    try {
+      const { data } = await api.get('/foods', { params: { query: query || undefined, category: active === 'All' ? undefined : active } })
+      setFoods(data.data.map((food) => ({ ...food, cook: food.cook_name })))
+      setError('')
+    } catch (requestError) { setError(apiError(requestError)) }
+  }
+
+  useEffect(() => {
+    api.get('/foods', { params: { category: active === 'All' ? undefined : active } })
+      .then(({ data }) => setFoods(data.data.map((food) => ({ ...food, cook: food.cook_name }))))
+      .catch((requestError) => setError(apiError(requestError)))
+  }, [active])
+  useEffect(() => {
+    Promise.all([api.get('/foods/categories'), api.get('/cooks')]).then(([categoryResponse, cookResponse]) => {
+      setCategories(categoryResponse.data.data.map((name) => ({ name, emoji: '🍽️' })))
+      setCooks(cookResponse.data.data.map((cook) => ({ ...cook, name: cook.full_name, emoji: '👩‍🍳', color: '#f5d89c', orders: cook.order_count || 0 })))
+    }).catch((requestError) => setError(apiError(requestError)))
+  }, [])
+
+  const filtered = foods
 
   return (
     <div className="page">
@@ -22,8 +47,8 @@ export default function Browse() {
 
             <div style={styles.searchBar}>
               <span style={{ opacity: 0.5 }}>🔍</span>
-              <input placeholder="Search dishes or cooks…" style={styles.searchInput} />
-              <button className="btn btn-forest btn-sm">Search</button>
+              <input value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => event.key === 'Enter' && loadFoods()} placeholder="Search dishes or cooks…" style={styles.searchInput} />
+              <button className="btn btn-forest btn-sm" onClick={loadFoods}>Search</button>
             </div>
 
             <div style={styles.categoryRow}>
@@ -57,6 +82,7 @@ export default function Browse() {
         </section>
 
         <section className="container" style={styles.section}>
+          {error && <p style={{ color: 'var(--color-chili)' }}>{error}</p>}
           <div style={styles.sectionHeadRow}>
             <h2 style={{ margin: 0 }}>Popular Near You</h2>
             <span style={styles.count}>{filtered.length} dishes</span>

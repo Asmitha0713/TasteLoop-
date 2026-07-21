@@ -1,10 +1,11 @@
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
 import SteamDivider from '../components/SteamDivider.jsx'
 import FoodCard from '../components/FoodCard.jsx'
 import CookCard from '../components/CookCard.jsx'
-import { foods, cooks } from '../data/sampleData.js'
+import api from '../services/api.js'
 
 const features = [
   { icon: '🍲', title: 'Real Home Cooking', text: 'Every dish is made fresh, in a real kitchen, by a real neighbour — not a commercial line.' },
@@ -14,6 +15,17 @@ const features = [
 ]
 
 export default function Landing() {
+  const [foods, setFoods] = useState([])
+  const [cooks, setCooks] = useState([])
+  const [query, setQuery] = useState('')
+  const navigate = useNavigate()
+  useEffect(() => {
+    Promise.all([api.get('/foods', { params: { limit: 3 } }), api.get('/cooks')]).then(([foodResponse, cookResponse]) => {
+      setFoods(foodResponse.data.data.map(food => ({ ...food, cook: food.cook_name })))
+      setCooks(cookResponse.data.data.map(cook => ({ ...cook, name: cook.full_name, emoji: '👩‍🍳', color: '#f5d89c', orders: cook.order_count || 0 })))
+    })
+  }, [])
+  const search = () => navigate(`/search${query ? `?query=${encodeURIComponent(query)}` : ''}`)
   return (
     <div className="page">
       <Navbar />
@@ -34,8 +46,8 @@ export default function Landing() {
 
             <div style={styles.searchBar}>
               <span style={{ opacity: 0.5 }}>🔍</span>
-              <input placeholder="Search for kottu, rice & curry, desserts…" style={styles.searchInput} />
-              <button className="btn btn-primary btn-sm">Search</button>
+              <input value={query} onChange={event => setQuery(event.target.value)} onKeyDown={event => event.key === 'Enter' && search()} placeholder="Search for kottu, rice & curry, desserts…" style={styles.searchInput} />
+              <button className="btn btn-primary btn-sm" onClick={search}>Search</button>
             </div>
 
             <div style={styles.heroActions}>

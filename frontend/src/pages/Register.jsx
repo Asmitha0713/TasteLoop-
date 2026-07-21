@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
+import api, { apiError, saveSession } from '../services/api.js'
 
-const initial = { fullName: '', identifier: '', password: '', confirm: '' }
+const initial = { fullName: '', email: '', phoneNumber: '', password: '', confirm: '', role: 'customer' }
 
 export default function Register() {
   const navigate = useNavigate()
@@ -16,7 +17,8 @@ export default function Register() {
   const validate = () => {
     const next = {}
     if (!form.fullName.trim()) next.fullName = 'Enter your full name.'
-    if (!form.identifier.trim()) next.identifier = 'Enter your email or phone number.'
+    if (!form.email.trim()) next.email = 'Enter your email address.'
+    if (!form.phoneNumber.trim()) next.phoneNumber = 'Enter your phone number.'
     if (!form.password) next.password = 'Choose a password.'
     else if (form.password.length < 6) next.password = 'Password must be at least 6 characters.'
     if (!form.confirm) next.confirm = 'Confirm your password.'
@@ -24,18 +26,25 @@ export default function Register() {
     return next
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const next = validate()
     setErrors(next)
     if (Object.keys(next).length > 0) return
 
-    // Backend: Register API (with bcrypt hashing) would be wired in here.
     setSubmitting(true)
-    setTimeout(() => {
+    try {
+      const { data } = await api.post('/auth/register', {
+        full_name: form.fullName, email: form.email, phone_number: form.phoneNumber,
+        password: form.password, confirm_password: form.confirm, role: form.role,
+      })
+      saveSession(data.data)
+      navigate(form.role === 'home_cook' ? '/login' : '/customer/dashboard')
+    } catch (error) {
+      setErrors({ form: apiError(error) })
+    } finally {
       setSubmitting(false)
-      navigate('/choose-role')
-    }, 700)
+    }
   }
 
   return (
@@ -51,6 +60,7 @@ export default function Register() {
               <p style={styles.sub}>Order home-cooked meals, or start selling from your own kitchen.</p>
 
               <form onSubmit={handleSubmit} noValidate>
+                {errors.form && <p style={styles.error}>{errors.form}</p>}
                 <div className="field">
                   <label htmlFor="fullName">Full name</label>
                   <input
@@ -65,17 +75,16 @@ export default function Register() {
                 </div>
 
                 <div className="field">
-                  <label htmlFor="identifier">Email or phone number</label>
+                  <label htmlFor="email">Email address</label>
                   <input
-                    id="identifier"
-                    type="text"
-                    placeholder="you@example.com or 07X XXX XXXX"
-                    value={form.identifier}
-                    onChange={update('identifier')}
-                    aria-invalid={!!errors.identifier}
+                    id="email" type="email" placeholder="you@example.com"
+                    value={form.email} onChange={update('email')} aria-invalid={!!errors.email}
                   />
-                  {errors.identifier && <p style={styles.error}>{errors.identifier}</p>}
+                  {errors.email && <p style={styles.error}>{errors.email}</p>}
                 </div>
+
+                <div className="field"><label htmlFor="phoneNumber">Phone number</label><input id="phoneNumber" placeholder="0771234567" value={form.phoneNumber} onChange={update('phoneNumber')} aria-invalid={!!errors.phoneNumber} />{errors.phoneNumber && <p style={styles.error}>{errors.phoneNumber}</p>}</div>
+                <div className="field"><label htmlFor="role">Account type</label><select id="role" value={form.role} onChange={update('role')}><option value="customer">Customer</option><option value="home_cook">Home Cook</option></select></div>
 
                 <div className="field">
                   <label htmlFor="password">Password</label>

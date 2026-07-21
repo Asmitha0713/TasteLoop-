@@ -1,23 +1,34 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import CustomerNav from '../components/CustomerNav.jsx'
 import Footer from '../components/Footer.jsx'
 import FoodCard from '../components/FoodCard.jsx'
-import { categories, foods } from '../data/sampleData.js'
+import api, { apiError } from '../services/api.js'
 
 export default function SearchFilter() {
-  const [query, setQuery] = useState('')
+  const [searchParams] = useSearchParams()
+  const [query, setQuery] = useState(searchParams.get('query') || '')
   const [category, setCategory] = useState('All')
   const [maxPrice, setMaxPrice] = useState(1500)
   const [sort, setSort] = useState('Recommended')
-  const results = useMemo(() => {
-    const matches = foods.filter((food) => (category === 'All' || food.category === category) && food.price <= maxPrice && `${food.name} ${food.cook}`.toLowerCase().includes(query.toLowerCase()))
-    return [...matches].sort((a, b) => sort === 'Price: Low to high' ? a.price - b.price : sort === 'Rating' ? b.rating - a.rating : 0)
+  const [results, setResults] = useState([])
+  const [categories, setCategories] = useState([])
+  const [error, setError] = useState('')
+  useEffect(() => { api.get('/foods/categories').then(({data}) => setCategories(data.data.map(name => ({name})))).catch(requestError => setError(apiError(requestError))) }, [])
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      api.get('/foods', { params: { query: query || undefined, category: category === 'All' ? undefined : category, max_price: maxPrice, sort: sort === 'Price: Low to high' ? 'price_low' : 'recommended' } })
+        .then(({data}) => setResults(data.data.map(food => ({...food,cook:food.cook_name}))))
+        .catch(requestError => setError(apiError(requestError)))
+    }, 250)
+    return () => window.clearTimeout(timer)
   }, [query, category, maxPrice, sort])
 
   return (
     <div className="page"><CustomerNav /><main className="page-content">
       <section style={styles.hero}><div className="container"><span className="eyebrow">Find your next meal</span><h1 style={styles.h1}>Search homemade food</h1><div style={styles.search}><span>🔍</span><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search dishes or home cooks…" style={styles.input} /><button className="btn btn-primary">Search</button></div></div></section>
       <section className="container search-layout" style={styles.layout}>
+        {error && <p style={{ color: 'var(--color-chili)' }}>{error}</p>}
         <aside className="card" style={styles.filters}>
           <div style={styles.filterHead}><h3 style={{ margin: 0 }}>Filters</h3><button onClick={() => { setCategory('All'); setMaxPrice(1500); setQuery('') }} style={styles.clear}>Clear all</button></div>
           <div style={styles.group}><strong style={styles.label}>Category</strong>{['All', ...categories.map((c) => c.name)].map((name) => <label style={styles.check} key={name}><input type="radio" name="category" checked={category === name} onChange={() => setCategory(name)} /> {name}</label>)}</div>
