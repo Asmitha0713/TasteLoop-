@@ -15,6 +15,8 @@ import OrderHistory from './pages/OrderHistory.jsx'
 import SearchFilter from './pages/SearchFilter.jsx'
 import AddFood from './pages/AddFood.jsx'
 import ManageFoods from './pages/ManageFoods.jsx'
+import Earnings from './pages/Earnings.jsx'
+import CookProfile from './pages/CookProfile.jsx'
 
 export default function App() {
   return (
@@ -36,6 +38,8 @@ export default function App() {
       <Route path="/cook/foods" element={<ManageFoods />} />
       <Route path="/cook/add-food" element={<AddFood />} />
       <Route path="/cook/foods/:id/edit" element={<AddFood />} />
+      <Route path="/cook/earnings" element={<Earnings />} />
+      <Route path="/cook/profile" element={<CookProfile />} />
       <Route path="/addfood" element={<Navigate to="/cook/add-food" replace />} />
       <Route path="/managefoods" element={<Navigate to="/cook/foods" replace />} />
       <Route path="/cookfoods" element={<Navigate to="/cook/foods" replace />} />
