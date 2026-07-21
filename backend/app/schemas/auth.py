@@ -109,3 +109,35 @@ class LoginResponse(BaseModel):
     success: bool = True
     message: str = "Login successful"
     data: RegisterData
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, value: EmailStr) -> str:
+        return str(value).lower()
+
+
+class ForgotPasswordResponse(BaseModel):
+    success: bool = True
+    message: str = "If an account exists for that email, password reset instructions have been sent."
+    reset_token: str | None = None
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str = Field(min_length=32, max_length=500)
+    password: str
+    confirm_password: str
+
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, value: str) -> str:
+        return RegisterRequest.validate_password(value)
+
+    @model_validator(mode="after")
+    def passwords_match(self) -> "ResetPasswordRequest":
+        if self.password != self.confirm_password:
+            raise ValueError("Password and confirm password do not match")
+        return self

@@ -1,4 +1,6 @@
 from datetime import UTC, datetime, timedelta
+import hashlib
+import secrets
 
 import bcrypt
 import jwt
@@ -33,3 +35,12 @@ def decode_access_token(token: str) -> dict:
     if payload.get("type") != "access" or not payload.get("sub"):
         raise ValueError("Invalid access token")
     return payload
+
+
+def create_password_reset_token() -> tuple[str, str]:
+    token = secrets.token_urlsafe(48)
+    return token, hash_password_reset_token(token)
+
+
+def hash_password_reset_token(token: str) -> str:
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()
