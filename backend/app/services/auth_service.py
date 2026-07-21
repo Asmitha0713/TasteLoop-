@@ -1,11 +1,13 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from fastapi import HTTPException, status
 from pymongo.errors import DuplicateKeyError
 
-from app.core.security import create_access_token, hash_password, verify_password
+from app.core.config import settings
+from app.core.security import create_access_token, create_password_reset_token, hash_password, hash_password_reset_token, verify_password
+from app.integrations.email import send_password_reset_email
 from app.repositories.user_repository import UserRepository
-from app.schemas.auth import LoginRequest, LoginResponse, RegisterData, RegisterRequest, RegisterResponse, UserResponse
+from app.schemas.auth import ForgotPasswordRequest, ForgotPasswordResponse, LoginRequest, LoginResponse, RegisterData, RegisterRequest, RegisterResponse, ResetPasswordRequest, UserResponse
 
 
 class AuthService:
@@ -72,6 +74,44 @@ class AuthService:
             created_at=user_document["created_at"].isoformat(),
         )
         return LoginResponse(data=RegisterData(user=user, access_token=access_token, expires_in=expires_in))
+
+    def forgot_password(self, payload: ForgotPasswordRequest) -> ForgotPasswordResponse:
+        if not settings.password_reset_debug and (not settings.smtp_host or not settings.smtp_from_email):
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Password reset email is not configured",
+            )
+
+        user = self.repository.find_by_email(payload.email)
+        if user is None:
+            return ForgotPasswordResponse()
+
+        token, token_hash = create_password_reset_token()
+        expires_at = datetime.now(UTC) + timedelta(minutes=settings.password_reset_expire_minutes)
+        self.repository.set_password_reset(user["_id"], token_hash, expires_at)
+
+        if settings.password_reset_debug:
+            return ForgotPasswordResponse(reset_token=token)
+
+        try:
+            send_password_reset_email(payload.email, token)
+        except (OSError, RuntimeError) as error:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Password reset email could not be sent",
+            ) from error
+        return ForgotPasswordResponse()
+
+    def reset_password(self, payload: ResetPasswordRequest) -> dict:
+        now = datetime.now(UTC)
+        user = self.repository.find_by_valid_reset_token(hash_password_reset_token(payload.token), now)
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Password reset token is invalid or expired",
+            )
+        self.repository.reset_password(user["_id"], hash_password(payload.password), now)
+        return {"success": True, "message": "Password reset successfully. You can now log in."}
 
     @staticmethod
     def _raise_duplicate_error(existing_user: dict, payload: RegisterRequest) -> None:

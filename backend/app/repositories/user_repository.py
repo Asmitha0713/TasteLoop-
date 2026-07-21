@@ -17,3 +17,27 @@ class UserRepository:
     def find_by_identifier(self, identifier: str):
         field = "email" if "@" in identifier else "phone_number"
         return self.collection.find_one({field: identifier})
+
+    def find_by_email(self, email: str):
+        return self.collection.find_one({"email": email})
+
+    def set_password_reset(self, user_id, token_hash: str, expires_at):
+        return self.collection.update_one(
+            {"_id": user_id},
+            {"$set": {"password_reset_token_hash": token_hash, "password_reset_expires_at": expires_at}},
+        )
+
+    def find_by_valid_reset_token(self, token_hash: str, now):
+        return self.collection.find_one({
+            "password_reset_token_hash": token_hash,
+            "password_reset_expires_at": {"$gt": now},
+        })
+
+    def reset_password(self, user_id, password_hash: str, updated_at):
+        return self.collection.update_one(
+            {"_id": user_id},
+            {
+                "$set": {"password_hash": password_hash, "updated_at": updated_at},
+                "$unset": {"password_reset_token_hash": "", "password_reset_expires_at": ""},
+            },
+        )
