@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import CustomerNav from '../components/CustomerNav.jsx'
 import Footer from '../components/Footer.jsx'
@@ -8,16 +8,24 @@ export default function Checkout() {
   const navigate = useNavigate()
   const [payment, setPayment] = useState('cash')
   const [error, setError] = useState('')
+  const [delivery, setDelivery] = useState({ name: '', phone: '', address: '', city: '', landmark: '' })
+  useEffect(() => {
+    Promise.all([api.get('/profile'), api.get('/addresses')]).then(([profileResponse, addressResponse]) => {
+      const user = profileResponse.data.data
+      const address = addressResponse.data.data.find(item => item.is_default) || addressResponse.data.data[0]
+      setDelivery({ name: address?.recipient_name || user.full_name || '', phone: address?.phone_number || user.phone_number || '', address: address?.address_line || '', city: address?.city || '', landmark: address?.landmark || '' })
+    }).catch(requestError => setError(apiError(requestError)))
+  }, [])
+  const updateDelivery = event => setDelivery(current => ({ ...current, [event.target.name]: event.target.value }))
   const submit = async (event) => {
     event.preventDefault()
-    const form = event.currentTarget
     try {
       const { data } = await api.post('/orders', {
-        full_name: form.querySelector('#name').value,
-        phone_number: form.querySelector('#phone').value,
-        address: form.querySelector('#address').value,
-        city: form.querySelector('#city').value,
-        landmark: form.querySelector('#landmark').value || null,
+        full_name: delivery.name,
+        phone_number: delivery.phone,
+        address: delivery.address,
+        city: delivery.city,
+        landmark: delivery.landmark || null,
         payment_method: payment,
       })
       navigate('/order-confirmation', { state: { order: data.data } })
@@ -28,7 +36,7 @@ export default function Checkout() {
       <Link to="/cart" style={styles.back}>← Back to cart</Link><span className="eyebrow">Almost there</span><h1 style={styles.h1}>Checkout</h1>
       {error && <p style={{ color: 'var(--color-chili)' }}>{error}</p>}
       <div className="checkout-layout" style={styles.layout}><div>
-        <section className="card" style={styles.section}><div style={styles.sectionHead}><span style={styles.number}>1</span><div><h2 style={styles.title}>Delivery details</h2><p style={styles.sub}>Where should we bring your meal?</p></div></div><div className="grid-2" style={styles.formGrid}><div className="field"><label htmlFor="name">Full name</label><input id="name" defaultValue="Ayesha Fernando" required /></div><div className="field"><label htmlFor="phone">Phone number</label><input id="phone" defaultValue="074 062 5386" required /></div><div className="field" style={{ gridColumn: '1 / -1' }}><label htmlFor="address">Delivery address</label><input id="address" defaultValue="No. 18, Station Road, Kilinochchi" required /></div><div className="field"><label htmlFor="city">City</label><input id="city" defaultValue="Kilinochchi" required /></div><div className="field"><label htmlFor="landmark">Nearby landmark</label><input id="landmark" placeholder="Optional" /></div></div></section>
+        <section className="card" style={styles.section}><div style={styles.sectionHead}><span style={styles.number}>1</span><div><h2 style={styles.title}>Delivery details</h2><p style={styles.sub}>Where should we bring your meal?</p></div></div><div className="grid-2" style={styles.formGrid}><div className="field"><label htmlFor="name">Full name</label><input id="name" name="name" value={delivery.name} onChange={updateDelivery} required /></div><div className="field"><label htmlFor="phone">Phone number</label><input id="phone" name="phone" value={delivery.phone} onChange={updateDelivery} required /></div><div className="field" style={{ gridColumn: '1 / -1' }}><label htmlFor="address">Delivery address</label><input id="address" name="address" value={delivery.address} onChange={updateDelivery} required /></div><div className="field"><label htmlFor="city">City</label><input id="city" name="city" value={delivery.city} onChange={updateDelivery} required /></div><div className="field"><label htmlFor="landmark">Nearby landmark</label><input id="landmark" name="landmark" value={delivery.landmark} onChange={updateDelivery} placeholder="Optional" /></div></div></section>
         <section className="card" style={styles.section}><div style={styles.sectionHead}><span style={styles.number}>2</span><div><h2 style={styles.title}>Delivery time</h2><p style={styles.sub}>Choose when you would like it.</p></div></div><div className="grid-2" style={styles.optionGrid}><label style={styles.option}><input type="radio" name="time" defaultChecked /> <span><strong>As soon as possible</strong><small>35–45 minutes</small></span></label><label style={styles.option}><input type="radio" name="time" /> <span><strong>Schedule for later</strong><small>Choose a time</small></span></label></div></section>
         <section className="card" style={styles.section}><div style={styles.sectionHead}><span style={styles.number}>3</span><div><h2 style={styles.title}>Payment method</h2><p style={styles.sub}>Select your preferred payment.</p></div></div><div style={styles.optionGrid}>{[['cash','💵','Cash on delivery'],['card','💳','Credit or debit card']].map(([id, icon, label]) => <label key={id} style={{ ...styles.option, borderColor: payment === id ? 'var(--color-forest)' : 'var(--color-border)' }}><input type="radio" name="payment" checked={payment === id} onChange={() => setPayment(id)} /><span style={{ fontSize: 22 }}>{icon}</span><strong>{label}</strong></label>)}</div>{payment === 'card' && <div className="field" style={{ marginTop: 18 }}><label htmlFor="card">Card number</label><input id="card" placeholder="1234 5678 9012 3456" required /></div>}</section>
       </div><aside className="card" style={styles.summary}><h2 style={styles.title}>Your order</h2><p style={styles.cook}>Nadeesha’s Kitchen</p><div style={styles.item}><span>2 × Chicken Rice & Curry</span><strong>Rs 1700</strong></div><div style={styles.item}><span>1 × Watalappan</span><strong>Rs 500</strong></div><div style={styles.item}><span>Fees</span><strong>Rs 300</strong></div><div style={styles.total}><span>Total</span><strong>Rs 2500</strong></div><button className="btn btn-primary btn-block" type="submit">Place order</button><p style={styles.secure}>By ordering, you agree to TasteLoop’s order terms.</p></aside></div>

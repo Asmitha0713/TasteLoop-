@@ -32,7 +32,8 @@ def get_current_user(
     user = database.users.find_one({"_id": user_id})
     if user is None:
         raise unauthorized
-    if user.get("account_status") != "active":
+    can_use_cook_workspace = user.get("role") == "home_cook" and user.get("account_status") == "pending_approval"
+    if user.get("account_status") != "active" and not can_use_cook_workspace:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account is not active")
     return user
 

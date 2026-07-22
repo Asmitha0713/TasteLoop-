@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import CookNav from '../components/CookNav.jsx'
-import api, { apiError } from '../services/api.js'
+import api, { apiError, currentUser } from '../services/api.js'
 import './CookFoods.css'
 
 export default function ManageFoods() {
   const location = useLocation()
   const [foods, setFoods] = useState([])
   const [error, setError] = useState('')
+  const user = currentUser()
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState('All')
   const visible = useMemo(() => foods.filter((food) => (filter === 'All' || food.status === filter) && food.name.toLowerCase().includes(query.toLowerCase())), [foods, query, filter])
@@ -29,6 +30,7 @@ export default function ManageFoods() {
     <div className="page cook-page"><CookNav />
       <main className="page-content cook-main"><div className="container">
         {location.state?.message && <div className="success-banner">✓ {location.state.message}</div>}
+        {user?.account_status === 'pending_approval' && <div className="success-banner">Your cook account is awaiting admin approval. You can prepare your menu now; approved dishes become public after your account is approved.</div>}
         {error && <div className="success-banner">{error}</div>}
         <div className="manage-heading"><div><span className="eyebrow">Your kitchen</span><h1>Manage foods</h1><p>Update your menu, stock and availability in one place.</p></div><Link to="/cook/add-food" className="btn btn-primary">＋ Add New Food</Link></div>
         <div className="food-stats">
