@@ -8,8 +8,8 @@ export const adminUsers = [
 ]
 
 export const adminFoods = [
-  { id: 1, name: 'Chicken Rice & Curry', cook: 'Nadeesha’s Kitchen', category: 'Rice & Curry', price: 850, status: 'Approved', emoji: '🍛', color: '#f5d89c', date: '20 Jul 2026' },
-  { id: 2, name: 'Cheese Chicken Kottu', cook: 'Amma’s Table', category: 'Kottu', price: 1050, status: 'Approved', emoji: '🥘', color: '#dce8c7', date: '20 Jul 2026' },
+  { id: 1, name: 'Chicken Rice & Curry', cook: 'Anista’s Kitchen', category: 'Rice & Curry', price: 850, status: 'Approved', emoji: '🍛', color: '#f5d89c', date: '20 Jul 2026' },
+  { id: 2, name: 'Cheese Chicken Kottu', cook: 'Retta’s Kitchen', category: 'Kottu', price: 1050, status: 'Approved', emoji: '🥘', color: '#dce8c7', date: '20 Jul 2026' },
   { id: 3, name: 'Spicy Fish Buns', cook: 'Rani Bakes', category: 'Bakes', price: 450, status: 'Pending', emoji: '🥐', color: '#f1d1b4', date: '21 Jul 2026' },
   { id: 4, name: 'Watalappan', cook: 'Sweet Colombo', category: 'Desserts', price: 500, status: 'Approved', emoji: '🍮', color: '#e8c9a4', date: '18 Jul 2026' },
   { id: 5, name: 'Seafood Kottu', cook: 'Coastal Kitchen', category: 'Kottu', price: 1200, status: 'Flagged', emoji: '🍲', color: '#cfe3e5', date: '17 Jul 2026' },

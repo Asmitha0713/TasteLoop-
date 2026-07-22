@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
 import api, { apiError, saveSession } from '../services/api.js'
+import PasswordEye from '../components/PasswordEye.jsx'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -10,6 +11,7 @@ export default function Login() {
   const [form, setForm] = useState({ identifier: '', password: '' })
   const [errors, setErrors] = useState({})
   const [submitting, setSubmitting] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }))
 
@@ -34,7 +36,8 @@ export default function Login() {
       const role = data.data.user.role
       const roleHome = role === 'admin' ? '/admin/dashboard' : role === 'home_cook' ? '/cook/foods' : '/customer/dashboard'
       const returnTo = location.state?.from || new URLSearchParams(location.search).get('from')
-      navigate(returnTo || roleHome, { replace: true })
+      const canReturn = returnTo && ((returnTo.startsWith('/cook/') && role === 'home_cook') || (returnTo.startsWith('/admin/') && role === 'admin') || (!returnTo.startsWith('/cook/') && !returnTo.startsWith('/admin/') && role === 'customer'))
+      navigate(canReturn ? returnTo : roleHome, { replace: true })
     } catch (error) {
       setErrors({ form: apiError(error) })
     } finally {
@@ -55,6 +58,7 @@ export default function Login() {
               <p style={styles.sub}>Pick up where you left off — order, cook, or check your kitchen.</p>
 
               <form onSubmit={handleSubmit} noValidate>
+                {location.state?.message && <p style={styles.notice}>{location.state.message}</p>}
                 {errors.form && <p style={styles.error}>{errors.form}</p>}
                 <div className="field">
                   <label htmlFor="identifier">Email or phone number</label>
@@ -74,14 +78,18 @@ export default function Login() {
                     <label htmlFor="password" style={{ margin: 0 }}>Password</label>
                     <Link to="#" style={styles.forgot}>Forgot password?</Link>
                   </div>
-                  <input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={form.password}
-                    onChange={update('password')}
-                    aria-invalid={!!errors.password}
-                  />
+                  <div style={styles.passwordWrap}>
+                    <input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="••••••••"
+                      value={form.password}
+                      onChange={update('password')}
+                      aria-invalid={!!errors.password}
+                      style={styles.passwordInput}
+                    />
+                    <button type="button" style={styles.passwordToggle} onClick={() => setShowPassword(current => !current)} aria-label={showPassword ? 'Hide password' : 'Show password'} title={showPassword ? 'Hide password' : 'Show password'}><PasswordEye visible={showPassword} /></button>
+                  </div>
                   {errors.password && <p style={styles.error}>{errors.password}</p>}
                 </div>
 
@@ -131,6 +139,10 @@ const styles = {
   labelRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 },
   forgot: { fontSize: 12.5, fontWeight: 600, color: 'var(--color-chili)' },
   error: { color: 'var(--color-chili)', fontSize: 12.5, marginTop: 6, marginBottom: 0 },
+  notice: { color: 'var(--color-forest)', background: 'var(--color-forest-tint)', padding: 12, borderRadius: 9, fontSize: 12.5 },
+  passwordWrap: { position: 'relative' },
+  passwordInput: { paddingRight: 64 },
+  passwordToggle: { position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', border: 0, background: 'transparent', color: 'var(--color-forest)', cursor: 'pointer', padding: 5, display: 'grid', placeItems: 'center' },
   divider: { display: 'flex', alignItems: 'center', gap: 12, margin: '26px 0 18px' },
   dividerLine: { flex: 1, height: 1, background: 'var(--color-border-strong)' },
   dividerText: { fontSize: 12, color: 'var(--color-ink-faint)', whiteSpace: 'nowrap' },

@@ -69,7 +69,8 @@ class AuthService:
         user_document = self.repository.find_by_identifier(payload.identifier)
         if user_document is None or not verify_password(payload.password, user_document.get("password_hash", "")):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email, phone number, or password")
-        if user_document.get("account_status") != "active":
+        can_use_cook_workspace = user_document.get("role") == "home_cook" and user_document.get("account_status") == "pending_approval"
+        if user_document.get("account_status") != "active" and not can_use_cook_workspace:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account is not active")
         user_id = str(user_document["_id"])
         access_token, expires_in, refresh_token, refresh_expires_in = self._issue_token_pair(user_id, user_document["role"])
@@ -90,7 +91,8 @@ class AuthService:
         except ValueError as error:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(error)) from error
         user = self.repository.find_by_id(claims["sub"])
-        if user is None or user.get("account_status") != "active":
+        can_use_cook_workspace = user and user.get("role") == "home_cook" and user.get("account_status") == "pending_approval"
+        if user is None or (user.get("account_status") != "active" and not can_use_cook_workspace):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
         consumed = self.token_repository.consume(user["_id"], claims["jti"], hash_token(payload.refresh_token))
         if consumed is None:

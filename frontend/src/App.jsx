@@ -58,6 +58,7 @@ export default function App() {
       <Route path="/admin/reports" element={admin(<AdminReports />)} />
       <Route path="/addfood" element={<Navigate to="/cook/add-food" replace />} />
       <Route path="/managefoods" element={<Navigate to="/cook/foods" replace />} />
+      <Route path="/cook/manage-foods" element={<Navigate to="/cook/foods" replace />} />
       <Route path="/cookfoods" element={<Navigate to="/cook/foods" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

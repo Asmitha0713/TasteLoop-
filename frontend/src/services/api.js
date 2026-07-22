@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { toast } from 'react-toastify'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
@@ -14,7 +15,11 @@ api.interceptors.request.use((config) => {
 let refreshRequest = null
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const method = response.config.method?.toLowerCase()
+    if (method && method !== 'get' && response.data?.message && !response.config.skipToast) toast.success(response.data.message)
+    return response
+  },
   async (error) => {
     const original = error.config
     const refreshToken = localStorage.getItem('tasteloop-refresh-token')
@@ -41,6 +46,7 @@ api.interceptors.response.use(
         window.location.replace(`/login?from=${encodeURIComponent(window.location.pathname)}`)
       }
     }
+    if (error.response?.status !== 401 && !original?.skipToast) toast.error(apiError(error))
     return Promise.reject(error)
   },
 )

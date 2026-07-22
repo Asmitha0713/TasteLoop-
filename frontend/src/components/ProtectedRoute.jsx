@@ -11,8 +11,8 @@ export default function ProtectedRoute({ children, roles }) {
   }
 
   if (roles && !roles.includes(user.role)) {
-    const home = user.role === 'admin' ? '/admin/dashboard' : user.role === 'home_cook' ? '/cook/foods' : '/customer/dashboard'
-    return <Navigate to={home} replace />
+    const requiredRole = roles.includes('home_cook') ? 'Home Cook' : roles.includes('admin') ? 'Admin' : 'Customer'
+    return <Navigate to="/login" replace state={{ from: location.pathname, message: `${requiredRole} account required. Please log in with the correct account.` }} />
   }
 
   return children
