@@ -6,8 +6,7 @@ export default function Footer() {
       <div className="container footer-grid" style={styles.grid}>
         <div style={styles.brandCol}>
           <div style={styles.logo}>
-            <img src="/tasteloop-logo.png" alt="TasteLoop" style={styles.logoImg} />
-            <span>TasteLoop</span>
+            <img src="/tasteloop-logo.png" alt="TasteLoop home-cooked food marketplace" style={styles.logoImg} />
           </div>
           <p style={styles.tag}>
             Delicious homemade food, made with love. Connecting home cooks
@@ -45,7 +44,7 @@ export default function Footer() {
         <div>
           <h4 style={styles.heading}>Contact Us</h4>
           <ul style={styles.list}>
-            <li>Hello@Tasteloop.app</li>
+            <li>asmithathavaradnam@gmail.com</li>
             <li>0740625386</li>
             <li>Kilinochchi, Sri Lanka</li>
           </ul>
@@ -58,7 +57,7 @@ export default function Footer() {
       </div>
 
       <div className="container" style={styles.bottomBar}>
-        <span>© {new Date().getFullYear()} TasteLoop. All rights reserved.</span>
+        <span>© {new Date().getFullYear()} TasteLoop. All rights reserved. · Owner: Asmitha Thavardnam</span>
         <div style={styles.bottomLinks}>
           <a href="#">Privacy</a>
           <a href="#">Terms</a>
@@ -94,8 +93,9 @@ const styles = {
   },
   logoImg: {
     display: 'block',
-    height: 54,
-    width: 'auto',
+    height: 126,
+    width: 270,
+    objectFit: 'contain',
     borderRadius: 6,
   },
   tag: {

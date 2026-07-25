@@ -1,12 +1,129 @@
 from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, Query
+from pymongo import DESCENDING
 from pymongo.database import Database
 
 from app.core.dependencies import require_roles
+from app.core.documents import serialize
 from app.database.mongodb import get_database
 
 router = APIRouter(prefix="/api/cook", tags=["Cook"])
+
+
+@router.get("/dashboard/stats")
+def dashboard_stats(
+    user: dict = Depends(require_roles("home_cook")),
+    database: Database = Depends(get_database),
+) -> dict:
+    """Return the signed-in home cook's headline dashboard statistics."""
+    cook_id = user["_id"]
+    now = datetime.now(UTC)
+    month_start = datetime(now.year, now.month, 1, tzinfo=UTC)
+
+    total_foods = database.foods.count_documents({"cook_id": cook_id})
+    available_foods = database.foods.count_documents({
+        "cook_id": cook_id,
+        "moderation_status": "approved",
+        "available": True,
+        "portions": {"$gt": 0},
+    })
+    pending_foods = database.foods.count_documents({"cook_id": cook_id, "moderation_status": "pending"})
+    sold_out_foods = database.foods.count_documents({
+        "cook_id": cook_id,
+        "$or": [{"available": False}, {"portions": {"$lte": 0}}],
+    })
+
+    order_pipeline = [
+        {"$match": {"items.cook_id": cook_id}},
+        {"$project": {
+            "status": 1,
+            "created_at": 1,
+            "cook_items": {
+                "$filter": {"input": "$items", "as": "item", "cond": {"$eq": ["$$item.cook_id", cook_id]}}
+            },
+        }},
+        {"$project": {
+            "status": 1,
+            "created_at": 1,
+            "cook_total": {"$sum": "$cook_items.total"},
+            "cook_portions": {"$sum": "$cook_items.quantity"},
+        }},
+        {"$group": {
+            "_id": None,
+            "total_orders": {"$sum": 1},
+            "pending_orders": {"$sum": {"$cond": [
+                {"$in": ["$status", ["confirmed", "preparing", "ready", "out_for_delivery"]]}, 1, 0
+            ]}},
+            "completed_orders": {"$sum": {"$cond": [{"$eq": ["$status", "delivered"]}, 1, 0]}},
+            "cancelled_orders": {"$sum": {"$cond": [{"$eq": ["$status", "cancelled"]}, 1, 0]}},
+            "total_earnings": {"$sum": {"$cond": [{"$eq": ["$status", "delivered"]}, "$cook_total", 0]}},
+            "month_earnings": {"$sum": {"$cond": [{"$and": [
+                {"$eq": ["$status", "delivered"]}, {"$gte": ["$created_at", month_start]}
+            ]}, "$cook_total", 0]}},
+            "portions_sold": {"$sum": {"$cond": [{"$eq": ["$status", "delivered"]}, "$cook_portions", 0]}},
+        }},
+        {"$project": {"_id": 0}},
+    ]
+    order_stats = next(database.orders.aggregate(order_pipeline), {
+        "total_orders": 0,
+        "pending_orders": 0,
+        "completed_orders": 0,
+        "cancelled_orders": 0,
+        "total_earnings": 0,
+        "month_earnings": 0,
+        "portions_sold": 0,
+    })
+
+    rating_pipeline = [
+        {"$match": {"cook_id": cook_id, "review_count": {"$gt": 0}}},
+        {"$group": {
+            "_id": None,
+            "weighted_rating": {"$sum": {"$multiply": ["$rating", "$review_count"]}},
+            "review_count": {"$sum": "$review_count"},
+        }},
+    ]
+    rating_stats = next(database.foods.aggregate(rating_pipeline), {"weighted_rating": 0, "review_count": 0})
+    review_count = rating_stats.get("review_count", 0)
+    average_rating = round(rating_stats.get("weighted_rating", 0) / review_count, 2) if review_count else 0
+
+    recent_orders = []
+    cursor = database.orders.find({"items.cook_id": cook_id}).sort("created_at", DESCENDING).limit(5)
+    for order in cursor:
+        cook_items = [item for item in order.get("items", []) if item.get("cook_id") == cook_id]
+        recent_orders.append(serialize({
+            "_id": order["_id"],
+            "order_number": order.get("order_number"),
+            "status": order.get("status"),
+            "amount": sum(item.get("total", 0) for item in cook_items),
+            "item_count": sum(item.get("quantity", 0) for item in cook_items),
+            "created_at": order.get("created_at"),
+        }))
+
+    return {
+        "success": True,
+        "data": {
+            "foods": {
+                "total": total_foods,
+                "available": available_foods,
+                "pending_approval": pending_foods,
+                "sold_out": sold_out_foods,
+            },
+            "orders": {
+                "total": order_stats["total_orders"],
+                "pending": order_stats["pending_orders"],
+                "completed": order_stats["completed_orders"],
+                "cancelled": order_stats["cancelled_orders"],
+            },
+            "earnings": {
+                "total": round(order_stats["total_earnings"], 2),
+                "this_month": round(order_stats["month_earnings"], 2),
+            },
+            "portions_sold": order_stats["portions_sold"],
+            "rating": {"average": average_rating, "review_count": review_count},
+            "recent_orders": recent_orders,
+        },
+    }
 
 
 @router.get("/earnings")

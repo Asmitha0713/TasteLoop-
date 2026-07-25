@@ -13,8 +13,7 @@ export default function Navbar() {
     <header style={styles.header}>
       <div className="container" style={styles.bar}>
         <Link to="/" style={styles.logo}>
-          <img src="/tasteloop-logo.png" alt="TasteLoop home" style={styles.logoImg} />
-          <span>TasteLoop</span>
+          <img src="/tasteloop-logo.png" alt="TasteLoop home-cooked food marketplace" style={styles.logoImg} />
         </Link>
 
         <nav style={styles.nav} className="hide-mobile">
@@ -69,8 +68,8 @@ const styles = {
   },
   logoImg: {
     display: 'block',
-    width: 58,
-    height: 58,
+    width: 238,
+    height: 82,
     objectFit: 'contain',
   },
   nav: {
