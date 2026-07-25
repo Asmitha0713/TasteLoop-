@@ -1,0 +1,218 @@
+/* TasteLoop premium violet theme — loaded last so every feature shares one visual system. */
+:root {
+  color-scheme: dark;
+  --color-bg: #090513;
+  --color-surface: #161027;
+  --color-surface-alt: #21173a;
+  --color-border: rgba(196, 181, 253, .14);
+  --color-border-strong: rgba(196, 181, 253, .3);
+  --color-ink: #faf8ff;
+  --color-ink-soft: #cec7e6;
+  --color-ink-faint: #968bad;
+  --color-forest: #9b6cff;
+  --color-forest-tint: rgba(139, 92, 246, .16);
+  --color-chili: #ec4899;
+  --color-mustard: #facc15;
+  --color-mustard-dark: #fde68a;
+  --color-mustard-tint: rgba(250, 204, 21, .13);
+  --shadow-card: 0 16px 45px rgba(3, 1, 12, .3);
+  --shadow-card-hover: 0 22px 55px rgba(76, 29, 149, .28);
+}
+
+html { background: var(--color-bg); scroll-behavior: smooth; }
+body {
+  min-height: 100vh;
+  color: var(--color-ink);
+  background:
+    radial-gradient(circle at 8% 4%, rgba(99, 102, 241, .18), transparent 32rem),
+    radial-gradient(circle at 92% 12%, rgba(217, 70, 239, .14), transparent 30rem),
+    radial-gradient(circle at 55% 90%, rgba(59, 130, 246, .08), transparent 34rem),
+    var(--color-bg);
+  background-attachment: fixed;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .2;
+  background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, black, transparent 75%);
+}
+::selection { color: white; background: #7c3aed; }
+* { scrollbar-color: #6d28d9 #120b21; }
+
+.page, .page-content, .cook-page, .cook-main, .customer-profile-page,
+.admin-shell, .admin-main { background: transparent !important; }
+.page { min-height: 100vh; }
+h1, h2, h3, h4, h5, h6, strong, label { color: var(--color-ink); }
+p, small { color: var(--color-ink-soft); }
+
+.card {
+  background: linear-gradient(145deg, rgba(32, 23, 55, .92), rgba(19, 13, 34, .92));
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(18px);
+}
+.card:hover { border-color: rgba(167, 139, 250, .3); }
+.eyebrow {
+  color: #c4b5fd;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.eyebrow::before { content: ''; width: 20px; height: 2px; border-radius: 9px; background: linear-gradient(90deg, #60a5fa, #e879f9); }
+.stitched { color: #ddd6fe; background: rgba(124, 58, 237, .2); border: 1px solid rgba(167,139,250,.16); }
+
+.btn {
+  min-height: 42px;
+  border-color: rgba(255,255,255,.08);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, filter .2s ease;
+}
+.btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
+.btn-primary, .btn-forest {
+  color: #fff;
+  background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 48%, #d946ef 100%);
+  box-shadow: 0 10px 28px rgba(124, 58, 237, .32), inset 0 1px rgba(255,255,255,.22);
+}
+.btn-secondary {
+  color: #ede9fe;
+  background: rgba(255,255,255,.055);
+  border-color: rgba(196,181,253,.26);
+}
+.btn-secondary:hover { background: rgba(139,92,246,.14); border-color: #8b5cf6; }
+
+input, select, textarea, .field input, .food-field input, .food-field select, .food-field textarea,
+.admin-select, .row-select, .period-select, .food-search input, .manage-toolbar select {
+  color: var(--color-ink) !important;
+  background: rgba(10, 6, 23, .72) !important;
+  border-color: var(--color-border-strong) !important;
+}
+input::placeholder, textarea::placeholder { color: #776d91; }
+input:focus, select:focus, textarea:focus, .field input:focus {
+  outline: none;
+  border-color: #9b6cff !important;
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, .14) !important;
+}
+select option { color: #f8f5ff; background: #171027; }
+
+header:not(.admin-topbar), .cook-nav {
+  background: rgba(9, 5, 19, .82) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  box-shadow: 0 10px 35px rgba(3, 1, 12, .2);
+  backdrop-filter: blur(20px);
+}
+header nav a, .cook-nav__link { color: var(--color-ink-soft) !important; }
+header nav a:hover, .cook-nav__link:hover, .cook-nav__link.active { color: white !important; }
+footer {
+  color: var(--color-ink-soft) !important;
+  background: linear-gradient(180deg, #0b0616, #05030c) !important;
+  border-top: 1px solid var(--color-border);
+}
+footer h3, footer h4, footer strong { color: white !important; }
+footer p, footer a { color: #aaa1c2 !important; }
+footer a:hover { color: #c4b5fd !important; }
+
+img[src='/tasteloop-logo.png'] {
+  border-radius: 10px;
+  object-fit: contain;
+}
+
+/* Cook workspace */
+.cook-nav__logo, .cook-profile strong { color: white; }
+.cook-nav__logo img { width: 238px !important; height: 82px !important; border-radius: 10px; }
+.cook-profile__avatar, .profile-photo, .earning-card.featured {
+  background: linear-gradient(135deg, #6d28d9, #c026d3) !important;
+}
+.food-stats .card strong, .earning-card strong { color: #ddd6fe; }
+.manage-card, .form-section, .profile-summary, .profile-details, .chart-card,
+.payout-card, .transactions-card { border-color: var(--color-border) !important; }
+.food-table th, .admin-table th {
+  color: #aaa1c2 !important;
+  background: rgba(139, 92, 246, .09) !important;
+}
+.food-table td, .admin-table td { color: var(--color-ink-soft) !important; border-color: var(--color-border) !important; }
+.food-table tr:hover td, .admin-table tbody tr:hover td { background: rgba(139,92,246,.055); }
+.row-actions a, .row-actions button, .moderation-actions button {
+  color: #c4b5fd !important;
+  background: rgba(139,92,246,.1) !important;
+  border-color: var(--color-border) !important;
+}
+.status-pill, .payment-status, .verified-badge, .success-banner {
+  color: #a7f3d0 !important;
+  background: rgba(16,185,129,.13) !important;
+  border-color: rgba(52,211,153,.2) !important;
+}
+.bar-track span, .admin-chart span { background: linear-gradient(180deg, #60a5fa, #8b5cf6 48%, #ec4899) !important; }
+
+/* Admin workspace */
+.admin-shell { background: var(--color-bg) !important; }
+.admin-sidebar {
+  background: linear-gradient(180deg, #170b2b 0%, #0b0615 72%, #08040f 100%) !important;
+  border-right: 1px solid var(--color-border);
+}
+.admin-sidebar nav a { color: #aaa1c2 !important; }
+.admin-sidebar nav a:hover, .admin-sidebar nav a.active {
+  color: white !important;
+  background: linear-gradient(90deg, rgba(124,58,237,.28), rgba(217,70,239,.09)) !important;
+}
+.admin-sidebar nav a.active { box-shadow: inset 3px 0 #a78bfa; }
+.admin-logo img { width: 198px !important; height: 106px !important; object-fit: contain; background: transparent !important; }
+.admin-logo { flex-wrap: wrap; }
+.admin-logo span { margin-left: 8px; color: #c4b5fd !important; }
+.admin-topbar {
+  background: rgba(12, 7, 25, .82) !important;
+  border-color: var(--color-border) !important;
+  backdrop-filter: blur(18px);
+}
+.admin-top-actions button { color: white; background: rgba(255,255,255,.06) !important; border-color: var(--color-border) !important; }
+.admin-content { color: var(--color-ink); }
+.admin-summary-row { color: var(--color-ink-soft) !important; background: rgba(139,92,246,.09) !important; border: 1px solid var(--color-border); }
+.admin-status, .role-chip { color: #cfc7e9; background: rgba(255,255,255,.07); }
+.admin-status.active, .admin-status.approved, .admin-status.resolved { color: #6ee7b7; background: rgba(16,185,129,.14); }
+.admin-status.pending, .admin-status.investigating { color: #fde68a; background: rgba(250,204,21,.12); }
+.admin-status.suspended, .admin-status.flagged, .admin-status.rejected { color: #f9a8d4; background: rgba(236,72,153,.14); }
+.admin-modal-backdrop { background: rgba(3,1,10,.76) !important; backdrop-filter: blur(8px); }
+.report-list > button { color: var(--color-ink); background: transparent !important; }
+.report-list > button:hover, .report-list > button.selected { background: rgba(139,92,246,.1) !important; box-shadow: inset 3px 0 #a78bfa; }
+.green { color: #6ee7b7 !important; background: rgba(16,185,129,.14) !important; }
+.orange, .red { color: #f9a8d4 !important; background: rgba(236,72,153,.14) !important; }
+.yellow { color: #fde68a !important; background: rgba(250,204,21,.12) !important; }
+.donut { background: conic-gradient(#8b5cf6 0 66%, #38bdf8 66% 82%, #facc15 82%) !important; }
+
+/* Customer surfaces, dialogs and notifications */
+.customer-nav, .customer-profile-card, .address-card, .cart-summary, .checkout-card {
+  border-color: var(--color-border) !important;
+}
+[role='dialog'] { color: var(--color-ink); }
+.Toastify__toast {
+  color: #f8f5ff;
+  background: linear-gradient(135deg, rgba(30,20,52,.98), rgba(15,9,29,.98)) !important;
+  border: 1px solid rgba(167,139,250,.24);
+  border-radius: 14px !important;
+  box-shadow: 0 18px 50px rgba(0,0,0,.42) !important;
+}
+.Toastify__progress-bar { background: linear-gradient(90deg, #60a5fa, #8b5cf6, #ec4899) !important; }
+
+@media (max-width: 760px) {
+  .container { padding-inline: 17px; }
+  h1 { font-size: clamp(2rem, 10vw, 3rem); }
+  .card { border-radius: 15px; }
+  .admin-sidebar { border-right: 0; border-bottom: 1px solid var(--color-border); }
+  .btn { min-height: 44px; }
+  .cook-nav__logo img { width: 178px !important; height: 64px !important; }
+  .admin-logo img { width: 170px !important; height: 88px !important; }
+}
+
+@media (max-width: 560px) {
+  header img[src='/tasteloop-logo.png'] { width: 164px !important; height: 60px !important; }
+  header .btn { padding-inline: 12px; font-size: 12px; }
+  footer img[src='/tasteloop-logo.png'] { width: 220px !important; height: 104px !important; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card, .btn { transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+  .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-card-hover); }
+}

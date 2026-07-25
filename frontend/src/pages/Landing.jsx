@@ -73,8 +73,8 @@ export default function Landing() {
               {features.map((f) => (
                 <div key={f.title} className="card" style={styles.featureCard}>
                   <div style={styles.featureIcon}>{f.icon}</div>
-                  <h4 style={{ margin: '10px 0 6px' }}>{f.title}</h4>
-                  <p style={{ fontSize: 13.5, margin: 0 }}>{f.text}</p>
+                  <h4 style={{ margin: '10px 0 6px', color: '#24163d' }}>{f.title}</h4>
+                  <p style={{ fontSize: 13.5, margin: 0, color: '#625778' }}>{f.text}</p>
                 </div>
               ))}
             </div>

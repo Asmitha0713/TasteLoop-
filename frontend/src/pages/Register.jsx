@@ -96,8 +96,6 @@ export default function Register() {
                 </div>
 
                 <div className="field"><label htmlFor="phoneNumber">Phone number</label><input id="phoneNumber" placeholder="0771234567" value={form.phoneNumber} onChange={update('phoneNumber')} aria-invalid={!!errors.phoneNumber} />{errors.phoneNumber && <p style={styles.error}>{errors.phoneNumber}</p>}</div>
-                <div className="field"><label htmlFor="role">Account type</label><select id="role" value={form.role} onChange={update('role')}><option value="customer">Customer</option><option value="home_cook">Home Cook</option></select></div>
-
                 <div className="field">
                   <label htmlFor="password">Password</label>
                   <div style={styles.passwordWrap}><input

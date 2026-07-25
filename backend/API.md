@@ -29,6 +29,7 @@ All protected endpoints use `Authorization: Bearer <access_token>`.
 - `GET /api/orders/cook` — orders containing the cook's foods
 - `PATCH /api/orders/{order_id}/status` — cook/admin order progress
 - `GET /api/cook/earnings?period=month` — cook earnings summary
+- `GET /api/cook/dashboard/stats` — authenticated home cook dashboard statistics, ratings, and recent orders
 
 ## Customer cart and orders
 
