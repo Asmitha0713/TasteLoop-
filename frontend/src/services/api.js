@@ -65,6 +65,12 @@ export const saveSession = (data) => {
   localStorage.setItem('tasteloop-user', JSON.stringify(data.user))
 }
 
+export const clearSession = () => {
+  localStorage.removeItem('tasteloop-token')
+  localStorage.removeItem('tasteloop-refresh-token')
+  localStorage.removeItem('tasteloop-user')
+}
+
 export const currentUser = () => {
   try { return JSON.parse(localStorage.getItem('tasteloop-user')) } catch { return null }
 }

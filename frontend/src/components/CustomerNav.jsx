@@ -1,9 +1,11 @@
 import { Link, useLocation } from 'react-router-dom'
+import LogoutButton from './LogoutButton.jsx'
 
 const links = [
   { to: '/customer/dashboard', label: 'Dashboard' },
   { to: '/search', label: 'Find Food' },
   { to: '/orders', label: 'My Orders' },
+  { to: '/favorites', label: 'Favorites' },
   { to: '/customer/profile', label: 'Profile' },
 ]
 
@@ -24,6 +26,7 @@ export default function CustomerNav() {
         <div style={styles.actions}>
           <Link to="/cart" className="btn btn-secondary btn-sm">🛒 Cart <span style={styles.badge}>2</span></Link>
           <Link to="/customer/profile" style={styles.avatar} title="Ayesha Fernando" aria-label="Open profile">AF</Link>
+          <LogoutButton compact />
         </div>
       </div>
     </header>

@@ -22,6 +22,7 @@ import AdminUsers from './pages/AdminUsers.jsx'
 import AdminFoods from './pages/AdminFoods.jsx'
 import AdminReports from './pages/AdminReports.jsx'
 import CustomerProfile from './pages/CustomerProfile.jsx'
+import Favorites from './pages/Favorites.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 const customer = (element) => <ProtectedRoute roles={['customer']}>{element}</ProtectedRoute>
@@ -40,6 +41,7 @@ export default function App() {
       <Route path="/choose-role" element={<ChooseRole />} />
       <Route path="/customer/dashboard" element={customer(<CustomerDashboard />)} />
       <Route path="/customer/profile" element={customer(<CustomerProfile />)} />
+      <Route path="/favorites" element={customer(<Favorites />)} />
       <Route path="/search" element={<SearchFilter />} />
       <Route path="/cart" element={customer(<Cart />)} />
       <Route path="/checkout" element={customer(<Checkout />)} />

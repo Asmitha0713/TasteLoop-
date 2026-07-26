@@ -149,6 +149,25 @@ class RefreshTokenRequest(BaseModel):
     refresh_token: str = Field(min_length=32, max_length=2000)
 
 
+class ChangePasswordRequest(BaseModel):
+    current_password: str = Field(min_length=1, max_length=72)
+    new_password: str
+    confirm_password: str
+
+    @field_validator("new_password")
+    @classmethod
+    def validate_new_password(cls, value: str) -> str:
+        return RegisterRequest.validate_password(value)
+
+    @model_validator(mode="after")
+    def passwords_match_and_change(self) -> "ChangePasswordRequest":
+        if self.new_password != self.confirm_password:
+            raise ValueError("New password and confirm password do not match")
+        if self.current_password == self.new_password:
+            raise ValueError("New password must be different from the current password")
+        return self
+
+
 class TokenPairResponse(BaseModel):
     success: bool = True
     message: str = "Token refreshed successfully"

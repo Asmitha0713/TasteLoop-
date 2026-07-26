@@ -10,6 +10,7 @@ All protected endpoints use `Authorization: Bearer <access_token>`.
 - `POST /api/auth/logout` — revoke a refresh token
 - `POST /api/auth/forgot-password` — request a single-use password reset token
 - `POST /api/auth/reset-password` — set a new password with the reset token
+- `POST /api/auth/change-password` — authenticated password change; revokes active refresh tokens
 - `GET /api/auth/me` — current authenticated user
 - `GET /api/profile` — profile details
 - `PATCH /api/profile` — customer or cook profile update
@@ -24,14 +25,22 @@ All protected endpoints use `Authorization: Bearer <access_token>`.
 - `GET /api/cooks/{cook_id}` — cook profile and available menu
 - `GET /api/foods/mine/list` — current cook's menu
 - `POST /api/foods` — submit a new food
+- `POST /api/foods/images` — upload a JPEG, PNG, or WebP food image (maximum 5 MB)
 - `PATCH /api/foods/{food_id}` — edit and resubmit a food
+- `PATCH /api/foods/{food_id}/availability` — activate or deactivate an owned food
 - `DELETE /api/foods/{food_id}` — delete the cook's food
 - `GET /api/orders/cook` — orders containing the cook's foods
+- `POST /api/orders/{order_id}/accept` — atomically accept a confirmed order
 - `PATCH /api/orders/{order_id}/status` — cook/admin order progress
 - `GET /api/cook/earnings?period=month` — cook earnings summary
 - `GET /api/cook/dashboard/stats` — authenticated home cook dashboard statistics, ratings, and recent orders
+- `POST|GET|PATCH|DELETE /api/cook/bank-details` — manage the current cook's payout bank details
 
 ## Customer cart and orders
+
+- `GET /api/favorites` — list the current customer's favorite foods
+- `POST /api/favorites/{food_id}` — add an approved food to favorites
+- `DELETE /api/favorites/{food_id}` — remove a food from favorites
 
 - `POST /api/addresses` — create a saved delivery address
 - `GET /api/addresses` — list the current customer's delivery addresses

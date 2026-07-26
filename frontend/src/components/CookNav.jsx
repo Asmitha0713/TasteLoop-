@@ -1,4 +1,5 @@
 import { Link, NavLink } from 'react-router-dom'
+import LogoutButton from './LogoutButton.jsx'
 
 const links = [
   { to: '/cook/foods', label: 'My Foods' },
@@ -15,7 +16,8 @@ export default function CookNav() {
         <nav className="cook-nav__links" aria-label="Cook navigation">
           {links.map((link) => <NavLink key={link.to} to={link.to} className={({ isActive }) => `cook-nav__link${isActive ? ' active' : ''}`}>{link.label}</NavLink>)}
         </nav>
-        <Link to="/cook/profile" className="cook-profile"><span className="cook-profile__avatar">NP</span><span className="hide-mobile"><strong>Nadeesha</strong><small>Home cook</small></span></Link>
+        <Link to="/cook/profile" className="cook-profile"><span className="cook-profile__avatar">👩‍🍳</span><span className="hide-mobile"><strong></strong><small>Home cook</small></span></Link>
+        <LogoutButton compact />
       </div>
     </header>
   )
