@@ -55,6 +55,10 @@ class FoodUpdate(BaseModel):
     image_url: str | None = Field(default=None, max_length=500)
 
 
+class FoodAvailabilityUpdate(BaseModel):
+    available: bool
+
+
 class CartItemRequest(BaseModel):
     food_id: str
     quantity: int = Field(default=1, ge=1, le=100)
@@ -78,6 +82,24 @@ class CheckoutRequest(BaseModel):
 
 class OrderStatusUpdate(BaseModel):
     status: Literal["confirmed", "preparing", "ready", "out_for_delivery", "delivered", "cancelled"]
+
+
+class BankDetailsCreate(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    account_holder_name: str = Field(min_length=2, max_length=120)
+    bank_name: str = Field(min_length=2, max_length=120)
+    branch_name: str = Field(min_length=2, max_length=120)
+    account_number: str = Field(min_length=5, max_length=34, pattern=r"^[A-Za-z0-9-]+$")
+
+
+class BankDetailsUpdate(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    account_holder_name: str | None = Field(default=None, min_length=2, max_length=120)
+    bank_name: str | None = Field(default=None, min_length=2, max_length=120)
+    branch_name: str | None = Field(default=None, min_length=2, max_length=120)
+    account_number: str | None = Field(default=None, min_length=5, max_length=34, pattern=r"^[A-Za-z0-9-]+$")
 
 
 class AdminUserCreate(BaseModel):

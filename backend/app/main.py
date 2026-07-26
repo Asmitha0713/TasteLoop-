@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.api.routes.auth import router as auth_router
 from app.api.routes.addresses import router as addresses_router
@@ -13,7 +14,7 @@ from app.api.routes.marketplace import router as marketplace_router
 from app.api.routes.orders import router as orders_router
 from app.api.routes.profiles import router as profiles_router
 from app.api.routes.reports import router as reports_router
-from app.core.config import settings
+from app.core.config import BACKEND_DIR, settings
 from app.database.mongodb import close_database, connect_database, get_database
 
 
@@ -25,6 +26,8 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(title="TasteLoop API", version="1.0.0", lifespan=lifespan)
+(BACKEND_DIR / "uploads").mkdir(parents=True, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=BACKEND_DIR / "uploads"), name="uploads")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[settings.client_url],

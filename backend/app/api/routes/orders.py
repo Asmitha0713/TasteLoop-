@@ -2,7 +2,7 @@ from datetime import UTC, datetime
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from pymongo import DESCENDING
+from pymongo import DESCENDING, ReturnDocument
 from pymongo.database import Database
 
 from app.core.dependencies import require_roles
@@ -12,6 +12,14 @@ from app.schemas.marketplace import CheckoutRequest, OrderStatusUpdate
 
 router = APIRouter(prefix="/api/orders", tags=["Orders"])
 DELIVERY_FEE = 300
+COOK_STATUS_TRANSITIONS = {
+    "confirmed": {"preparing", "cancelled"},
+    "preparing": {"ready", "cancelled"},
+    "ready": {"out_for_delivery"},
+    "out_for_delivery": {"delivered"},
+    "delivered": set(),
+    "cancelled": set(),
+}
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
@@ -68,6 +76,27 @@ def cook_orders(user: dict = Depends(require_roles("home_cook")), database: Data
     return {"success": True, "data": [serialize(order) for order in orders]}
 
 
+@router.post("/{order_id}/accept")
+def accept_order(
+    order_id: str,
+    user: dict = Depends(require_roles("home_cook")),
+    database: Database = Depends(get_database),
+) -> dict:
+    order_object_id = object_id(order_id, "order")
+    now = datetime.now(UTC)
+    order = database.orders.find_one_and_update(
+        {"_id": order_object_id, "items.cook_id": user["_id"], "status": "confirmed"},
+        {"$set": {"status": "preparing", "updated_at": now}, "$push": {"status_history": {"status": "preparing", "at": now}}},
+        return_document=ReturnDocument.AFTER,
+    )
+    if order is None:
+        owned_order = database.orders.find_one({"_id": order_object_id, "items.cook_id": user["_id"]})
+        if owned_order is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Only confirmed orders can be accepted")
+    return {"success": True, "message": "Order accepted", "data": serialize(order)}
+
+
 @router.patch("/{order_id}/status")
 def update_order_status(
     order_id: str, payload: OrderStatusUpdate,
@@ -76,6 +105,15 @@ def update_order_status(
     filters: dict = {"_id": object_id(order_id, "order")}
     if user["role"] == "home_cook":
         filters["items.cook_id"] = user["_id"]
+        order = database.orders.find_one(filters)
+        if order is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
+        allowed = COOK_STATUS_TRANSITIONS.get(order.get("status"), set())
+        if payload.status not in allowed:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"Order cannot move from {order.get('status')} to {payload.status}",
+            )
     now = datetime.now(UTC)
     result = database.orders.update_one(filters, {"$set": {"status": payload.status, "updated_at": now}, "$push": {"status_history": {"status": payload.status, "at": now}}})
     if result.matched_count == 0:

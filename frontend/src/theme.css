@@ -83,6 +83,26 @@ p, small { color: var(--color-ink-soft); }
   border-color: rgba(196,181,253,.26);
 }
 .btn-secondary:hover { background: rgba(139,92,246,.14); border-color: #8b5cf6; }
+.logout-button {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 15px;
+  color: #fbcfe8;
+  background: rgba(236, 72, 153, .1);
+  border: 1px solid rgba(244, 114, 182, .25);
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+.logout-button:hover { color: white; background: rgba(236,72,153,.2); border-color: rgba(244,114,182,.5); transform: translateY(-1px); }
+.logout-button:disabled { cursor: wait; opacity: .6; transform: none; }
+.logout-button--compact { width: 40px; height: 40px; min-height: 40px; flex: 0 0 40px; padding: 0; font-size: 20px; }
 
 input, select, textarea, .field input, .food-field input, .food-field select, .food-field textarea,
 .admin-select, .row-select, .period-select, .food-search input, .manage-toolbar select {
@@ -162,6 +182,7 @@ img[src='/tasteloop-logo.png'] {
 .admin-logo img { width: 198px !important; height: 106px !important; object-fit: contain; background: transparent !important; }
 .admin-logo { flex-wrap: wrap; }
 .admin-logo span { margin-left: 8px; color: #c4b5fd !important; }
+.admin-account .logout-button { margin-left: auto; }
 .admin-topbar {
   background: rgba(12, 7, 25, .82) !important;
   border-color: var(--color-border) !important;

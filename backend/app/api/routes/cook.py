@@ -1,14 +1,70 @@
 from datetime import UTC, datetime, timedelta
 
-from fastapi import APIRouter, Depends, Query
-from pymongo import DESCENDING
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from pymongo import DESCENDING, ReturnDocument
 from pymongo.database import Database
+from pymongo.errors import DuplicateKeyError
 
 from app.core.dependencies import require_roles
 from app.core.documents import serialize
 from app.database.mongodb import get_database
+from app.schemas.marketplace import BankDetailsCreate, BankDetailsUpdate
 
 router = APIRouter(prefix="/api/cook", tags=["Cook"])
+
+
+@router.post("/bank-details", status_code=status.HTTP_201_CREATED)
+def create_bank_details(
+    payload: BankDetailsCreate,
+    user: dict = Depends(require_roles("home_cook")),
+    database: Database = Depends(get_database),
+) -> dict:
+    now = datetime.now(UTC)
+    document = {**payload.model_dump(), "cook_id": user["_id"], "created_at": now, "updated_at": now}
+    try:
+        document["_id"] = database.bank_details.insert_one(document).inserted_id
+    except DuplicateKeyError as error:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Bank details already exist; update them instead") from error
+    return {"success": True, "message": "Bank details created", "data": serialize(document)}
+
+
+@router.get("/bank-details")
+def get_bank_details(
+    user: dict = Depends(require_roles("home_cook")),
+    database: Database = Depends(get_database),
+) -> dict:
+    document = database.bank_details.find_one({"cook_id": user["_id"]})
+    if document is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Bank details not found")
+    return {"success": True, "data": serialize(document)}
+
+
+@router.patch("/bank-details")
+def update_bank_details(
+    payload: BankDetailsUpdate,
+    user: dict = Depends(require_roles("home_cook")),
+    database: Database = Depends(get_database),
+) -> dict:
+    changes = payload.model_dump(exclude_none=True)
+    if not changes:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No bank detail changes supplied")
+    changes["updated_at"] = datetime.now(UTC)
+    document = database.bank_details.find_one_and_update(
+        {"cook_id": user["_id"]}, {"$set": changes}, return_document=ReturnDocument.AFTER,
+    )
+    if document is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Bank details not found")
+    return {"success": True, "message": "Bank details updated", "data": serialize(document)}
+
+
+@router.delete("/bank-details", status_code=status.HTTP_204_NO_CONTENT)
+def delete_bank_details(
+    user: dict = Depends(require_roles("home_cook")),
+    database: Database = Depends(get_database),
+) -> None:
+    result = database.bank_details.delete_one({"cook_id": user["_id"]})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Bank details not found")
 
 
 @router.get("/dashboard/stats")
