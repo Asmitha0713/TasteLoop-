@@ -38,6 +38,10 @@ All protected endpoints use `Authorization: Bearer <access_token>`.
 
 ## Customer cart and orders
 
+- `GET /api/favorites` — list the current customer's favorite foods
+- `POST /api/favorites/{food_id}` — add an approved food to favorites
+- `DELETE /api/favorites/{food_id}` — remove a food from favorites
+
 - `POST /api/addresses` — create a saved delivery address
 - `GET /api/addresses` — list the current customer's delivery addresses
 - `GET /api/addresses/{address_id}` — fetch one owned delivery address

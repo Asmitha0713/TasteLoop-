@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
 import api, { apiError } from '../services/api.js'
+import FavoriteButton from '../components/FavoriteButton.jsx'
 
 export default function FoodDetails() {
   const [qty, setQty] = useState(1)
@@ -32,7 +33,7 @@ export default function FoodDetails() {
             </div>
 
             <div>
-              <span className="stitched">{food.category}</span>
+              <div style={styles.detailTop}><span className="stitched">{food.category}</span><FavoriteButton foodId={food.id} large /></div>
               <h1 style={styles.title}>{food.name}</h1>
               <p style={styles.cook}>
                 by <strong>{food.cook_name || food.cook?.kitchen_name || food.cook?.full_name}</strong> · <span style={styles.rating}>★ {food.rating}</span>{' '}
@@ -102,6 +103,7 @@ const styles = {
   },
   emoji: { filter: 'drop-shadow(0 10px 14px rgba(0,0,0,0.18))' },
   title: { fontSize: 34, margin: '12px 0 8px' },
+  detailTop: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 },
   cook: { fontSize: 14, color: 'var(--color-ink-soft)', marginBottom: 18 },
   rating: { color: 'var(--color-mustard-dark)', fontWeight: 700 },
   description: { fontSize: 15, lineHeight: 1.7, marginBottom: 24 },

@@ -5,6 +5,7 @@ const links = [
   { to: '/customer/dashboard', label: 'Dashboard' },
   { to: '/search', label: 'Find Food' },
   { to: '/orders', label: 'My Orders' },
+  { to: '/favorites', label: 'Favorites' },
   { to: '/customer/profile', label: 'Profile' },
 ]
 

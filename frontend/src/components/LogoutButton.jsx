@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import api, { clearSession } from '../services/api.js'
+import { resetFavoriteCache } from '../services/favorites.js'
 
 export default function LogoutButton({ className = '', compact = false }) {
   const navigate = useNavigate()
@@ -17,6 +18,7 @@ export default function LogoutButton({ className = '', compact = false }) {
       // Local logout must still complete if the token expired or the API is offline.
     } finally {
       clearSession()
+      resetFavoriteCache()
       toast.success('Logged out successfully')
       navigate('/login', { replace: true })
     }
