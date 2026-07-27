@@ -9,6 +9,7 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('tasteloop-token')
   if (token) config.headers.Authorization = `Bearer ${token}`
+  if (config.data instanceof FormData) delete config.headers['Content-Type']
   return config
 })
 
@@ -73,6 +74,12 @@ export const clearSession = () => {
 
 export const currentUser = () => {
   try { return JSON.parse(localStorage.getItem('tasteloop-user')) } catch { return null }
+}
+
+export const assetUrl = (path) => {
+  if (!path || /^(https?:|data:|blob:)/.test(path)) return path
+  const apiRoot = api.defaults.baseURL.replace(/\/?api\/?$/, '')
+  return `${apiRoot}${path.startsWith('/') ? path : `/${path}`}`
 }
 
 export default api

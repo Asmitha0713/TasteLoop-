@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import CookNav from '../components/CookNav.jsx'
-import api, { apiError } from '../services/api.js'
+import api, { apiError, assetUrl } from '../services/api.js'
 import './CookFoods.css'
 
-const emptyForm = { name: '', category: '', price: '', portions: '', description: '', ingredients: '', prepTime: '', available: true }
+const emptyForm = { name: '', category: '', price: '', portions: '', description: '', ingredients: '', prepTime: '', available: true, image_url: '' }
 
 export default function AddFood() {
   const { id } = useParams()
@@ -12,11 +12,15 @@ export default function AddFood() {
   const [form, setForm] = useState(emptyForm)
   const [errors, setErrors] = useState({})
   const [preview, setPreview] = useState('')
+  const [imageFile, setImageFile] = useState(null)
   useEffect(() => {
     if (!id) return
     api.get('/foods/mine/list').then(({ data }) => {
       const food = data.data.find((item) => item.id === id)
-      if (food) setForm({ ...emptyForm, ...food, price: String(food.price), portions: String(food.portions), prepTime: food.prep_time || '', ingredients: (food.ingredients || []).join(', ') })
+      if (food) {
+        setForm({ ...emptyForm, ...food, price: String(food.price), portions: String(food.portions), prepTime: food.prep_time || '', ingredients: (food.ingredients || []).join(', ') })
+        setPreview(assetUrl(food.image_url))
+      }
     }).catch((error) => setErrors({ form: apiError(error) }))
   }, [id])
 
@@ -28,7 +32,11 @@ export default function AddFood() {
 
   const chooseImage = (event) => {
     const file = event.target.files[0]
-    if (file) setPreview(URL.createObjectURL(file))
+    if (file) {
+      setImageFile(file)
+      setPreview(URL.createObjectURL(file))
+      setErrors((current) => ({ ...current, image: '' }))
+    }
   }
 
   const submit = async (event) => {
@@ -41,8 +49,15 @@ export default function AddFood() {
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length) return
 
-    const payload = { name: form.name, category: form.category, price: Number(form.price), portions: Number(form.portions), description: form.description, ingredients: form.ingredients.split(',').map((item) => item.trim()).filter(Boolean), prep_time: form.prepTime ? Number(form.prepTime) : null, available: form.available }
     try {
+      let imageUrl = form.image_url || null
+      if (imageFile) {
+        const upload = new FormData()
+        upload.append('image', imageFile)
+        const { data } = await api.post('/foods/images', upload)
+        imageUrl = data.data.image_url
+      }
+      const payload = { name: form.name, category: form.category, price: Number(form.price), portions: Number(form.portions), description: form.description, ingredients: form.ingredients.split(',').map((item) => item.trim()).filter(Boolean), prep_time: form.prepTime ? Number(form.prepTime) : null, available: form.available, image_url: imageUrl }
       if (id) await api.patch(`/foods/${id}`, payload)
       else await api.post('/foods', payload)
       navigate('/cook/foods', { state: { message: id ? 'Food updated and submitted for approval.' : 'Food submitted for approval.' } })
@@ -69,7 +84,7 @@ export default function AddFood() {
             </section>
             <section className="card form-section">
               <div className="section-title"><span>02</span><div><h2>Photo</h2><p>A clear photo helps customers choose with confidence.</p></div></div>
-              <label className="image-upload">{preview ? <img src={preview} alt="Food preview" /> : <><b>＋</b><strong>Upload a food photo</strong><small>PNG or JPG, up to 5 MB</small></>}<input type="file" accept="image/png,image/jpeg" onChange={chooseImage} /></label>
+              <label className="image-upload">{preview ? <img src={preview} alt="Food preview" /> : <><b>＋</b><strong>Upload a food photo</strong><small>PNG, JPG or WebP, up to 5 MB</small></>}<input type="file" accept="image/png,image/jpeg,image/webp" onChange={chooseImage} /></label>
             </section>
             <section className="card form-section">
               <div className="section-title"><span>03</span><div><h2>Price & availability</h2><p>Set today’s price and available quantity.</p></div></div>

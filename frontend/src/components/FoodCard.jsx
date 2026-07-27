@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
 import FavoriteButton from './FavoriteButton.jsx'
+import { assetUrl } from '../services/api.js'
 
 export default function FoodCard({ food, favorite, onFavoriteChange }) {
   return (
     <article className="card" style={styles.card}>
-      <div style={{ ...styles.image, background: food.color }}><span>{food.emoji}</span><FavoriteButton foodId={food.id} initialFavorite={favorite} onChange={onFavoriteChange} /></div>
+      <div style={{ ...styles.image, background: food.color }}>{food.image_url ? <img src={assetUrl(food.image_url)} alt={food.name} style={styles.foodImage} loading="lazy" /> : <span>{food.emoji}</span>}<FavoriteButton foodId={food.id} initialFavorite={favorite} onChange={onFavoriteChange} /></div>
       <div style={styles.body}>
         <div style={styles.meta}><span className="stitched">{food.category}</span><span>★ {food.rating}</span></div>
         <h3 style={styles.title}>{food.name}</h3>
@@ -18,6 +19,7 @@ export default function FoodCard({ food, favorite, onFavoriteChange }) {
 const styles = {
   card: { overflow: 'hidden' },
   image: { height: 180, display: 'grid', placeItems: 'center', fontSize: 70, position: 'relative' },
+  foodImage: { width: '100%', height: '100%', display: 'block', objectFit: 'cover' },
   body: { padding: 20 },
   meta: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--color-mustard-dark)', fontSize: 13, fontWeight: 700 },
   title: { margin: '14px 0 4px', fontSize: 20 },

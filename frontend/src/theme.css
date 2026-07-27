@@ -103,6 +103,26 @@ p, small { color: var(--color-ink-soft); }
 .logout-button:hover { color: white; background: rgba(236,72,153,.2); border-color: rgba(244,114,182,.5); transform: translateY(-1px); }
 .logout-button:disabled { cursor: wait; opacity: .6; transform: none; }
 .logout-button--compact { width: 40px; height: 40px; min-height: 40px; flex: 0 0 40px; padding: 0; font-size: 20px; }
+.notification-wrap { position: relative; flex: 0 0 auto; }
+.notification-bell { position: relative; width: 40px; height: 40px; display: grid; place-items: center; color: #ede9fe; background: rgba(255,255,255,.06); border: 1px solid var(--color-border); border-radius: 50%; font-size: 22px; cursor: pointer; }
+.notification-bell:hover { background: rgba(139,92,246,.16); }
+.notification-bell b { position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; padding: 0 4px; display: grid; place-items: center; color: white; background: var(--color-chili); border: 2px solid #090513; border-radius: 10px; font-size: 9px; }
+.notification-panel { position: absolute; z-index: 100; top: calc(100% + 12px); right: 0; width: min(380px, calc(100vw - 28px)); overflow: hidden; color: var(--color-ink); background: rgba(20,13,36,.98); border: 1px solid var(--color-border-strong); border-radius: 16px; box-shadow: 0 24px 70px rgba(0,0,0,.45); backdrop-filter: blur(20px); }
+.notification-head { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 17px; border-bottom: 1px solid var(--color-border); }
+.notification-head strong,.notification-head small { display: block; }
+.notification-head small { margin-top: 3px; color: var(--color-ink-faint); font-size: 10px; }
+.notification-head button { padding: 5px; color: #c4b5fd; background: none; border: 0; font: inherit; font-size: 10px; font-weight: 700; cursor: pointer; }
+.notification-list { max-height: 390px; overflow-y: auto; }
+.notification-list > button { width: 100%; display: flex; align-items: flex-start; gap: 11px; padding: 15px 17px; text-align: left; color: inherit; background: transparent; border: 0; border-bottom: 1px solid var(--color-border); cursor: pointer; }
+.notification-list > button:hover,.notification-list > button.unread { background: rgba(139,92,246,.09); }
+.notification-list > button.unread { box-shadow: inset 3px 0 #a78bfa; }
+.notification-list i { width: 34px; height: 34px; flex: 0 0 34px; display: grid; place-items: center; background: var(--color-surface-alt); border-radius: 10px; font-style: normal; }
+.notification-list span { min-width: 0; }
+.notification-list strong,.notification-list small,.notification-list time { display: block; }
+.notification-list strong { font-size: 12px; }
+.notification-list small { margin: 4px 0; color: var(--color-ink-soft); font-size: 10.5px; line-height: 1.45; }
+.notification-list time { color: var(--color-ink-faint); font-size: 8.5px; }
+.notification-empty { padding: 42px 20px; text-align: center; color: var(--color-ink-faint); font-size: 12px; }
 .favorite-button {
   position: absolute;
   top: 14px;
@@ -179,6 +199,8 @@ img[src='/tasteloop-logo.png'] {
   background: rgba(139, 92, 246, .09) !important;
 }
 .food-table td, .admin-table td { color: var(--color-ink-soft) !important; border-color: var(--color-border) !important; }
+.food-cell > span, .admin-food-cell i { overflow: hidden; }
+.food-cell > span img, .admin-food-cell i img { width: 100%; height: 100%; display: block; object-fit: cover; border-radius: inherit; }
 .food-table tr:hover td, .admin-table tbody tr:hover td { background: rgba(139,92,246,.055); }
 .row-actions a, .row-actions button, .moderation-actions button {
   color: #c4b5fd !important;

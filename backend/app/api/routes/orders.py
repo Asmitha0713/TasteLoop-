@@ -9,6 +9,7 @@ from app.core.dependencies import require_roles
 from app.core.documents import object_id, serialize
 from app.database.mongodb import get_database
 from app.schemas.marketplace import CheckoutRequest, OrderStatusUpdate
+from app.services.notification_service import create_notification
 
 router = APIRouter(prefix="/api/orders", tags=["Orders"])
 DELIVERY_FEE = 300
@@ -39,7 +40,7 @@ def checkout(payload: CheckoutRequest, user: dict = Depends(require_roles("custo
         order_items.append({
             "food_id": food["_id"], "cook_id": food["cook_id"], "name": food["name"],
             "quantity": quantity, "unit_price": food["price"], "total": item_total,
-            "emoji": food.get("emoji", "🍽️"), "color": food.get("color", "#f4dfb8"),
+            "emoji": food.get("emoji", "🍽️"), "color": food.get("color", "#f4dfb8"), "image_url": food.get("image_url"),
         })
     now = datetime.now(UTC)
     order = {
@@ -55,6 +56,11 @@ def checkout(payload: CheckoutRequest, user: dict = Depends(require_roles("custo
         database.foods.update_one({"_id": item["food_id"]}, {"$inc": {"portions": -item["quantity"]}})
     database.carts.delete_one({"customer_id": user["_id"]})
     order["_id"] = result.inserted_id
+    for cook_id in {item["cook_id"] for item in order_items}:
+        create_notification(
+            database, cook_id, "new_order", "New order received",
+            f"Order {order['order_number']} is waiting for your acceptance.", order["_id"],
+        )
     return {"success": True, "message": "Order placed successfully", "data": serialize(order)}
 
 
@@ -94,6 +100,10 @@ def accept_order(
         if owned_order is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Only confirmed orders can be accepted")
+    create_notification(
+        database, order["customer_id"], "order_accepted", "Order accepted",
+        f"Your order {order['order_number']} was accepted and is being prepared.", order["_id"],
+    )
     return {"success": True, "message": "Order accepted", "data": serialize(order)}
 
 
@@ -118,4 +128,18 @@ def update_order_status(
     result = database.orders.update_one(filters, {"$set": {"status": payload.status, "updated_at": now}, "$push": {"status_history": {"status": payload.status, "at": now}}})
     if result.matched_count == 0:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
-    return {"success": True, "message": "Order status updated", "data": serialize(database.orders.find_one({"_id": filters["_id"]}))}
+    updated_order = database.orders.find_one({"_id": filters["_id"]})
+    notification_copy = {
+        "preparing": ("Order is being prepared", "Your home cook has started preparing your meal."),
+        "ready": ("Order is ready", "Your meal is ready for delivery."),
+        "out_for_delivery": ("Order is on the way", "Your meal is out for delivery."),
+        "delivered": ("Order delivered", "Your order has been marked as delivered. Enjoy your meal!"),
+        "cancelled": ("Order cancelled", "Your order has been cancelled."),
+    }
+    if payload.status in notification_copy and updated_order:
+        title, message = notification_copy[payload.status]
+        create_notification(
+            database, updated_order["customer_id"], f"order_{payload.status}", title,
+            f"{message} Order {updated_order['order_number']}", updated_order["_id"],
+        )
+    return {"success": True, "message": "Order status updated", "data": serialize(updated_order)}

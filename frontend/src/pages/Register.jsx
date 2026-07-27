@@ -78,7 +78,6 @@ export default function Register() {
                   <input
                     id="fullName"
                     type="text"
-                    placeholder="Ashen Perera"
                     value={form.fullName}
                     onChange={update('fullName')}
                     aria-invalid={!!errors.fullName}
@@ -89,13 +88,13 @@ export default function Register() {
                 <div className="field">
                   <label htmlFor="email">Email address</label>
                   <input
-                    id="email" type="email" placeholder="you@example.com"
+                    id="email" type="email"
                     value={form.email} onChange={update('email')} aria-invalid={!!errors.email}
                   />
                   {errors.email && <p style={styles.error}>{errors.email}</p>}
                 </div>
 
-                <div className="field"><label htmlFor="phoneNumber">Phone number</label><input id="phoneNumber" placeholder="0771234567" value={form.phoneNumber} onChange={update('phoneNumber')} aria-invalid={!!errors.phoneNumber} />{errors.phoneNumber && <p style={styles.error}>{errors.phoneNumber}</p>}</div>
+                <div className="field"><label htmlFor="phoneNumber">Phone number</label><input id="phoneNumber" value={form.phoneNumber} onChange={update('phoneNumber')} aria-invalid={!!errors.phoneNumber} />{errors.phoneNumber && <p style={styles.error}>{errors.phoneNumber}</p>}</div>
                 <div className="field">
                   <label htmlFor="password">Password</label>
                   <div style={styles.passwordWrap}><input

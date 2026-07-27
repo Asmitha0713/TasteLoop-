@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import CustomerNav from '../components/CustomerNav.jsx'
 import Footer from '../components/Footer.jsx'
-import api, { apiError } from '../services/api.js'
+import api, { apiError, assetUrl } from '../services/api.js'
 
 export default function Cart() {
   const [items, setItems] = useState([])
@@ -28,7 +28,7 @@ export default function Cart() {
         <div>
           <div style={styles.cookLine}><span>Order from</span><strong>Nadeesha’s Kitchen</strong><span className="stitched">★ 4.9</span></div>
           <div className="card" style={styles.list}>{items.map((item, index) => <div style={{ ...styles.item, borderTop: index ? '1px solid var(--color-border)' : 0 }} key={item.id}>
-            <div style={{ ...styles.image, background: item.color }}>{item.emoji}</div><div style={{ flex: 1 }}><h3 style={styles.name}>{item.name}</h3><p style={styles.meta}>{item.category} · Made fresh today</p><button onClick={() => remove(item.id)} style={styles.remove}>Remove</button></div>
+            <div style={{ ...styles.image, background: item.color }}>{item.image_url ? <img src={assetUrl(item.image_url)} alt={item.name} style={styles.foodImage} /> : item.emoji}</div><div style={{ flex: 1 }}><h3 style={styles.name}>{item.name}</h3><p style={styles.meta}>{item.category} · Made fresh today</p><button onClick={() => remove(item.id)} style={styles.remove}>Remove</button></div>
             <div style={styles.right}><div style={styles.stepper}><button onClick={() => updateQty(item.id, -1)}>−</button><strong>{item.quantity}</strong><button onClick={() => updateQty(item.id, 1)}>+</button></div><strong style={styles.price}>Rs {item.price * item.quantity}</strong></div>
           </div>)}</div>
           <div style={styles.note}><label htmlFor="note">Note for the cook</label><textarea id="note" placeholder="Allergies, spice preference, or delivery notes…" style={styles.textarea} /></div>
@@ -42,7 +42,7 @@ export default function Cart() {
 
 const styles = {
   wrap: { paddingTop: 48, paddingBottom: 70 }, h1: { fontSize: 38, margin: '8px 0 30px' }, layout: { display: 'grid', gridTemplateColumns: '1fr 340px', gap: 30, alignItems: 'start' },
-  cookLine: { display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, color: 'var(--color-ink-soft)', fontSize: 13 }, list: { padding: '0 22px' }, item: { display: 'flex', gap: 16, padding: '22px 0', alignItems: 'center' }, image: { width: 82, height: 82, borderRadius: 14, display: 'grid', placeItems: 'center', fontSize: 40, flexShrink: 0 }, name: { fontSize: 17, margin: '0 0 5px' }, meta: { margin: 0, fontSize: 12.5 }, remove: { border: 0, background: 'none', padding: '7px 0 0', color: 'var(--color-chili)', cursor: 'pointer', fontSize: 11.5 }, right: { alignSelf: 'stretch', display: 'flex', flexDirection: 'column', alignItems: 'end', justifyContent: 'space-between' },
+  cookLine: { display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, color: 'var(--color-ink-soft)', fontSize: 13 }, list: { padding: '0 22px' }, item: { display: 'flex', gap: 16, padding: '22px 0', alignItems: 'center' }, image: { width: 82, height: 82, borderRadius: 14, display: 'grid', placeItems: 'center', fontSize: 40, flexShrink: 0, overflow: 'hidden' }, foodImage: { width: '100%', height: '100%', display: 'block', objectFit: 'cover' }, name: { fontSize: 17, margin: '0 0 5px' }, meta: { margin: 0, fontSize: 12.5 }, remove: { border: 0, background: 'none', padding: '7px 0 0', color: 'var(--color-chili)', cursor: 'pointer', fontSize: 11.5 }, right: { alignSelf: 'stretch', display: 'flex', flexDirection: 'column', alignItems: 'end', justifyContent: 'space-between' },
   stepper: { display: 'flex', gap: 11, alignItems: 'center' }, price: { color: 'var(--color-chili)' }, note: { marginTop: 22, fontSize: 13, fontWeight: 700 }, textarea: { display: 'block', marginTop: 8, padding: 13, width: '100%', minHeight: 78, resize: 'vertical', border: '1px solid var(--color-border-strong)', borderRadius: 10, background: 'white', font: 'inherit' }, continue: { display: 'inline-block', marginTop: 20, color: 'var(--color-forest)', fontSize: 13, fontWeight: 700 },
   summary: { padding: 24, position: 'sticky', top: 100 }, summaryTitle: { fontSize: 22, marginBottom: 20 }, row: { display: 'flex', justifyContent: 'space-between', margin: '13px 0', color: 'var(--color-ink-soft)', fontSize: 13.5 }, promo: { display: 'flex', margin: '20px 0', gap: 8 }, total: { display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--color-border)', padding: '20px 0', fontSize: 19 }, secure: { fontSize: 11, textAlign: 'center', margin: '14px 0 0' },
 }

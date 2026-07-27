@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pymongo import DESCENDING
@@ -13,6 +13,76 @@ from app.schemas.marketplace import AdminUserCreate, AccountStatusUpdate, FoodMo
 
 router = APIRouter(prefix="/api/admin", tags=["Admin"])
 admin_user = require_roles("admin")
+
+
+@router.get("/analytics/reports-revenue")
+def reports_revenue_analytics(
+    period: str = Query(default="month", pattern="^(week|month|year)$"),
+    _user: dict = Depends(admin_user),
+    database: Database = Depends(get_database),
+) -> dict:
+    now = datetime.now(UTC)
+    start = {"week": now - timedelta(days=7), "month": now - timedelta(days=30), "year": now - timedelta(days=365)}[period]
+    date_format = "%Y-%m" if period == "year" else "%Y-%m-%d"
+
+    revenue_pipeline = [
+        {"$match": {"status": "delivered", "created_at": {"$gte": start, "$lte": now}}},
+        {"$facet": {
+            "summary": [{"$group": {
+                "_id": None, "gross_revenue": {"$sum": "$total"},
+                "order_count": {"$sum": 1}, "average_order_value": {"$avg": "$total"},
+            }}],
+            "series": [
+                {"$group": {
+                    "_id": {"$dateToString": {"format": date_format, "date": "$created_at", "timezone": "UTC"}},
+                    "revenue": {"$sum": "$total"}, "orders": {"$sum": 1},
+                }},
+                {"$sort": {"_id": 1}},
+            ],
+        }},
+    ]
+    revenue_result = next(database.orders.aggregate(revenue_pipeline), {"summary": [], "series": []})
+    revenue = revenue_result.get("summary", [{}])[0] if revenue_result.get("summary") else {}
+    series = [{"date": item["_id"], "revenue": round(item["revenue"], 2), "orders": item["orders"]} for item in revenue_result.get("series", [])]
+
+    order_statuses = {
+        row["_id"]: row["count"] for row in database.orders.aggregate([
+            {"$match": {"created_at": {"$gte": start, "$lte": now}}},
+            {"$group": {"_id": "$status", "count": {"$sum": 1}}},
+        ])
+    }
+    report_rows = list(database.reports.aggregate([
+        {"$match": {"created_at": {"$gte": start, "$lte": now}}},
+        {"$facet": {
+            "by_status": [{"$group": {"_id": "$status", "count": {"$sum": 1}}}],
+            "by_type": [{"$group": {"_id": "$report_type", "count": {"$sum": 1}}}, {"$sort": {"count": -1}}],
+            "high_priority": [{"$match": {"priority": "high", "status": {"$ne": "resolved"}}}, {"$count": "count"}],
+            "total": [{"$count": "count"}],
+        }},
+    ]))
+    report_result = report_rows[0] if report_rows else {}
+    by_status = {row["_id"]: row["count"] for row in report_result.get("by_status", [])}
+
+    return {"success": True, "data": {
+        "period": period,
+        "from": start.isoformat(),
+        "to": now.isoformat(),
+        "revenue": {
+            "gross": round(revenue.get("gross_revenue", 0), 2),
+            "delivered_orders": revenue.get("order_count", 0),
+            "average_order_value": round(revenue.get("average_order_value", 0), 2),
+            "series": series,
+        },
+        "orders_by_status": order_statuses,
+        "reports": {
+            "total": report_result.get("total", [{}])[0].get("count", 0) if report_result.get("total") else 0,
+            "open": by_status.get("open", 0),
+            "investigating": by_status.get("investigating", 0),
+            "resolved": by_status.get("resolved", 0),
+            "high_priority_open": report_result.get("high_priority", [{}])[0].get("count", 0) if report_result.get("high_priority") else 0,
+            "by_type": [{"type": row["_id"], "count": row["count"]} for row in report_result.get("by_type", [])],
+        },
+    }}
 
 
 @router.get("/dashboard")
