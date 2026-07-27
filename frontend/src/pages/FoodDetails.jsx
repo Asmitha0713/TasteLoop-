@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
-import api, { apiError } from '../services/api.js'
+import api, { apiError, assetUrl } from '../services/api.js'
 import FavoriteButton from '../components/FavoriteButton.jsx'
 
 export default function FoodDetails() {
@@ -29,7 +29,7 @@ export default function FoodDetails() {
 
           <div className="grid-2" style={styles.grid}>
             <div style={{ ...styles.imageBox, background: food.color }}>
-              <span style={styles.emoji}>{food.emoji}</span>
+              {food.image_url ? <img src={assetUrl(food.image_url)} alt={food.name} style={styles.foodImage} /> : <span style={styles.emoji}>{food.emoji}</span>}
             </div>
 
             <div>
@@ -102,6 +102,7 @@ const styles = {
     boxShadow: 'var(--shadow-card)',
   },
   emoji: { filter: 'drop-shadow(0 10px 14px rgba(0,0,0,0.18))' },
+  foodImage: { width: '100%', height: '100%', display: 'block', objectFit: 'cover', borderRadius: 'var(--radius-lg)' },
   title: { fontSize: 34, margin: '12px 0 8px' },
   detailTop: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 },
   cook: { fontSize: 14, color: 'var(--color-ink-soft)', marginBottom: 18 },

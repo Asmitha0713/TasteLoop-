@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import CookNav from '../components/CookNav.jsx'
-import api, { apiError, currentUser } from '../services/api.js'
+import api, { apiError, assetUrl, currentUser } from '../services/api.js'
 import './CookFoods.css'
 
 export default function ManageFoods() {
@@ -17,7 +17,7 @@ export default function ManageFoods() {
   useEffect(() => { api.get('/foods/mine/list').then(({ data }) => setFoods(data.data.map(display))).catch((requestError) => setError(apiError(requestError))) }, [])
   const toggle = async (id) => {
     const food = foods.find((item) => item.id === id)
-    try { const { data } = await api.patch(`/foods/${id}`, { available: food.status !== 'Available' }); setFoods((current) => current.map((item) => item.id === id ? display(data.data) : item)) }
+    try { const { data } = await api.patch(`/foods/${id}/availability`, { available: food.status !== 'Available' }); setFoods((current) => current.map((item) => item.id === id ? display(data.data) : item)) }
     catch (requestError) { setError(apiError(requestError)) }
   }
   const remove = async (id, name) => {
@@ -41,7 +41,7 @@ export default function ManageFoods() {
         <section className="card manage-card">
           <div className="manage-toolbar"><label className="food-search"><span>⌕</span><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search your foods…" aria-label="Search foods" /></label><select value={filter} onChange={(e) => setFilter(e.target.value)} aria-label="Filter by status"><option>All</option><option>Available</option><option>Unavailable</option><option>Sold out</option></select></div>
           <div className="food-table-wrap"><table className="food-table"><thead><tr><th>Food</th><th>Price</th><th>Portions</th><th>Status</th><th><span className="sr-only">Actions</span></th></tr></thead><tbody>
-            {visible.map((food) => <tr key={food.id}><td><div className="food-cell"><span style={{ background: food.color }}>{food.emoji}</span><div><strong>{food.name}</strong><small>{food.category}</small></div></div></td><td><strong>Rs. {Number(food.price).toLocaleString()}</strong></td><td>{food.portions}</td><td><button className={`status-pill ${food.status.toLowerCase().replace(' ', '-')}`} onClick={() => toggle(food.id)}><i />{food.status}</button></td><td><div className="row-actions"><Link to={`/cook/foods/${food.id}/edit`} aria-label={`Edit ${food.name}`}>✎</Link><button onClick={() => remove(food.id, food.name)} aria-label={`Delete ${food.name}`}>♲</button></div></td></tr>)}
+            {visible.map((food) => <tr key={food.id}><td><div className="food-cell"><span style={{ background: food.color }}>{food.image_url ? <img src={assetUrl(food.image_url)} alt="" /> : food.emoji}</span><div><strong>{food.name}</strong><small>{food.category}</small></div></div></td><td><strong>Rs. {Number(food.price).toLocaleString()}</strong></td><td>{food.portions}</td><td><button className={`status-pill ${food.status.toLowerCase().replace(' ', '-')}`} onClick={() => toggle(food.id)}><i />{food.status}</button></td><td><div className="row-actions"><Link to={`/cook/foods/${food.id}/edit`} aria-label={`Edit ${food.name}`}>✎</Link><button onClick={() => remove(food.id, food.name)} aria-label={`Delete ${food.name}`}>♲</button></div></td></tr>)}
           </tbody></table></div>
           {!visible.length && <div className="empty-foods"><span>🍽️</span><h2>No foods found</h2><p>Try another search or add something new to your menu.</p><Link to="/cook/add-food" className="btn btn-forest btn-sm">Add a food</Link></div>}
         </section>

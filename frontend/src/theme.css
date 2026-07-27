@@ -179,6 +179,8 @@ img[src='/tasteloop-logo.png'] {
   background: rgba(139, 92, 246, .09) !important;
 }
 .food-table td, .admin-table td { color: var(--color-ink-soft) !important; border-color: var(--color-border) !important; }
+.food-cell > span, .admin-food-cell i { overflow: hidden; }
+.food-cell > span img, .admin-food-cell i img { width: 100%; height: 100%; display: block; object-fit: cover; border-radius: inherit; }
 .food-table tr:hover td, .admin-table tbody tr:hover td { background: rgba(139,92,246,.055); }
 .row-actions a, .row-actions button, .moderation-actions button {
   color: #c4b5fd !important;
