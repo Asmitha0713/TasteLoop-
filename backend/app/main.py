@@ -12,6 +12,7 @@ from app.api.routes.cook import router as cook_router
 from app.api.routes.foods import router as foods_router
 from app.api.routes.favorites import router as favorites_router
 from app.api.routes.marketplace import router as marketplace_router
+from app.api.routes.notifications import router as notifications_router
 from app.api.routes.orders import router as orders_router
 from app.api.routes.profiles import router as profiles_router
 from app.api.routes.reports import router as reports_router
@@ -42,6 +43,7 @@ app.include_router(profiles_router)
 app.include_router(foods_router)
 app.include_router(favorites_router)
 app.include_router(marketplace_router)
+app.include_router(notifications_router)
 app.include_router(cart_router)
 app.include_router(orders_router)
 app.include_router(cook_router)

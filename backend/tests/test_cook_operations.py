@@ -75,7 +75,7 @@ class FakeOrders:
     def __init__(self, cook_id):
         self.order = {
             "_id": ObjectId(), "order_number": "TL-ACCEPT", "status": "confirmed",
-            "items": [{"cook_id": cook_id}], "created_at": datetime.now(UTC),
+            "customer_id": ObjectId(), "items": [{"cook_id": cook_id}], "created_at": datetime.now(UTC),
         }
 
     def find_one_and_update(self, filters, update, **_kwargs):
@@ -90,7 +90,8 @@ class FakeOrders:
 
 def test_confirmed_order_can_be_explicitly_accepted():
     cook_id = ObjectId()
-    database = type("Database", (), {"orders": FakeOrders(cook_id)})()
+    notifications = type("Notifications", (), {"insert_one": lambda self, document: Result(ObjectId())})()
+    database = type("Database", (), {"orders": FakeOrders(cook_id), "notifications": notifications})()
 
     response = accept_order(str(database.orders.order["_id"]), {"_id": cook_id}, database)
 

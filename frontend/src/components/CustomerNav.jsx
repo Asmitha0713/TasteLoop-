@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import LogoutButton from './LogoutButton.jsx'
+import NotificationBell from './NotificationBell.jsx'
 
 const links = [
   { to: '/customer/dashboard', label: 'Dashboard' },
@@ -24,6 +25,7 @@ export default function CustomerNav() {
           ))}
         </nav>
         <div style={styles.actions}>
+          <NotificationBell />
           <Link to="/cart" className="btn btn-secondary btn-sm">🛒 Cart <span style={styles.badge}>2</span></Link>
           <Link to="/customer/profile" style={styles.avatar} title="Ayesha Fernando" aria-label="Open profile">AF</Link>
           <LogoutButton compact />

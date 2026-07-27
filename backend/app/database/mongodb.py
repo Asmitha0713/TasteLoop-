@@ -51,6 +51,7 @@ def connect_database() -> None:
     database.bank_details.create_index([("cook_id", ASCENDING)], unique=True)
     database.favorites.create_index([("customer_id", ASCENDING), ("food_id", ASCENDING)], unique=True)
     database.favorites.create_index([("customer_id", ASCENDING), ("created_at", DESCENDING)])
+    database.notifications.create_index([("user_id", ASCENDING), ("read", ASCENDING), ("created_at", DESCENDING)])
     database.foods.create_index([("cook_id", ASCENDING)])
     database.foods.create_index([("moderation_status", ASCENDING), ("available", ASCENDING)])
     database.orders.create_index([("customer_id", ASCENDING), ("created_at", ASCENDING)])

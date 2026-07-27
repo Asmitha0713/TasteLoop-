@@ -56,12 +56,16 @@ All protected endpoints use `Authorization: Bearer <access_token>`.
 - `POST /api/orders` — validate the cart and place an order
 - `GET /api/orders` — customer order history
 - `POST /api/reports` — submit a marketplace report
+- `GET /api/notifications` — list notifications and unread count
+- `PATCH /api/notifications/{notification_id}/read` — mark one notification as read
+- `PATCH /api/notifications/read-all` — mark all notifications as read
 
 The checkout endpoint accepts `cash` or `card` as the selected payment method. It never accepts or stores raw card numbers. A real payment provider should own card collection and tokenization.
 
 ## Administration
 
 - `GET /api/admin/dashboard` — system counts and delivered revenue
+- `GET /api/admin/analytics/reports-revenue?period=month` — revenue series, order status totals, and report aggregation
 - `GET|POST /api/admin/users` — search or create users
 - `PATCH /api/admin/users/{user_id}/status` — activate, approve or suspend
 - `GET /api/admin/foods` — moderation queue
