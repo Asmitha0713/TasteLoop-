@@ -26,7 +26,7 @@ export default function Cart() {
       {error && <p style={{ color: 'var(--color-chili)' }}>{error}</p>}
       <div className="cart-layout" style={styles.layout}>
         <div>
-          <div style={styles.cookLine}><span>Order from</span><strong>Nadeesha’s Kitchen</strong><span className="stitched">★ 4.9</span></div>
+          <div style={styles.cookLine}><span>Order from</span><span className="stitched">★ 4.9</span></div>
           <div className="card" style={styles.list}>{items.map((item, index) => <div style={{ ...styles.item, borderTop: index ? '1px solid var(--color-border)' : 0 }} key={item.id}>
             <div style={{ ...styles.image, background: item.color }}>{item.image_url ? <img src={assetUrl(item.image_url)} alt={item.name} style={styles.foodImage} /> : item.emoji}</div><div style={{ flex: 1 }}><h3 style={styles.name}>{item.name}</h3><p style={styles.meta}>{item.category} · Made fresh today</p><button onClick={() => remove(item.id)} style={styles.remove}>Remove</button></div>
             <div style={styles.right}><div style={styles.stepper}><button onClick={() => updateQty(item.id, -1)}>−</button><strong>{item.quantity}</strong><button onClick={() => updateQty(item.id, 1)}>+</button></div><strong style={styles.price}>Rs {item.price * item.quantity}</strong></div>
