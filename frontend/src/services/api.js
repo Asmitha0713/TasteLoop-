@@ -9,7 +9,11 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('tasteloop-token')
   if (token) config.headers.Authorization = `Bearer ${token}`
-  if (config.data instanceof FormData) delete config.headers['Content-Type']
+  if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+    // Let the browser add the multipart boundary required by FastAPI uploads.
+    if (typeof config.headers.delete === 'function') config.headers.delete('Content-Type')
+    else delete config.headers['Content-Type']
+  }
   return config
 })
 

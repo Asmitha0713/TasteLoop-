@@ -55,7 +55,9 @@ async def store_evidence(image: UploadFile) -> str:
     return f"/uploads/{key}"
 
 
-def evidence_url(stored_path: str) -> str:
+def evidence_url(stored_path: str | None) -> str | None:
+    if not stored_path:
+        return None
     if not stored_path.startswith("s3://"):
         return stored_path
     bucket_and_key = stored_path[5:].split("/", 1)

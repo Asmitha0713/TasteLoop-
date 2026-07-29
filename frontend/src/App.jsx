@@ -59,6 +59,7 @@ export default function App() {
       <Route path="/cook/add-food" element={cook(<AddFood />)} />
       <Route path="/cook/foods/:id/edit" element={cook(<AddFood />)} />
       <Route path="/cook/earnings" element={cook(<Earnings />)} />
+      <Route path="/cook/complaints" element={cook(<MyComplaints />)} />
       <Route path="/cook/profile" element={cook(<CookProfile />)} />
       <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
       <Route path="/admin/dashboard" element={admin(<AdminDashboard />)} />

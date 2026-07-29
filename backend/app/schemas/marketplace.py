@@ -138,7 +138,10 @@ class ReviewCreate(BaseModel):
     comment: str = Field(default="", max_length=1000)
 
 
-ComplaintStatus = Literal["pending", "under_review", "approved", "rejected", "refunded", "replacement_sent"]
+ComplaintStatus = Literal[
+    "pending", "in_progress", "resolved", "rejected",
+    "under_review", "approved", "refunded", "replacement_sent",
+]
 
 
 class ComplaintCreate(BaseModel):
@@ -146,11 +149,13 @@ class ComplaintCreate(BaseModel):
 
     order_id: str
     issue_type: Literal[
+        "food_quality", "wrong_order", "late_delivery", "payment_issue",
+        "home_cook_issue", "customer_issue",
         "food_damaged_during_delivery", "food_spilled", "wrong_food_received",
         "missing_food_item", "poor_packaging", "other",
     ]
     description: str = Field(min_length=10, max_length=2000)
-    requested_solution: Literal["refund", "replacement"]
+    requested_solution: Literal["refund", "replacement", "resolution"] = "resolution"
 
 
 class ComplaintStatusUpdate(BaseModel):
@@ -158,6 +163,7 @@ class ComplaintStatusUpdate(BaseModel):
 
     complaint_status: ComplaintStatus
     admin_notes: str | None = Field(default=None, max_length=2000)
+    admin_response: str | None = Field(default=None, max_length=2000)
 
 
 class ComplaintRefundRequest(BaseModel):
