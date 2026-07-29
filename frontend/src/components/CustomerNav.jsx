@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import LogoutButton from './LogoutButton.jsx'
 import NotificationBell from './NotificationBell.jsx'
+import api, { currentUser, userInitials } from '../services/api.js'
 
 const links = [
   { to: '/customer/dashboard', label: 'Dashboard' },
@@ -8,11 +10,18 @@ const links = [
   { to: '/orders', label: 'My Orders' },
   { to: '/favorites', label: 'Favorites' },
   { to: '/complaints', label: 'Complaints' },
-  { to: '/customer/profile', label: 'Profile' },
+  { to: '/customer/profile', label: '👤 Profile' },
 ]
 
 export default function CustomerNav() {
   const { pathname } = useLocation()
+  const [name, setName] = useState(() => currentUser()?.full_name || '')
+
+  useEffect(() => {
+    api.get('/profile', { skipToast: true })
+      .then(({ data }) => setName(data.data.full_name || ''))
+      .catch(() => {})
+  }, [])
 
   return (
     <header style={styles.header}>
@@ -28,7 +37,7 @@ export default function CustomerNav() {
         <div style={styles.actions}>
           <NotificationBell />
           <Link to="/cart" className="btn btn-secondary btn-sm">🛒 Cart <span style={styles.badge}>2</span></Link>
-          <Link to="/customer/profile" style={styles.avatar} title="Ayesha Fernando" aria-label="Open profile">AF</Link>
+          <Link to="/customer/profile" style={styles.avatar} title={name || 'My profile'} aria-label={`Open ${name || 'my'} profile`}>{userInitials(name)}</Link>
           <LogoutButton compact />
         </div>
       </div>

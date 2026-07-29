@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react'
 import CustomerNav from '../components/CustomerNav.jsx'
 import Footer from '../components/Footer.jsx'
 import './CustomerProfile.css'
-import api, { apiError } from '../services/api.js'
+import api, { apiError, userInitials } from '../services/api.js'
 
 const initialProfile = {
-  name: 'Ayesha Fernando',
-  email: 'ayesha@example.com',
-  phone: '077 845 2190',
-  address: '42, Station Road',
-  city: 'Kilinochchi',
-  note: 'Call when you arrive at the gate.',
+  name: '',
+  email: '',
+  phone: '',
+  address: '',
+  city: '',
+  note: '',
 }
 
 export default function CustomerProfile() {
@@ -64,11 +64,11 @@ export default function CustomerProfile() {
     <main className="page-content customer-profile-main"><div className="container customer-profile-container">
       {saved && <div className="success-banner">✓ Your profile has been updated.</div>}
       {error && <div className="success-banner">{error}</div>}
-      <div className="customer-profile-heading"><div><span className="eyebrow">Your TasteLoop account</span><h1>My profile</h1><p>Manage your personal details, delivery address and food preferences.</p></div>{!editing && <button className="btn btn-primary" onClick={() => { setDraft(profile); setEditing(true) }}>✎ Edit Profile</button>}</div>
+      <div className="customer-profile-heading"><div><span className="eyebrow">Your TasteLoop account</span><h1>👤 My profile</h1><p>Manage your personal details, delivery address and food preferences.</p></div>{!editing && <button className="btn btn-primary" onClick={() => { setDraft(profile); setEditing(true) }}>✎ Edit Profile</button>}</div>
 
       <div className="customer-profile-grid">
         <aside className="card customer-profile-summary">
-          <div className="customer-avatar">AF<button aria-label="Change profile picture">＋</button></div>
+          <div className="customer-avatar" title={profile.name || 'Customer profile'}><span aria-hidden="true">👤</span><button aria-label="Change profile picture">＋</button></div>
           <h2>{profile.name}</h2><p>Customer since May 2026</p><span className="customer-member">TasteLoop Member</span>
           <div className="customer-profile-stats"><div><strong>12</strong><span>Orders</span></div><div><strong>4</strong><span>Favourite cooks</span></div></div>
           <nav className="profile-shortcuts"><a href="#details">♙ <span>Personal details</span></a><a href="#address">⌖ <span>Delivery address</span></a><a href="#preferences">♡ <span>Food preferences</span></a></nav>

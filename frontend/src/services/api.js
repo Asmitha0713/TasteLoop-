@@ -76,6 +76,14 @@ export const currentUser = () => {
   try { return JSON.parse(localStorage.getItem('tasteloop-user')) } catch { return null }
 }
 
+export const userInitials = (name = '') => {
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  if (!parts.length) return 'U'
+  return `${parts[0][0]}${parts.length > 1 ? parts[parts.length - 1][0] : ''}`.toUpperCase()
+}
+
+export const firstName = (name = '') => name.trim().split(/\s+/).filter(Boolean)[0] || 'there'
+
 export const assetUrl = (path) => {
   if (!path || /^(https?:|data:|blob:)/.test(path)) return path
   const apiRoot = api.defaults.baseURL.replace(/\/?api\/?$/, '')
