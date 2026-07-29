@@ -6,6 +6,7 @@ const links = [
   { to: '/admin/users', label: 'Users', icon: '♙' },
   { to: '/admin/foods', label: 'Foods', icon: '♨' },
   { to: '/admin/reports', label: 'Reports', icon: '⚑' },
+  { to: '/admin/complaints', label: 'Complaints', icon: '!' },
 ]
 
 export default function AdminNav() {

@@ -121,6 +121,14 @@ def payment_status(order_id: str, user: dict = Depends(require_roles("customer")
     return {"success": True, "data": {"order_id": str(order["_id"]), "order_number": order["order_number"], "payment_status": order["payment_status"], "status": order["status"], "total": order["total"]}}
 
 
+@router.get("/{order_id}")
+def order_detail(order_id: str, user: dict = Depends(require_roles("customer")), database: Database = Depends(get_database)) -> dict:
+    order = database.orders.find_one({"_id": object_id(order_id, "order"), "customer_id": user["_id"]})
+    if order is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
+    return {"success": True, "data": serialize(order)}
+
+
 @router.get("")
 def my_orders(
     order_status: str | None = Query(default=None, alias="status"),

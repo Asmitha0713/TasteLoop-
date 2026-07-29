@@ -62,6 +62,20 @@ All protected endpoints use `Authorization: Bearer <access_token>`.
 
 The checkout endpoint accepts `cash` or `card` as the selected payment method. It never accepts or stores raw card numbers. A real payment provider should own card collection and tokenization.
 
+## Complaints, refunds, and replacements
+
+- `POST /api/complaints` — customer multipart complaint submission with an evidence image.
+- `GET /api/complaints/my` — complaints owned by the current customer.
+- `GET /api/complaints/{complaint_id}` — customer-owned complaint detail.
+- `GET /api/admin/complaints` — admin complaint queue with customer and order details.
+- `PATCH /api/admin/complaints/{complaint_id}/status` — review, approve, or reject.
+- `POST /api/admin/complaints/{complaint_id}/refund` — full or partial mock refund ledger operation.
+- `POST /api/admin/complaints/{complaint_id}/replacement` — zero-value replacement order.
+
+Complaint evidence uses private AWS S3 storage when `AWS_S3_BUCKET` is configured and local
+`/uploads/complaints` storage otherwise. The current refund processor is intentionally marked
+`mock`; connect a payment-gateway refund API before production refunds.
+
 ## Administration
 
 - `GET /api/admin/dashboard` — system counts and delivered revenue

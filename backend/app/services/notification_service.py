@@ -8,6 +8,7 @@ def create_notification(
     title: str,
     message: str,
     order_id=None,
+    complaint_id=None,
 ) -> dict:
     document = {
         "user_id": user_id,
@@ -15,6 +16,7 @@ def create_notification(
         "title": title,
         "message": message,
         "order_id": order_id,
+        "complaint_id": complaint_id,
         "read": False,
         "created_at": datetime.now(UTC),
     }

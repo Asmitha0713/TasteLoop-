@@ -7,6 +7,7 @@ const links = [
   { to: '/search', label: 'Find Food' },
   { to: '/orders', label: 'My Orders' },
   { to: '/favorites', label: 'Favorites' },
+  { to: '/complaints', label: 'Complaints' },
   { to: '/customer/profile', label: 'Profile' },
 ]
 

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Lora:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap');
 
 :root {
   --color-bg: #fbf5e8;
@@ -15,8 +15,8 @@
   --color-mustard: #e3ad39;
   --color-mustard-dark: #9c6b09;
   --color-mustard-tint: #f8e8ba;
-  --font-body: 'DM Sans', system-ui, sans-serif;
-  --font-display: 'Lora', Georgia, serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+  --font-display: 'Poppins', system-ui, sans-serif;
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 24px;

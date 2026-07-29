@@ -912,3 +912,895 @@ footer p, footer a { color: #b9a58f !important; }
 .favorites-message > span { color: #e2bb80; background: rgba(199,155,101,.11); border-color: rgba(226,196,155,.2); }
 .logout-button { color: #e0bd89; background: rgba(199,155,101,.08); border-color: rgba(226,196,155,.22); }
 .logout-button:hover { color: #1b0805; background: #d3a86e; }
+
+/* TasteLoop definitive premium homemade-food palette. */
+:root {
+  color-scheme: light;
+  --color-bg: #fff8ee;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f0f5ed;
+  --color-border: rgba(31, 77, 58, .12);
+  --color-border-strong: rgba(31, 77, 58, .25);
+  --color-ink: #252525;
+  --color-ink-soft: #5f625f;
+  --color-ink-faint: #858a86;
+  --color-forest: #1f4d3a;
+  --color-forest-tint: #e8f0e5;
+  --color-chili: #d96c4a;
+  --color-mustard: #d9a84a;
+  --color-mustard-dark: #96611f;
+  --color-mustard-tint: #fff0d5;
+  --color-sage: #a8c3a0;
+  --shadow-card: 0 12px 34px rgba(31, 77, 58, .09);
+  --shadow-card-hover: 0 18px 44px rgba(31, 77, 58, .15);
+}
+html { background: #fff8ee; }
+body {
+  color: #252525;
+  background:
+    radial-gradient(circle at 8% 2%, rgba(168,195,160,.2), transparent 30rem),
+    radial-gradient(circle at 94% 12%, rgba(217,108,74,.07), transparent 27rem),
+    #fff8ee;
+  background-attachment: fixed;
+}
+body::before {
+  opacity: .13;
+  background-image: linear-gradient(rgba(31,77,58,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(31,77,58,.035) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: linear-gradient(to bottom, black, transparent 82%);
+}
+::selection { color: white; background: #d96c4a; }
+* { scrollbar-color: #a8c3a0 #f4eee4; }
+h1, h2, h3, h4, h5, h6 { color: #1f4d3a; }
+strong, label { color: #252525; }
+p, small { color: #5f625f; }
+.card {
+  color: #252525;
+  background: #ffffff;
+  border: 1px solid rgba(31,77,58,.12);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: none;
+}
+.card:hover { border-color: rgba(168,195,160,.75); }
+.eyebrow { color: #d96c4a; }
+.eyebrow::before { background: linear-gradient(90deg, #d96c4a, #a8c3a0); }
+.stitched { color: #1f4d3a; background: #e8f0e5; border-color: rgba(31,77,58,.12); }
+.btn-primary {
+  color: white;
+  background: linear-gradient(135deg, #c85f40, #d96c4a 58%, #e58364);
+  border-color: transparent;
+  box-shadow: 0 9px 22px rgba(217,108,74,.24), inset 0 1px rgba(255,255,255,.24);
+}
+.btn-primary:hover { color: white; background: linear-gradient(135deg, #b95034, #cf6242); }
+.btn-forest { color: white; background: linear-gradient(135deg, #173e2e, #1f4d3a 58%, #346653); box-shadow: 0 9px 22px rgba(31,77,58,.2); }
+.btn-forest:hover { color: white; background: #173e2e; }
+.btn-secondary { color: #1f4d3a; background: #e8f0e5; border-color: rgba(31,77,58,.18); }
+.btn-secondary:hover { color: #173e2e; background: #d8e6d4; border-color: #a8c3a0; }
+.btn:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid rgba(217,108,74,.35); outline-offset: 3px; }
+header:not(.admin-topbar), .cook-nav {
+  color: white;
+  background: rgba(31,77,58,.96) !important;
+  border-bottom-color: rgba(255,255,255,.12) !important;
+  box-shadow: 0 10px 30px rgba(31,77,58,.18);
+  backdrop-filter: blur(18px);
+}
+header nav a, .cook-nav__link { color: rgba(255,255,255,.78) !important; }
+header nav a:hover, .cook-nav__link:hover, .cook-nav__link.active { color: white !important; }
+.cook-nav__logo, .cook-profile strong, header strong { color: white; }
+header .btn-secondary { color: white; background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.28); }
+header .btn-secondary:hover { background: rgba(255,255,255,.2); }
+header .notification-bell { color: white; background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.2); }
+header .logout-button { color: white; background: rgba(217,108,74,.18); border-color: rgba(255,255,255,.2); }
+input, select, textarea, .field input, .food-field input, .food-field select, .food-field textarea,
+.admin-select, .row-select, .period-select, .food-search input, .manage-toolbar select {
+  color: #252525 !important;
+  background: #ffffff !important;
+  border-color: rgba(31,77,58,.23) !important;
+}
+input::placeholder, textarea::placeholder { color: #9a9d9a; }
+input:focus, select:focus, textarea:focus, .field input:focus {
+  border-color: #1f4d3a !important;
+  box-shadow: 0 0 0 4px rgba(168,195,160,.3) !important;
+}
+input:disabled { color: #747974 !important; background: #f3f5f1 !important; }
+select option { color: #252525; background: white; }
+footer {
+  color: rgba(255,255,255,.82) !important;
+  background: linear-gradient(180deg, #1f4d3a, #15382a) !important;
+  border-top-color: rgba(255,255,255,.1);
+}
+footer h3, footer h4, footer strong { color: white !important; }
+footer p, footer a { color: rgba(255,255,255,.72) !important; }
+footer a:hover { color: #dcebd7 !important; }
+.notification-panel, .Toastify__toast {
+  color: #252525;
+  background: #ffffff !important;
+  border-color: rgba(31,77,58,.16);
+  box-shadow: 0 20px 55px rgba(31,77,58,.2) !important;
+}
+.notification-head strong, .notification-list strong { color: #1f4d3a; }
+.notification-head button { color: #d96c4a !important; }
+.notification-list > button { color: #252525; }
+.notification-list > button:hover, .notification-list > button.unread { background: #f0f5ed; }
+.notification-list > button.unread { box-shadow: inset 3px 0 #d96c4a; }
+.notification-bell b { color: white; background: #d96c4a; border-color: #1f4d3a; }
+.Toastify__progress-bar { background: linear-gradient(90deg, #1f4d3a, #a8c3a0, #d96c4a) !important; }
+.favorite-button { color: white; background: rgba(31,45,38,.78); border-color: rgba(255,255,255,.35); }
+.favorite-button:hover { background: rgba(217,108,74,.9); }
+.favorite-button.active { color: white; background: #d96c4a; border-color: rgba(255,255,255,.55); }
+.cook-profile__avatar, .profile-photo, .earning-card.featured { background: linear-gradient(135deg, #1f4d3a, #547d65) !important; }
+.food-stats .card strong, .earning-card strong { color: #1f4d3a; }
+.food-table th, .admin-table th, .admin-summary-row { color: #667068 !important; background: #f0f5ed !important; }
+.food-table td, .admin-table td { color: #525853 !important; border-color: rgba(31,77,58,.1) !important; }
+.food-table tr:hover td, .admin-table tbody tr:hover td { background: rgba(168,195,160,.11); }
+.row-actions a, .row-actions button, .moderation-actions button { color: #1f4d3a !important; background: #e8f0e5 !important; border-color: rgba(31,77,58,.14) !important; }
+.bar-track span, .admin-chart span { background: linear-gradient(180deg, #a8c3a0, #1f4d3a 62%, #d96c4a) !important; }
+.status-pill, .payment-status, .verified-badge, .success-banner { color: #1f4d3a !important; background: #e8f0e5 !important; border-color: rgba(31,77,58,.14) !important; }
+.admin-sidebar { background: linear-gradient(180deg, #1f4d3a 0%, #183f30 72%, #123326 100%) !important; border-right-color: rgba(255,255,255,.1); }
+.admin-sidebar nav a { color: rgba(255,255,255,.7) !important; }
+.admin-sidebar nav a:hover, .admin-sidebar nav a.active { color: white !important; background: rgba(255,255,255,.11) !important; }
+.admin-sidebar nav a.active { box-shadow: inset 3px 0 #d96c4a; }
+.admin-logo span { color: #dcebd7 !important; }
+.admin-topbar { background: rgba(255,248,238,.94) !important; border-color: rgba(31,77,58,.11) !important; }
+.admin-top-actions button { color: #1f4d3a; background: white !important; border-color: rgba(31,77,58,.14) !important; }
+.admin-content { color: #252525; }
+.admin-status, .role-chip { color: #58615a; background: #eef1ec; }
+.admin-status.active, .admin-status.approved, .admin-status.resolved { color: #1f4d3a; background: #e1eddd; }
+.admin-status.pending, .admin-status.investigating { color: #96611f; background: #fff0d5; }
+.admin-status.suspended, .admin-status.flagged, .admin-status.rejected { color: #a44231; background: #f9e2db; }
+.report-list > button, .admin-complaint-list > button { color: #252525; }
+.report-list > button:hover, .report-list > button.selected,
+.admin-complaint-list > button.selected { background: #e8f0e5 !important; box-shadow: inset 3px 0 #d96c4a; }
+.favorites-hero { background: linear-gradient(180deg, rgba(168,195,160,.24), transparent); }
+.favorites-message > span { color: #d96c4a; background: #fae8e2; border-color: rgba(217,108,74,.18); }
+.complaint-modal { background: rgba(20,45,35,.68); }
+.complaint-status { color: #96611f; background: #fff0d5; }
+.complaint-status.approved, .complaint-status.refunded, .complaint-status.replacement-sent { color: #1f4d3a; background: #e1eddd; }
+.complaint-status.rejected { color: #a44231; background: #f9e2db; }
+.complaint-solutions label.selected { border-color: #1f4d3a; background: #e8f0e5; }
+.error-banner { color: #943b2c; background: #f9e2db; border: 1px solid rgba(217,108,74,.16); }
+.logout-button { color: #b94e34; background: #fae8e2; border-color: rgba(217,108,74,.2); }
+.logout-button:hover { color: white; background: #d96c4a; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .card, .btn, header nav a, footer a, .favorite-button {
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease, color .2s ease;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-card-hover); }
+}
+
+/* TasteLoop premium warm-earth palette — final active theme. */
+:root {
+  --color-bg: #f5e8d3;
+  --color-surface: #fff9f1;
+  --color-surface-alt: #eee1cc;
+  --color-border: rgba(74, 44, 26, .12);
+  --color-border-strong: rgba(74, 44, 26, .25);
+  --color-ink: #4a2c1a;
+  --color-ink-soft: #725844;
+  --color-ink-faint: #9a806c;
+  --color-forest: #2e4a17;
+  --color-forest-tint: #e4eadb;
+  --color-chili: #6b3e1e;
+  --color-mustard: #f4b63d;
+  --color-mustard-dark: #8d5c08;
+  --color-mustard-tint: #fbe8bb;
+  --radius-sm: 14px;
+  --radius-md: 22px;
+  --radius-lg: 24px;
+  --shadow-card: 0 12px 34px rgba(74, 44, 26, .09);
+  --shadow-card-hover: 0 20px 46px rgba(74, 44, 26, .15);
+}
+html { background: #f5e8d3; }
+body {
+  color: #4a2c1a;
+  background:
+    radial-gradient(circle at 7% 3%, rgba(244,182,61,.12), transparent 30rem),
+    radial-gradient(circle at 94% 13%, rgba(46,74,23,.07), transparent 28rem),
+    #f5e8d3;
+}
+body::before { opacity: .1; background-image: linear-gradient(rgba(74,44,26,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(74,44,26,.035) 1px, transparent 1px); }
+::selection { color: #2d1a0e; background: #f4b63d; }
+* { scrollbar-color: #c99a3b #eadbc3; }
+h1, h2, h3, h4, h5, h6 { color: #2e4a17; }
+strong, label { color: #4a2c1a; }
+p, small { color: #725844; }
+.card { color: #4a2c1a; background: #fff9f1; border-color: rgba(74,44,26,.12); border-radius: 22px; box-shadow: var(--shadow-card); }
+.card:hover { border-color: rgba(107,62,30,.28); }
+.eyebrow { color: #6b3e1e; }
+.eyebrow::before { background: linear-gradient(90deg, #6b3e1e, #f4b63d); }
+.stitched { color: #2e4a17; background: #e4eadb; border-color: rgba(46,74,23,.13); }
+.btn { border-radius: 16px; }
+.btn-primary {
+  color: #38220f;
+  background: #f4b63d;
+  box-shadow: 0 9px 22px rgba(145,98,13,.19), inset 0 1px rgba(255,255,255,.35);
+}
+.btn-primary:hover { color: #2c1a0b; background: #dda22f; }
+.btn-secondary { color: #fff9f1; background: #6b3e1e; border-color: #6b3e1e; }
+.btn-secondary:hover { color: white; background: #553017; border-color: #553017; }
+.btn-forest { color: white; background: #2e4a17; box-shadow: 0 9px 22px rgba(46,74,23,.18); }
+.btn-forest:hover { color: white; background: #243b12; }
+header:not(.admin-topbar), .cook-nav { background: rgba(46,74,23,.97) !important; border-bottom-color: rgba(255,249,241,.12) !important; box-shadow: 0 10px 32px rgba(46,74,23,.2); }
+header nav a, .cook-nav__link { color: rgba(255,249,241,.76) !important; }
+header nav a:hover, .cook-nav__link:hover, .cook-nav__link.active { color: #fff9f1 !important; }
+.cook-nav__logo, .cook-profile strong, header strong { color: #fff9f1; }
+header .btn-primary { color: #38220f; background: #f4b63d; }
+header .btn-secondary { color: #fff9f1; background: #6b3e1e; border-color: rgba(255,249,241,.2); }
+header .btn-secondary:hover { background: #553017; }
+header .notification-bell { color: #fff9f1; background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18); }
+header .logout-button { color: #fff9f1; background: rgba(107,62,30,.8); border-color: rgba(255,255,255,.18); }
+input, select, textarea, .field input, .food-field input, .food-field select, .food-field textarea,
+.admin-select, .row-select, .period-select, .food-search input, .manage-toolbar select { color: #4a2c1a !important; background: #fff9f1 !important; border-color: rgba(74,44,26,.23) !important; border-radius: 14px; }
+input::placeholder, textarea::placeholder { color: #a58d79; }
+input:focus, select:focus, textarea:focus, .field input:focus { border-color: #6b3e1e !important; box-shadow: 0 0 0 4px rgba(244,182,61,.22) !important; }
+input:disabled { color: #8d7561 !important; background: #eee1cc !important; }
+select option { color: #4a2c1a; background: #fff9f1; }
+footer { color: rgba(255,249,241,.82) !important; background: linear-gradient(180deg, #2e4a17, #243b12) !important; border-top-color: rgba(255,249,241,.1); }
+footer h3, footer h4, footer strong { color: #fff9f1 !important; }
+footer p, footer a { color: rgba(255,249,241,.72) !important; }
+footer a:hover { color: #f4b63d !important; }
+.notification-panel, .Toastify__toast { color: #4a2c1a; background: #fff9f1 !important; border-color: rgba(74,44,26,.16); box-shadow: 0 20px 55px rgba(74,44,26,.18) !important; }
+.notification-head strong, .notification-list strong { color: #2e4a17; }
+.notification-head button { color: #6b3e1e !important; }
+.notification-list > button { color: #4a2c1a; }
+.notification-list > button:hover, .notification-list > button.unread { background: #f5e8d3; }
+.notification-list > button.unread { box-shadow: inset 3px 0 #f4b63d; }
+.notification-bell b { color: #38220f; background: #f4b63d; border-color: #2e4a17; }
+.Toastify__progress-bar { background: linear-gradient(90deg, #2e4a17, #f4b63d, #6b3e1e) !important; }
+.favorite-button { color: #fff9f1; background: rgba(74,44,26,.78); }
+.favorite-button:hover, .favorite-button.active { color: #38220f; background: #f4b63d; }
+.cook-profile__avatar, .profile-photo, .earning-card.featured { background: linear-gradient(135deg, #2e4a17, #567238) !important; }
+.food-stats .card strong, .earning-card strong { color: #2e4a17; }
+.food-table th, .admin-table th, .admin-summary-row { color: #725844 !important; background: #eee1cc !important; }
+.food-table td, .admin-table td { color: #654b38 !important; border-color: rgba(74,44,26,.1) !important; }
+.food-table tr:hover td, .admin-table tbody tr:hover td { background: rgba(244,182,61,.09); }
+.row-actions a, .row-actions button, .moderation-actions button { color: #2e4a17 !important; background: #e4eadb !important; border-color: rgba(46,74,23,.14) !important; }
+.bar-track span, .admin-chart span { background: linear-gradient(180deg, #f4b63d, #6b3e1e) !important; }
+.status-pill, .payment-status, .verified-badge, .success-banner { color: #2e4a17 !important; background: #e4eadb !important; border-color: rgba(46,74,23,.14) !important; }
+.admin-sidebar { background: linear-gradient(180deg, #2e4a17 0%, #253d13 72%, #1e3210 100%) !important; }
+.admin-sidebar nav a { color: rgba(255,249,241,.7) !important; }
+.admin-sidebar nav a:hover, .admin-sidebar nav a.active { color: #fff9f1 !important; background: rgba(255,255,255,.1) !important; }
+.admin-sidebar nav a.active { box-shadow: inset 3px 0 #f4b63d; }
+.admin-logo span { color: #f4d994 !important; }
+.admin-topbar { background: rgba(245,232,211,.94) !important; border-color: rgba(74,44,26,.11) !important; }
+.admin-top-actions button { color: #2e4a17; background: #fff9f1 !important; border-color: rgba(74,44,26,.13) !important; }
+.admin-content { color: #4a2c1a; }
+.admin-status, .role-chip { color: #725844; background: #eee1cc; }
+.admin-status.active, .admin-status.approved, .admin-status.resolved { color: #2e4a17; background: #e4eadb; }
+.admin-status.pending, .admin-status.investigating { color: #8d5c08; background: #fbe8bb; }
+.admin-status.suspended, .admin-status.flagged, .admin-status.rejected { color: #7d3e25; background: #f3ddd0; }
+.report-list > button, .admin-complaint-list > button { color: #4a2c1a; }
+.report-list > button:hover, .report-list > button.selected, .admin-complaint-list > button.selected { background: #eee1cc !important; box-shadow: inset 3px 0 #f4b63d; }
+.favorites-hero { background: linear-gradient(180deg, rgba(244,182,61,.14), transparent); }
+.favorites-message > span { color: #6b3e1e; background: #f3ddd0; border-color: rgba(107,62,30,.16); }
+.complaint-modal { background: rgba(46,55,25,.68); }
+.complaint-status { color: #8d5c08; background: #fbe8bb; }
+.complaint-status.approved, .complaint-status.refunded, .complaint-status.replacement-sent { color: #2e4a17; background: #e4eadb; }
+.complaint-status.rejected { color: #7d3e25; background: #f3ddd0; }
+.complaint-solutions label.selected { border-color: #2e4a17; background: #e4eadb; }
+.error-banner { color: #793b24; background: #f3ddd0; border-color: rgba(107,62,30,.15); }
+.logout-button { color: #fff9f1; background: #6b3e1e; border-color: #6b3e1e; }
+.logout-button:hover { color: #fff9f1; background: #553017; }
+
+/* TasteLoop premium soft-green palette — final active theme. */
+:root {
+  color-scheme: light;
+  --color-bg: #f7f6f0;
+  --color-surface: #ffffff;
+  --color-surface-alt: #dceee8;
+  --color-border: rgba(93, 156, 138, .14);
+  --color-border-strong: rgba(93, 156, 138, .32);
+  --color-ink: #222222;
+  --color-ink-soft: #5d6361;
+  --color-ink-faint: #8b918f;
+  --color-forest: #5d9c8a;
+  --color-forest-tint: #dceee8;
+  --color-chili: #5d9c8a;
+  --color-mustard: #8a9a5b;
+  --color-mustard-dark: #65733c;
+  --color-mustard-tint: #edf0df;
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 20px;
+  --shadow-card: 0 10px 30px rgba(47, 88, 77, .08);
+  --shadow-card-hover: 0 17px 40px rgba(47, 88, 77, .13);
+  --font-body: 'Manrope', system-ui, sans-serif;
+  --font-display: 'Manrope', system-ui, sans-serif;
+}
+html { background: #f7f6f0; }
+body {
+  color: #222222;
+  background:
+    radial-gradient(circle at 7% 4%, rgba(220,238,232,.55), transparent 31rem),
+    radial-gradient(circle at 94% 12%, rgba(138,154,91,.06), transparent 28rem),
+    #f7f6f0;
+  font-family: var(--font-body);
+}
+body::before { opacity: .07; background-image: linear-gradient(rgba(93,156,138,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(93,156,138,.04) 1px, transparent 1px); }
+::selection { color: white; background: #5d9c8a; }
+* { scrollbar-color: #8ebbad #edf1ed; }
+h1, h2, h3, h4, h5, h6 { color: #222222; font-family: var(--font-display); font-weight: 800; letter-spacing: -.025em; }
+strong, label { color: #222222; }
+p, small { color: #5d6361; }
+.card { color: #222222; background: #ffffff; border-color: rgba(93,156,138,.13); border-radius: 20px; box-shadow: var(--shadow-card); }
+.card:hover { border-color: rgba(93,156,138,.34); }
+.eyebrow { color: #5d9c8a; }
+.eyebrow::before { background: #8a9a5b; }
+.stitched { color: #53622f; background: #edf0df; border-color: rgba(138,154,91,.17); }
+.btn { border-radius: 13px; }
+.btn-primary, .btn-forest { color: white; background: #5d9c8a; border-color: #5d9c8a; box-shadow: 0 8px 20px rgba(93,156,138,.2); }
+.btn-primary:hover, .btn-forest:hover { color: white; background: #487f70; border-color: #487f70; }
+.btn-secondary { color: #4d8978; background: #ffffff; border-color: #5d9c8a; box-shadow: none; }
+.btn-secondary:hover { color: #3f7164; background: #dceee8; border-color: #4d8978; }
+header:not(.admin-topbar), .cook-nav { color: #222222; background: rgba(255,255,255,.94) !important; border-bottom-color: rgba(93,156,138,.13) !important; box-shadow: 0 8px 28px rgba(47,88,77,.08); }
+header nav a, .cook-nav__link { color: #636a67 !important; }
+header nav a:hover, .cook-nav__link:hover, .cook-nav__link.active { color: #4d8978 !important; }
+.cook-nav__logo, .cook-profile strong, header strong { color: #222222; }
+header img[src='/tasteloop-logo.png'] { background: #5d9c8a; padding: 5px 9px; border-radius: 12px; }
+header .btn-primary { color: white; background: #5d9c8a; border-color: #5d9c8a; }
+header .btn-secondary { color: #4d8978; background: white; border-color: #5d9c8a; }
+header .btn-secondary:hover { color: #3f7164; background: #dceee8; }
+header .notification-bell { color: #4d8978; background: #f7faf8; border-color: rgba(93,156,138,.22); }
+header .logout-button { color: #4d8978; background: #dceee8; border-color: rgba(93,156,138,.22); }
+input, select, textarea, .field input, .food-field input, .food-field select, .food-field textarea,
+.admin-select, .row-select, .period-select, .food-search input, .manage-toolbar select { color: #222222 !important; background: #ffffff !important; border-color: rgba(93,156,138,.28) !important; border-radius: 12px; }
+input::placeholder, textarea::placeholder { color: #9ba19f; }
+input:focus, select:focus, textarea:focus, .field input:focus { border-color: #5d9c8a !important; box-shadow: 0 0 0 4px rgba(93,156,138,.15) !important; }
+input:disabled { color: #7d8380 !important; background: #eef3f0 !important; }
+select option { color: #222222; background: white; }
+footer { color: #5d6361 !important; background: #ffffff !important; border-top: 1px solid rgba(93,156,138,.14); box-shadow: 0 -8px 30px rgba(47,88,77,.05); }
+footer h3, footer h4, footer strong { color: #222222 !important; }
+footer p, footer a { color: #68706d !important; }
+footer a:hover { color: #5d9c8a !important; }
+footer img[src='/tasteloop-logo.png'] { background: #5d9c8a; padding: 8px 12px; border-radius: 14px; }
+.notification-panel, .Toastify__toast { color: #222222; background: #ffffff !important; border-color: rgba(93,156,138,.18); box-shadow: 0 20px 55px rgba(47,88,77,.16) !important; }
+.notification-head strong, .notification-list strong { color: #222222; }
+.notification-head button { color: #5d9c8a !important; }
+.notification-list > button { color: #222222; }
+.notification-list > button:hover, .notification-list > button.unread { background: #eff7f4; }
+.notification-list > button.unread { box-shadow: inset 3px 0 #5d9c8a; }
+.notification-bell b { color: white; background: #8a9a5b; border-color: white; }
+.Toastify__progress-bar { background: #5d9c8a !important; }
+.favorite-button { color: white; background: rgba(34,48,44,.7); }
+.favorite-button:hover, .favorite-button.active { color: white; background: #5d9c8a; }
+.cook-profile__avatar, .profile-photo, .earning-card.featured { background: #5d9c8a !important; }
+.food-stats .card strong, .earning-card strong { color: #4d8978; }
+.food-table th, .admin-table th, .admin-summary-row { color: #67716d !important; background: #eef5f2 !important; }
+.food-table td, .admin-table td { color: #555d5a !important; border-color: rgba(93,156,138,.1) !important; }
+.food-table tr:hover td, .admin-table tbody tr:hover td { background: rgba(220,238,232,.35); }
+.row-actions a, .row-actions button, .moderation-actions button { color: #4d8978 !important; background: #dceee8 !important; border-color: rgba(93,156,138,.16) !important; }
+.bar-track span, .admin-chart span { background: linear-gradient(180deg, #8a9a5b, #5d9c8a) !important; }
+.status-pill, .payment-status, .verified-badge, .success-banner { color: #4d796c !important; background: #dceee8 !important; border-color: rgba(93,156,138,.15) !important; }
+.admin-sidebar { background: #ffffff !important; border-right: 1px solid rgba(93,156,138,.14); box-shadow: 8px 0 25px rgba(47,88,77,.05); }
+.admin-sidebar nav a { color: #68706d !important; }
+.admin-sidebar nav a:hover, .admin-sidebar nav a.active { color: #3f7164 !important; background: #dceee8 !important; }
+.admin-sidebar nav a.active { box-shadow: inset 3px 0 #5d9c8a; }
+.admin-logo { border-bottom-color: rgba(93,156,138,.14); }
+.admin-logo img { background: #5d9c8a !important; padding: 5px; }
+.admin-logo span { color: #4d8978 !important; }
+.admin-account { border-top-color: rgba(93,156,138,.14); }
+.admin-account strong { color: #222222; }
+.admin-topbar { background: rgba(255,255,255,.94) !important; border-color: rgba(93,156,138,.12) !important; }
+.admin-top-actions button { color: #4d8978; background: white !important; border-color: rgba(93,156,138,.15) !important; }
+.admin-content { color: #222222; }
+.admin-status, .role-chip { color: #646c69; background: #eff2ef; }
+.admin-status.active, .admin-status.approved, .admin-status.resolved { color: #4d796c; background: #dceee8; }
+.admin-status.pending, .admin-status.investigating { color: #65733c; background: #edf0df; }
+.admin-status.suspended, .admin-status.flagged, .admin-status.rejected { color: #8e4e4e; background: #f4e3e3; }
+.report-list > button, .admin-complaint-list > button { color: #222222; }
+.report-list > button:hover, .report-list > button.selected, .admin-complaint-list > button.selected { background: #dceee8 !important; box-shadow: inset 3px 0 #5d9c8a; }
+.favorites-hero { background: linear-gradient(180deg, rgba(220,238,232,.58), transparent); }
+.favorites-message > span { color: #65733c; background: #edf0df; border-color: rgba(138,154,91,.16); }
+.complaint-modal { background: rgba(35,56,50,.55); }
+.complaint-status { color: #65733c; background: #edf0df; }
+.complaint-status.approved, .complaint-status.refunded, .complaint-status.replacement-sent { color: #4d796c; background: #dceee8; }
+.complaint-status.rejected { color: #8e4e4e; background: #f4e3e3; }
+.complaint-solutions label.selected { border-color: #5d9c8a; background: #dceee8; }
+.error-banner { color: #8e4e4e; background: #f4e3e3; border-color: rgba(142,78,78,.14); }
+.logout-button { color: #4d8978; background: #dceee8; border-color: rgba(93,156,138,.2); }
+.logout-button:hover { color: white; background: #487f70; }
+
+/* TasteLoop luxury fine-dining palette — final active theme. */
+:root {
+  color-scheme: dark;
+  --color-bg: #071a14;
+  --color-surface: #11251d;
+  --color-surface-alt: #0f3d2e;
+  --color-border: rgba(168, 140, 74, .34);
+  --color-border-strong: #a88c4a;
+  --color-ink: #f5e9c8;
+  --color-ink-soft: #d8ccb0;
+  --color-ink-faint: #a88c4a;
+  --color-forest: #0f3d2e;
+  --color-forest-tint: #11251d;
+  --color-chili: #d8c27a;
+  --color-mustard: #d8c27a;
+  --color-mustard-dark: #d8c27a;
+  --color-mustard-tint: #11251d;
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 20px;
+  --shadow-card: 0 12px 32px rgba(4, 16, 12, .45);
+  --shadow-card-hover: 0 20px 44px rgba(4, 16, 12, .65);
+}
+html { background: #071a14; }
+body { color: #f5e9c8; background: #071a14; }
+body::before { opacity: .12; background-image: linear-gradient(rgba(168,140,74,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(168,140,74,.08) 1px, transparent 1px); }
+::selection { color: #071a14; background: #d8c27a; }
+* { scrollbar-color: #a88c4a #04100c; }
+h1, h2, h3, h4, h5, h6 { color: #f5e9c8; }
+strong, label { color: #f5e9c8; }
+p, small { color: #d8ccb0; }
+.page, .page-content, .cook-page, .cook-main, .customer-profile-page, .admin-shell, .admin-main { background: transparent !important; }
+.card { color: #f5e9c8; background: #11251d; border: 1px solid rgba(168,140,74,.34); border-radius: 20px; box-shadow: var(--shadow-card); }
+.card:hover { border-color: #a88c4a; }
+.eyebrow { color: #d8c27a; }
+.eyebrow::before { background: #d8c27a; }
+.stitched { color: #d8c27a; background: #0f3d2e; border-color: #a88c4a; }
+.btn { border-radius: 13px; }
+.btn-primary { color: #071a14; background: #d8c27a; border-color: #d8c27a; box-shadow: 0 8px 22px rgba(4,16,12,.45); }
+.btn-primary:hover { color: #071a14; background: #a88c4a; border-color: #a88c4a; }
+.btn-secondary, .btn-forest { color: #f5e9c8; background: #0f3d2e; border-color: #a88c4a; box-shadow: none; }
+.btn-secondary:hover, .btn-forest:hover { color: #d8c27a; background: #11251d; border-color: #d8c27a; }
+header:not(.admin-topbar), .cook-nav { color: #f5e9c8; background: rgba(4,16,12,.97) !important; border-bottom-color: rgba(168,140,74,.34) !important; box-shadow: 0 10px 32px rgba(4,16,12,.55); }
+header nav a, .cook-nav__link { color: #d8ccb0 !important; }
+header nav a:hover, .cook-nav__link:hover, .cook-nav__link.active { color: #d8c27a !important; }
+.cook-nav__logo, .cook-profile strong, header strong { color: #f5e9c8; }
+header img[src='/tasteloop-logo.png'] { background: #071a14; border: 1px solid rgba(168,140,74,.34); }
+header .btn-primary { color: #071a14; background: #d8c27a; border-color: #d8c27a; }
+header .btn-secondary { color: #f5e9c8; background: #0f3d2e; border-color: #a88c4a; }
+header .btn-secondary:hover { color: #d8c27a; background: #11251d; }
+header .notification-bell, header .logout-button { color: #d8c27a; background: #11251d; border-color: #a88c4a; }
+.landing-hero { background: #0f3d2e !important; border-bottom: 1px solid #a88c4a; }
+.landing-hero h1, .landing-hero p { color: #f5e9c8; }
+.landing-hero .eyebrow { color: #d8c27a; }
+.landing-why { background: #071a14 !important; }
+.landing-why .card { background: #11251d !important; }
+.landing-why .card h4 { color: #f5e9c8 !important; }
+.landing-why .card p { color: #d8ccb0 !important; }
+input, select, textarea, .field input, .food-field input, .food-field select, .food-field textarea,
+.admin-select, .row-select, .period-select, .food-search input, .manage-toolbar select { color: #f5e9c8 !important; background: #11251d !important; border-color: #a88c4a !important; }
+input::placeholder, textarea::placeholder { color: #d8ccb0; opacity: .7; }
+input:focus, select:focus, textarea:focus, .field input:focus { border-color: #d8c27a !important; box-shadow: 0 0 0 4px rgba(216,194,122,.14) !important; }
+input:disabled { color: #d8ccb0 !important; background: #0f3d2e !important; }
+select option { color: #f5e9c8; background: #11251d; }
+footer { color: #d8ccb0 !important; background: #04100c !important; border-top: 1px solid rgba(168,140,74,.34); box-shadow: 0 -8px 30px rgba(4,16,12,.4); }
+footer h3, footer h4, footer strong { color: #f5e9c8 !important; }
+footer p, footer a { color: #d8ccb0 !important; }
+footer a:hover { color: #d8c27a !important; }
+footer img[src='/tasteloop-logo.png'] { background: #071a14; border: 1px solid rgba(168,140,74,.34); }
+.notification-panel, .Toastify__toast { color: #f5e9c8; background: #11251d !important; border-color: #a88c4a; box-shadow: 0 20px 55px rgba(4,16,12,.65) !important; }
+.notification-head strong, .notification-list strong { color: #f5e9c8; }
+.notification-head button { color: #d8c27a !important; }
+.notification-list > button { color: #f5e9c8; }
+.notification-list > button:hover, .notification-list > button.unread { background: #0f3d2e; }
+.notification-list > button.unread { box-shadow: inset 3px 0 #d8c27a; }
+.notification-bell b { color: #071a14; background: #d8c27a; border-color: #04100c; }
+.Toastify__progress-bar { background: #d8c27a !important; }
+.favorite-button { color: #f5e9c8; background: rgba(4,16,12,.78); border-color: #a88c4a; }
+.favorite-button:hover, .favorite-button.active { color: #071a14; background: #d8c27a; }
+.cook-profile__avatar, .profile-photo, .earning-card.featured { background: #0f3d2e !important; border: 1px solid #a88c4a; }
+.food-stats .card strong, .earning-card strong { color: #d8c27a; }
+.food-table th, .admin-table th, .admin-summary-row { color: #d8c27a !important; background: #0f3d2e !important; }
+.food-table td, .admin-table td { color: #d8ccb0 !important; border-color: rgba(168,140,74,.28) !important; }
+.food-table tr:hover td, .admin-table tbody tr:hover td { background: rgba(15,61,46,.55); }
+.row-actions a, .row-actions button, .moderation-actions button { color: #d8c27a !important; background: #0f3d2e !important; border-color: #a88c4a !important; }
+.bar-track span, .admin-chart span { background: #d8c27a !important; }
+.status-pill, .payment-status, .verified-badge, .success-banner { color: #d8c27a !important; background: #0f3d2e !important; border-color: #a88c4a !important; }
+.admin-sidebar { background: #04100c !important; border-right: 1px solid rgba(168,140,74,.34); box-shadow: 8px 0 25px rgba(4,16,12,.45); }
+.admin-sidebar nav a { color: #d8ccb0 !important; }
+.admin-sidebar nav a:hover, .admin-sidebar nav a.active { color: #d8c27a !important; background: #11251d !important; }
+.admin-sidebar nav a.active { box-shadow: inset 3px 0 #d8c27a; }
+.admin-logo { border-bottom-color: rgba(168,140,74,.34); }
+.admin-logo img { background: #071a14 !important; border-color: #a88c4a; }
+.admin-logo span { color: #d8c27a !important; }
+.admin-account { border-top-color: rgba(168,140,74,.34); }
+.admin-account strong { color: #f5e9c8; }
+.admin-topbar { background: rgba(4,16,12,.97) !important; border-color: rgba(168,140,74,.34) !important; }
+.admin-top-actions button { color: #d8c27a; background: #11251d !important; border-color: #a88c4a !important; }
+.admin-content { color: #f5e9c8; }
+.admin-status, .role-chip, .admin-status.active, .admin-status.approved, .admin-status.resolved,
+.admin-status.pending, .admin-status.investigating, .admin-status.suspended, .admin-status.flagged, .admin-status.rejected { color: #d8c27a; background: #0f3d2e; }
+.report-list > button, .admin-complaint-list > button { color: #f5e9c8; }
+.report-list > button:hover, .report-list > button.selected, .admin-complaint-list > button.selected { background: #0f3d2e !important; box-shadow: inset 3px 0 #d8c27a; }
+.favorites-hero { background: #0f3d2e; border-bottom-color: #a88c4a; }
+.favorites-message > span { color: #d8c27a; background: #0f3d2e; border-color: #a88c4a; }
+.complaint-modal { background: rgba(4,16,12,.82); }
+.complaint-status, .complaint-status.approved, .complaint-status.refunded, .complaint-status.replacement-sent, .complaint-status.rejected { color: #d8c27a; background: #0f3d2e; }
+.complaint-solutions label.selected { border-color: #d8c27a; background: #0f3d2e; }
+.error-banner { color: #f5e9c8; background: #0f3d2e; border-color: #a88c4a; }
+.logout-button { color: #d8c27a; background: #11251d; border-color: #a88c4a; }
+.logout-button:hover { color: #071a14; background: #d8c27a; }
+.green, .orange, .red, .yellow { color: #d8c27a !important; background: #0f3d2e !important; }
+.priority.high, .priority.medium, .priority.low { color: #d8c27a; background: #0f3d2e; }
+.donut { background: #d8c27a !important; }
+.donut::before { background: #11251d; }
+
+/* TasteLoop warm home-kitchen palette — final active theme. */
+:root {
+  color-scheme: light;
+  --color-bg: #fdf3ec;
+  --color-surface: #ffffff;
+  --color-surface-alt: #fbe3dc;
+  --color-border: #e7d8cc;
+  --color-border-strong: #d7c3b3;
+  --color-ink: #3e362e;
+  --color-ink-soft: #756b62;
+  --color-ink-faint: #9b9086;
+  --color-forest: #7a8450;
+  --color-forest-tint: #e8ebd9;
+  --color-chili: #e8927c;
+  --color-mustard: #7a8450;
+  --color-mustard-dark: #687242;
+  --color-mustard-tint: #e8ebd9;
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 20px;
+  --shadow-card: 0 10px 30px rgba(62, 54, 46, .09);
+  --shadow-card-hover: 0 18px 42px rgba(62, 54, 46, .14);
+  --font-body: 'Nunito', system-ui, sans-serif;
+  --font-display: 'Poppins', system-ui, sans-serif;
+}
+html { background: #fdf3ec; }
+body { color: #3e362e; background: #fdf3ec; font-family: var(--font-body); }
+body::before { opacity: .1; background-image: linear-gradient(rgba(122,132,80,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(122,132,80,.045) 1px, transparent 1px); }
+::selection { color: #3e362e; background: #fbe3dc; }
+* { scrollbar-color: #7a8450 #f3e7de; }
+h1, h2, h3, h4, h5, h6 { color: #3e362e; font-family: var(--font-display); letter-spacing: -.025em; }
+strong, label { color: #3e362e; }
+p, small { color: #756b62; }
+.page, .page-content, .cook-page, .cook-main, .customer-profile-page, .admin-shell, .admin-main { background: transparent !important; }
+.card { color: #3e362e; background: #ffffff; border: 1px solid #e7d8cc; border-radius: 20px; box-shadow: var(--shadow-card); }
+.card:hover { border-color: #c8c99f; }
+.eyebrow { color: #e8927c; }
+.eyebrow::before { background: #7a8450; }
+.stitched { color: #687242; background: #e8ebd9; border-color: #d7dcbf; }
+.btn { border-radius: 13px; }
+.btn-primary { color: #ffffff; background: #e8927c; border-color: #e8927c; box-shadow: 0 8px 20px rgba(232,146,124,.23); }
+.btn-primary:hover { color: #ffffff; background: #d77f69; border-color: #d77f69; }
+.btn-secondary, .btn-forest { color: #ffffff; background: #7a8450; border-color: #7a8450; box-shadow: none; }
+.btn-secondary:hover, .btn-forest:hover { color: #ffffff; background: #687242; border-color: #687242; }
+header:not(.admin-topbar), .cook-nav { color: #3e362e; background: rgba(255,255,255,.95) !important; border-bottom-color: #e7d8cc !important; box-shadow: 0 8px 26px rgba(62,54,46,.08); }
+header nav a, .cook-nav__link { color: #685f57 !important; }
+header nav a:hover, .cook-nav__link:hover, .cook-nav__link.active { color: #7a8450 !important; }
+.cook-nav__logo, .cook-profile strong, header strong { color: #3e362e; }
+header img[src='/tasteloop-logo.png'] { background: transparent; border: 0; padding: 0; }
+header .btn-primary { color: #ffffff; background: #e8927c; border-color: #e8927c; }
+header .btn-secondary { color: #687242; background: #ffffff; border-color: #7a8450; }
+header .btn-secondary:hover { color: #ffffff; background: #7a8450; }
+header .notification-bell { color: #687242; background: #ffffff; border-color: #d7dcbf; }
+header .logout-button { color: #d77f69; background: #fbe3dc; border-color: #efb7a8; }
+.landing-hero { color: #3e362e; background: #fdf3ec !important; border-bottom: 1px solid #e7d8cc; }
+.landing-hero h1 { color: #3e362e; }
+.landing-hero p { color: #756b62; }
+.landing-hero .eyebrow { color: #e8927c; }
+.landing-why { background: #ffffff !important; border-block: 1px solid #e7d8cc; }
+.landing-why h2, .landing-why .card h4 { color: #3e362e !important; }
+.landing-why .card { background: #fdf3ec !important; border-color: #e7d8cc; }
+.landing-why .card p { color: #756b62 !important; }
+input, select, textarea, .field input, .food-field input, .food-field select, .food-field textarea,
+.admin-select, .row-select, .period-select, .food-search input, .manage-toolbar select { color: #3e362e !important; background: #ffffff !important; border-color: #d7c3b3 !important; }
+input::placeholder, textarea::placeholder { color: #a79c93; opacity: 1; }
+input:focus, select:focus, textarea:focus, .field input:focus { border-color: #7a8450 !important; box-shadow: 0 0 0 4px rgba(122,132,80,.14) !important; }
+input:disabled { color: #8c8178 !important; background: #f3e9e2 !important; }
+select option { color: #3e362e; background: #ffffff; }
+footer { color: #fdf3ec !important; background: #3e362e !important; border-top: 1px solid #6b5e52; box-shadow: 0 -8px 28px rgba(62,54,46,.1); }
+footer h3, footer h4, footer strong { color: #ffffff !important; }
+footer p, footer a { color: #e7d8cc !important; }
+footer a:hover { color: #e8927c !important; }
+footer img[src='/tasteloop-logo.png'] { background: transparent; border: 0; padding: 0; }
+.notification-panel, .Toastify__toast { color: #3e362e; background: #ffffff !important; border-color: #e7d8cc; box-shadow: 0 20px 55px rgba(62,54,46,.16) !important; }
+.notification-head strong, .notification-list strong { color: #3e362e; }
+.notification-head button { color: #e8927c !important; }
+.notification-list > button { color: #3e362e; }
+.notification-list > button:hover, .notification-list > button.unread { background: #fdf3ec; }
+.notification-list > button.unread { box-shadow: inset 3px 0 #e8927c; }
+.notification-bell b { color: #ffffff; background: #e8927c; border-color: #ffffff; }
+.Toastify__progress-bar { background: #e8927c !important; }
+.favorite-button { color: #ffffff; background: rgba(62,54,46,.7); border-color: #ffffff; }
+.favorite-button:hover, .favorite-button.active { color: #ffffff; background: #e8927c; }
+.cook-profile__avatar, .profile-photo, .earning-card.featured { background: #7a8450 !important; border-color: #7a8450; }
+.food-stats .card strong, .earning-card strong { color: #687242; }
+.food-table th, .admin-table th, .admin-summary-row { color: #756b62 !important; background: #f4eee8 !important; }
+.food-table td, .admin-table td { color: #685f57 !important; border-color: #e7d8cc !important; }
+.food-table tr:hover td, .admin-table tbody tr:hover td { background: #fdf3ec; }
+.row-actions a, .row-actions button, .moderation-actions button { color: #687242 !important; background: #e8ebd9 !important; border-color: #d7dcbf !important; }
+.bar-track span, .admin-chart span { background: #7a8450 !important; }
+.status-pill, .payment-status, .verified-badge, .success-banner { color: #687242 !important; background: #e8ebd9 !important; border-color: #d7dcbf !important; }
+.admin-sidebar { background: #ffffff !important; border-right: 1px solid #e7d8cc; box-shadow: 8px 0 24px rgba(62,54,46,.05); }
+.admin-sidebar nav a { color: #756b62 !important; }
+.admin-sidebar nav a:hover, .admin-sidebar nav a.active { color: #687242 !important; background: #e8ebd9 !important; }
+.admin-sidebar nav a.active { box-shadow: inset 3px 0 #e8927c; }
+.admin-logo { border-bottom-color: #e7d8cc; }
+.admin-logo img { background: transparent !important; border: 0; padding: 0; }
+.admin-logo span { color: #7a8450 !important; }
+.admin-account { border-top-color: #e7d8cc; }
+.admin-account strong { color: #3e362e; }
+.admin-topbar { background: rgba(255,255,255,.95) !important; border-color: #e7d8cc !important; }
+.admin-top-actions button { color: #687242; background: #ffffff !important; border-color: #d7dcbf !important; }
+.admin-content { color: #3e362e; }
+.admin-status, .role-chip { color: #756b62; background: #f1ebe6; }
+.admin-status.active, .admin-status.approved, .admin-status.resolved { color: #687242; background: #e8ebd9; }
+.admin-status.pending, .admin-status.investigating { color: #9a624f; background: #fbe3dc; }
+.admin-status.suspended, .admin-status.flagged, .admin-status.rejected { color: #a94f45; background: #f7dfdc; }
+.report-list > button, .admin-complaint-list > button { color: #3e362e; }
+.report-list > button:hover, .report-list > button.selected, .admin-complaint-list > button.selected { background: #fdf3ec !important; box-shadow: inset 3px 0 #e8927c; }
+.favorites-hero { background: #fbe3dc; border-bottom-color: #e7d8cc; }
+.favorites-message > span { color: #687242; background: #e8ebd9; border-color: #d7dcbf; }
+.complaint-modal { background: rgba(62,54,46,.6); }
+.complaint-status { color: #9a624f; background: #fbe3dc; }
+.complaint-status.approved, .complaint-status.refunded, .complaint-status.replacement-sent { color: #687242; background: #e8ebd9; }
+.complaint-status.rejected { color: #a94f45; background: #f7dfdc; }
+.complaint-solutions label.selected { border-color: #7a8450; background: #e8ebd9; }
+.error-banner { color: #a94f45; background: #f7dfdc; border-color: #efbbb5; }
+.logout-button { color: #d77f69; background: #fbe3dc; border-color: #efb7a8; }
+.logout-button:hover { color: #ffffff; background: #d77f69; }
+.green { color: #687242 !important; background: #e8ebd9 !important; }
+.orange, .red { color: #d77f69 !important; background: #fbe3dc !important; }
+.yellow { color: #687242 !important; background: #e8ebd9 !important; }
+.priority.high { color: #a94f45; background: #f7dfdc; }
+.priority.medium { color: #9a624f; background: #fbe3dc; }
+.priority.low { color: #687242; background: #e8ebd9; }
+.donut { background: #7a8450 !important; }
+.donut::before { background: #ffffff; }
+
+/* Light and dark appearance -------------------------------------------------
+   This is intentionally the final theme layer so every legacy page shares
+   the same semantic surfaces, text, borders and controls. */
+:root {
+  color-scheme: dark;
+  --theme-bg: #171411;
+  --theme-surface: #241f1b;
+  --theme-surface-alt: #302821;
+  --theme-surface-muted: #2a241f;
+  --theme-text: #fdf3ec;
+  --theme-text-soft: #d6c7ba;
+  --theme-text-faint: #aa9b8e;
+  --theme-primary: #ee9a83;
+  --theme-primary-hover: #f2aa96;
+  --theme-secondary: #a9b475;
+  --theme-secondary-hover: #bec98b;
+  --theme-border: #493d34;
+  --theme-border-strong: #665548;
+  --theme-nav: rgba(24, 20, 17, .95);
+  --theme-footer: #100e0c;
+  --theme-footer-text: #fdf3ec;
+  --theme-success-bg: #2c3824;
+  --theme-danger-bg: #422725;
+  --theme-warning-bg: #452f27;
+  --theme-shadow: 0 14px 38px rgba(0, 0, 0, .30);
+  --color-bg: var(--theme-bg);
+  --color-surface: var(--theme-surface);
+  --color-surface-alt: var(--theme-surface-alt);
+  --color-border: var(--theme-border);
+  --color-border-strong: var(--theme-border-strong);
+  --color-ink: var(--theme-text);
+  --color-ink-soft: var(--theme-text-soft);
+  --color-ink-faint: var(--theme-text-faint);
+  --color-forest: var(--theme-secondary);
+  --color-forest-tint: var(--theme-success-bg);
+  --color-chili: var(--theme-primary);
+  --color-mustard: var(--theme-primary);
+  --color-mustard-dark: var(--theme-primary-hover);
+  --color-mustard-tint: var(--theme-surface-alt);
+  --shadow-card: var(--theme-shadow);
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --theme-bg: #171411;
+  --theme-surface: #241f1b;
+  --theme-surface-alt: #302821;
+  --theme-surface-muted: #2a241f;
+  --theme-text: #fdf3ec;
+  --theme-text-soft: #d6c7ba;
+  --theme-text-faint: #aa9b8e;
+  --theme-primary: #ee9a83;
+  --theme-primary-hover: #f2aa96;
+  --theme-secondary: #a9b475;
+  --theme-secondary-hover: #bec98b;
+  --theme-border: #493d34;
+  --theme-border-strong: #665548;
+  --theme-nav: rgba(24, 20, 17, .95);
+  --theme-footer: #100e0c;
+  --theme-footer-text: #fdf3ec;
+  --theme-success-bg: #2c3824;
+  --theme-danger-bg: #422725;
+  --theme-warning-bg: #452f27;
+  --theme-shadow: 0 14px 38px rgba(0, 0, 0, .30);
+}
+
+html, body, #root { min-height: 100%; }
+body, .page, .page-content, .admin-main, .admin-content, .cook-page {
+  color: var(--theme-text) !important;
+  background-color: var(--theme-bg) !important;
+}
+body { transition: color .22s ease, background-color .22s ease; }
+h1, h2, h3, h4, h5, h6, label, legend, strong, th { color: var(--theme-text) !important; }
+p, small, .muted, .subtitle { color: var(--theme-text-soft) !important; }
+hr { border-color: var(--theme-border) !important; }
+
+.card, .auth-card, .role-card, .food-card, .cook-card, .stat-card,
+.profile-card, .order-card, .complaint-card, .complaint-panel,
+.complaint-detail, .payment-card, .checkout-card, .earning-card,
+.food-form-card, .admin-card, .admin-panel, .admin-table-wrap,
+.dashboard-card, .summary-card, .modal-content, .dialog,
+.notification-panel, .Toastify__toast {
+  color: var(--theme-text) !important;
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  box-shadow: var(--theme-shadow) !important;
+}
+
+header:not(.admin-topbar), .cook-nav, .admin-topbar {
+  color: var(--theme-text) !important;
+  background: var(--theme-nav) !important;
+  border-color: var(--theme-border) !important;
+}
+header a, header strong, .cook-nav__link, .cook-nav__logo,
+.cook-profile strong, .admin-top-actions span { color: var(--theme-text-soft) !important; }
+header nav a:hover, header nav a[aria-current='page'], .cook-nav__link.active {
+  color: var(--theme-secondary) !important;
+}
+
+.btn-primary, header .btn-primary, .primary-button {
+  color: #ffffff !important;
+  background: var(--theme-primary) !important;
+  border-color: var(--theme-primary) !important;
+}
+.btn-primary:hover, header .btn-primary:hover, .primary-button:hover { background: var(--theme-primary-hover) !important; }
+.btn-secondary, header .btn-secondary, .secondary-button {
+  color: var(--theme-secondary) !important;
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-secondary) !important;
+}
+.btn-secondary:hover, header .btn-secondary:hover, .secondary-button:hover,
+.btn-forest, .row-actions a:hover, .row-actions button:hover {
+  color: var(--theme-bg) !important;
+  background: var(--theme-secondary) !important;
+}
+
+input, select, textarea, .field input, .food-field input, .food-field select,
+.food-field textarea, .admin-select, .row-select, .period-select,
+.food-search input, .manage-toolbar select {
+  color: var(--theme-text) !important;
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border-strong) !important;
+}
+input::placeholder, textarea::placeholder { color: var(--theme-text-faint) !important; }
+input:focus, select:focus, textarea:focus, .field input:focus {
+  border-color: var(--theme-secondary) !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--theme-secondary) 20%, transparent) !important;
+}
+input:disabled { color: var(--theme-text-faint) !important; background: var(--theme-surface-muted) !important; }
+select option { color: var(--theme-text) !important; background: var(--theme-surface) !important; }
+
+.landing-hero, .favorites-hero {
+  color: var(--theme-text) !important;
+  background: var(--theme-bg) !important;
+  border-color: var(--theme-border) !important;
+}
+.landing-hero h1, .landing-why h2, .landing-why .card h4 { color: var(--theme-text) !important; }
+.landing-hero p, .landing-why .card p { color: var(--theme-text-soft) !important; }
+.landing-hero-badge { color: var(--theme-text) !important; background: var(--theme-surface) !important; border-color: var(--theme-border) !important; }
+.landing-why { background: var(--theme-surface-muted) !important; border-color: var(--theme-border) !important; }
+.landing-why .card { background: var(--theme-surface) !important; border-color: var(--theme-border) !important; }
+
+.food-table th, .admin-table th, .admin-summary-row {
+  color: var(--theme-text-soft) !important;
+  background: var(--theme-surface-alt) !important;
+}
+.food-table td, .admin-table td { color: var(--theme-text-soft) !important; border-color: var(--theme-border) !important; }
+.food-table tr:hover td, .admin-table tbody tr:hover td,
+.notification-list > button:hover, .notification-list > button.unread,
+.report-list > button:hover, .report-list > button.selected,
+.admin-complaint-list > button.selected { background: var(--theme-surface-alt) !important; }
+
+.admin-sidebar { background: var(--theme-surface) !important; border-color: var(--theme-border) !important; }
+.admin-sidebar nav a, .admin-account small { color: var(--theme-text-soft) !important; }
+.admin-sidebar nav a:hover, .admin-sidebar nav a.active {
+  color: var(--theme-secondary) !important;
+  background: var(--theme-success-bg) !important;
+}
+.admin-account, .admin-logo { border-color: var(--theme-border) !important; }
+.admin-account strong { color: var(--theme-text) !important; }
+
+.notification-head strong, .notification-list strong, .notification-list > button,
+.report-list > button, .admin-complaint-list > button { color: var(--theme-text) !important; }
+.notification-list > button, .report-list > button, .admin-complaint-list > button { border-color: var(--theme-border) !important; }
+.Toastify__close-button { color: var(--theme-text) !important; }
+.Toastify__progress-bar { background: var(--theme-primary) !important; }
+.complaint-modal { background: rgba(0, 0, 0, .68) !important; }
+.complaint-status, .admin-status.pending, .admin-status.investigating { color: var(--theme-primary) !important; background: var(--theme-warning-bg) !important; }
+.complaint-status.approved, .complaint-status.refunded, .complaint-status.replacement-sent,
+.admin-status.active, .admin-status.approved, .admin-status.resolved, .status-pill,
+.payment-status, .verified-badge, .success-banner, .green {
+  color: var(--theme-secondary) !important;
+  background: var(--theme-success-bg) !important;
+  border-color: var(--theme-secondary) !important;
+}
+.complaint-status.rejected, .admin-status.suspended, .admin-status.flagged,
+.admin-status.rejected, .error-banner, .priority.high {
+  color: var(--theme-primary) !important;
+  background: var(--theme-danger-bg) !important;
+  border-color: var(--theme-primary) !important;
+}
+.order-status-badge { color: var(--theme-secondary) !important; background: var(--theme-success-bg) !important; }
+.order-status-badge.cancelled { color: var(--theme-primary) !important; background: var(--theme-danger-bg) !important; }
+.complaint-solutions label { background: var(--theme-surface) !important; border-color: var(--theme-border) !important; }
+.complaint-solutions label.selected { background: var(--theme-success-bg) !important; border-color: var(--theme-secondary) !important; }
+.row-actions a, .row-actions button, .moderation-actions button {
+  color: var(--theme-secondary) !important;
+  background: var(--theme-success-bg) !important;
+  border-color: var(--theme-secondary) !important;
+}
+.favorite-button { color: #fff !important; background: rgba(30, 25, 21, .75) !important; }
+.favorite-button:hover, .favorite-button.active { background: var(--theme-primary) !important; }
+.logout-button { color: var(--theme-primary) !important; background: var(--theme-warning-bg) !important; border-color: var(--theme-primary) !important; }
+.logout-button:hover { color: #fff !important; background: var(--theme-primary) !important; }
+.donut { background: var(--theme-secondary) !important; }
+.donut::before { background: var(--theme-surface) !important; }
+footer { color: var(--theme-footer-text) !important; background: var(--theme-footer) !important; border-color: var(--theme-border) !important; }
+footer h3, footer h4, footer strong { color: #ffffff !important; }
+footer p, footer a { color: #e7d8cc !important; }
+footer a:hover { color: var(--theme-primary) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  body { transition: none; }
+}
+
+/* TasteLoop food-board background (dark mode only) */
+html[data-theme='dark'] body {
+  background-color: #171411 !important;
+  background-image:
+    linear-gradient(rgba(10, 9, 8, .58), rgba(10, 9, 8, .72)),
+    url('/tasteloop-dark-background.jpg');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+html[data-theme='dark'] #root,
+html[data-theme='dark'] .page,
+html[data-theme='dark'] .page-content,
+html[data-theme='dark'] .cook-page,
+html[data-theme='dark'] .admin-shell,
+html[data-theme='dark'] .admin-main,
+html[data-theme='dark'] .admin-content {
+  background-color: transparent !important;
+}
+
+html[data-theme='dark'] .landing-hero,
+html[data-theme='dark'] .favorites-hero,
+html[data-theme='dark'] .landing-why {
+  background: rgba(23, 20, 17, .76) !important;
+  backdrop-filter: blur(3px);
+}
+
+html[data-theme='dark'] .card,
+html[data-theme='dark'] .auth-card,
+html[data-theme='dark'] .role-card,
+html[data-theme='dark'] .profile-card,
+html[data-theme='dark'] .order-card,
+html[data-theme='dark'] .complaint-card,
+html[data-theme='dark'] .complaint-panel,
+html[data-theme='dark'] .complaint-detail,
+html[data-theme='dark'] .payment-card,
+html[data-theme='dark'] .checkout-card,
+html[data-theme='dark'] .admin-card,
+html[data-theme='dark'] .admin-panel,
+html[data-theme='dark'] .admin-table-wrap,
+html[data-theme='dark'] .dashboard-card,
+html[data-theme='dark'] .summary-card {
+  background: rgba(36, 31, 27, .94) !important;
+  backdrop-filter: blur(7px);
+}
+
+@media (max-width: 760px) {
+  html[data-theme='dark'] body {
+    background-position: center top;
+    background-attachment: scroll;
+  }
+}

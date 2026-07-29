@@ -9,6 +9,7 @@ from app.api.routes.addresses import router as addresses_router
 from app.api.routes.admin import router as admin_router
 from app.api.routes.cart import router as cart_router
 from app.api.routes.cook import router as cook_router
+from app.api.routes.complaints import router as complaints_router
 from app.api.routes.foods import router as foods_router
 from app.api.routes.favorites import router as favorites_router
 from app.api.routes.marketplace import router as marketplace_router
@@ -47,6 +48,7 @@ app.include_router(notifications_router)
 app.include_router(cart_router)
 app.include_router(orders_router)
 app.include_router(cook_router)
+app.include_router(complaints_router)
 app.include_router(reports_router)
 app.include_router(admin_router)
 

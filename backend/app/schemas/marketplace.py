@@ -138,6 +138,38 @@ class ReviewCreate(BaseModel):
     comment: str = Field(default="", max_length=1000)
 
 
+ComplaintStatus = Literal["pending", "under_review", "approved", "rejected", "refunded", "replacement_sent"]
+
+
+class ComplaintCreate(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    order_id: str
+    issue_type: Literal[
+        "food_damaged_during_delivery", "food_spilled", "wrong_food_received",
+        "missing_food_item", "poor_packaging", "other",
+    ]
+    description: str = Field(min_length=10, max_length=2000)
+    requested_solution: Literal["refund", "replacement"]
+
+
+class ComplaintStatusUpdate(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    complaint_status: ComplaintStatus
+    admin_notes: str | None = Field(default=None, max_length=2000)
+
+
+class ComplaintRefundRequest(BaseModel):
+    refund_type: Literal["full", "partial"]
+    partial_amount: float | None = Field(default=None, gt=0)
+    admin_notes: str | None = Field(default=None, max_length=2000)
+
+
+class ComplaintReplacementRequest(BaseModel):
+    admin_notes: str | None = Field(default=None, max_length=2000)
+
+
 class DeliveryAddressCreate(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
