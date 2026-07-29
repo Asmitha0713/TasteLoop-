@@ -5,6 +5,8 @@
   .grid-2, .grid-3, .grid-4, .footer-grid { grid-template-columns: 1fr !important; }
   .customer-hero-grid, .search-layout, .cart-layout, .checkout-layout, .confirmation-grid { grid-template-columns: 1fr !important; }
   .hide-mobile { display: none !important; }
+  .hero-marketplace-grid { grid-template-columns: 1fr !important; gap: 36px !important; }
+  .hero-marketplace-grid > div:last-child { min-height: 360px !important; }
 }
 
 @media (max-width: 520px) {
@@ -12,4 +14,5 @@
   .container { padding-inline: 16px; }
   header .container { gap: 10px !important; }
   .order-history-row { align-items: flex-start; }
+  .hero-marketplace-grid > div:last-child { min-height: 290px !important; }
 }

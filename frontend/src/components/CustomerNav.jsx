@@ -7,6 +7,7 @@ const links = [
   { to: '/search', label: 'Find Food' },
   { to: '/orders', label: 'My Orders' },
   { to: '/favorites', label: 'Favorites' },
+  { to: '/complaints', label: 'Complaints' },
   { to: '/customer/profile', label: 'Profile' },
 ]
 
@@ -39,7 +40,7 @@ const styles = {
   header: { position: 'sticky', top: 0, zIndex: 50, background: 'rgba(251,245,232,.94)', backdropFilter: 'blur(8px)', borderBottom: '1px solid var(--color-border)' },
   bar: { minHeight: 78, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 22 },
   brand: { display: 'flex', alignItems: 'center', gap: 9, fontFamily: 'var(--font-display)', fontSize: 21, fontWeight: 700, color: 'var(--color-ink)' },
-  logo: { display: 'block', height: 82, width: 238, objectFit: 'contain' },
+  logo: { display: 'block', height: 94, width: 270, objectFit: 'contain' },
   nav: { display: 'flex', gap: 28 },
   link: { fontSize: 14, fontWeight: 700 },
   actions: { display: 'flex', alignItems: 'center', gap: 12 },

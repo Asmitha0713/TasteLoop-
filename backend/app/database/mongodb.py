@@ -59,6 +59,9 @@ def connect_database() -> None:
     database.orders.create_index([("order_number", ASCENDING)], unique=True)
     database.carts.create_index([("user_id", ASCENDING)], unique=True)
     database.reports.create_index([("status", ASCENDING), ("created_at", ASCENDING)])
+    database.complaints.create_index([("customer_id", ASCENDING), ("created_at", DESCENDING)])
+    database.complaints.create_index([("complaint_status", ASCENDING), ("created_at", DESCENDING)])
+    database.complaints.create_index([("order_id", ASCENDING), ("complaint_status", ASCENDING)])
 
 
 def close_database() -> None:

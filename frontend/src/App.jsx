@@ -23,6 +23,10 @@ import AdminFoods from './pages/AdminFoods.jsx'
 import AdminReports from './pages/AdminReports.jsx'
 import CustomerProfile from './pages/CustomerProfile.jsx'
 import Favorites from './pages/Favorites.jsx'
+import PaymentResult from './pages/PaymentResult.jsx'
+import MyComplaints from './pages/MyComplaints.jsx'
+import OrderDetails from './pages/OrderDetails.jsx'
+import AdminComplaints from './pages/AdminComplaints.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 const customer = (element) => <ProtectedRoute roles={['customer']}>{element}</ProtectedRoute>
@@ -46,7 +50,10 @@ export default function App() {
       <Route path="/cart" element={customer(<Cart />)} />
       <Route path="/checkout" element={customer(<Checkout />)} />
       <Route path="/order-confirmation" element={customer(<OrderConfirmation />)} />
+      <Route path="/payment-result" element={customer(<PaymentResult />)} />
       <Route path="/orders" element={customer(<OrderHistory />)} />
+      <Route path="/orders/:id" element={customer(<OrderDetails />)} />
+      <Route path="/complaints" element={customer(<MyComplaints />)} />
       <Route path="/cook/dashboard" element={<Navigate to="/cook/foods" replace />} />
       <Route path="/cook/foods" element={cook(<ManageFoods />)} />
       <Route path="/cook/add-food" element={cook(<AddFood />)} />
@@ -58,6 +65,7 @@ export default function App() {
       <Route path="/admin/users" element={admin(<AdminUsers />)} />
       <Route path="/admin/foods" element={admin(<AdminFoods />)} />
       <Route path="/admin/reports" element={admin(<AdminReports />)} />
+      <Route path="/admin/complaints" element={admin(<AdminComplaints />)} />
       <Route path="/addfood" element={<Navigate to="/cook/add-food" replace />} />
       <Route path="/managefoods" element={<Navigate to="/cook/foods" replace />} />
       <Route path="/cook/manage-foods" element={<Navigate to="/cook/foods" replace />} />

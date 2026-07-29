@@ -68,8 +68,8 @@ const styles = {
   },
   logoImg: {
     display: 'block',
-    width: 238,
-    height: 82,
+    width: 270,
+    height: 94,
     objectFit: 'contain',
   },
   nav: {

@@ -25,6 +25,15 @@ class Settings:
     smtp_password: str = os.getenv("SMTP_PASSWORD", "")
     smtp_from_email: str = os.getenv("SMTP_FROM_EMAIL", "")
     smtp_use_tls: bool = os.getenv("SMTP_USE_TLS", "true").lower() == "true"
+    backend_public_url: str = os.getenv("BACKEND_PUBLIC_URL", "http://localhost:5000").rstrip("/")
+    payhere_merchant_id: str = os.getenv("PAYHERE_MERCHANT_ID", "")
+    payhere_merchant_secret: str = os.getenv("PAYHERE_MERCHANT_SECRET", "")
+    payhere_sandbox: bool = os.getenv("PAYHERE_SANDBOX", "true").lower() == "true"
+    aws_access_key_id: str = os.getenv("AWS_ACCESS_KEY_ID", "")
+    aws_secret_access_key: str = os.getenv("AWS_SECRET_ACCESS_KEY", "")
+    aws_region: str = os.getenv("AWS_REGION", "ap-south-1")
+    aws_s3_bucket: str = os.getenv("AWS_S3_BUCKET", "")
+    aws_s3_public_url: str = os.getenv("AWS_S3_PUBLIC_URL", "").rstrip("/")
 
 
 settings = Settings()

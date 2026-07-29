@@ -1,12 +1,27 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import CustomerNav from '../components/CustomerNav.jsx'
 import Footer from '../components/Footer.jsx'
 import FoodCard from '../components/FoodCard.jsx'
-import { foods } from '../data/sampleData.js'
 import { orders } from '../data/customerData.js'
+import api, { apiError } from '../services/api.js'
 
 export default function CustomerDashboard() {
   const activeOrder = orders[0]
+  const [foods, setFoods] = useState([])
+  const [foodError, setFoodError] = useState('')
+  const [favorites, setFavorites] = useState([])
+  const [favoritesError, setFavoritesError] = useState('')
+
+  useEffect(() => {
+    api.get('/foods', { params: { limit: 3 } })
+      .then(({ data }) => setFoods(data.data))
+      .catch((error) => setFoodError(apiError(error)))
+    api.get('/favorites', { skipToast: true })
+      .then(({ data }) => setFavorites(data.data.slice(0, 2)))
+      .catch((error) => setFavoritesError(apiError(error)))
+  }, [])
+
   return (
     <div className="page">
       <CustomerNav />
@@ -30,12 +45,16 @@ export default function CustomerDashboard() {
 
         <section className="container" style={styles.section}>
           <div style={styles.headingRow}><div><span className="eyebrow">Picked for you</span><h2>Popular near Kilinochchi</h2></div><Link to="/search" className="btn btn-secondary btn-sm">View all</Link></div>
-          <div className="grid-3" style={styles.grid}>{foods.slice(0, 3).map((food) => <FoodCard food={food} key={food.id} />)}</div>
+          {foodError && <div className="error-banner">{foodError}</div>}
+          {!foodError && foods.length === 0 && <div className="card" style={styles.empty}>No approved foods are available yet.</div>}
+          <div className="grid-3" style={styles.grid}>{foods.map((food) => <FoodCard food={food} key={food.id} />)}</div>
         </section>
 
         <section className="container" style={{ ...styles.section, paddingBottom: 70 }}>
-          <div style={styles.headingRow}><div><span className="eyebrow">Order again</span><h2>Your recent favourites</h2></div><Link to="/orders" style={styles.textLink}>See order history →</Link></div>
-          <div className="grid-2" style={styles.recentGrid}>{orders.slice(1, 3).map((order) => <div className="card" style={styles.recent} key={order.id}><div style={{ ...styles.miniEmoji, background: order.color }}>{order.emoji}</div><div style={{ flex: 1 }}><h3 style={styles.orderTitle}>{order.cook}</h3><p style={styles.small}>{order.items}</p></div><button className="btn btn-secondary btn-sm">Reorder</button></div>)}</div>
+          <div style={styles.headingRow}><div><span className="eyebrow">Saved for later</span><h2>Your recent favourites</h2></div><Link to="/favorites" style={styles.textLink}>View all favourites →</Link></div>
+          {favoritesError && <div className="error-banner">{favoritesError}</div>}
+          {!favoritesError && favorites.length === 0 && <div className="card" style={styles.empty}>You have not saved any favourites yet. Tap the heart on a dish to add it here.</div>}
+          <div className="grid-2" style={styles.recentGrid}>{favorites.map((food) => <FoodCard key={food.id} food={food} favorite onFavoriteChange={(next) => !next && setFavorites((current) => current.filter((item) => item.id !== food.id))} />)}</div>
         </section>
       </main>
       <Footer />
@@ -54,5 +73,5 @@ const styles = {
   steps: { display: 'flex', justifyContent: 'space-between', marginTop: 8, color: 'var(--color-ink-faint)', fontSize: 10.5 },
   section: { paddingTop: 54 }, headingRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 20, marginBottom: 24 }, grid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 },
   textLink: { color: 'var(--color-forest)', fontSize: 13, fontWeight: 700 }, recentGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 },
-  recent: { padding: 16, display: 'flex', gap: 14, alignItems: 'center' }, miniEmoji: { width: 50, height: 50, flexShrink: 0, display: 'grid', placeItems: 'center', borderRadius: 12, fontSize: 25 },
+  empty: { padding: 24, color: 'var(--color-ink-soft)' },
 }
