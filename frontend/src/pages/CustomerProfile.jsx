@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import CustomerNav from '../components/CustomerNav.jsx'
 import Footer from '../components/Footer.jsx'
 import './CustomerProfile.css'
-import api, { apiError, userInitials } from '../services/api.js'
+import api, { apiError } from '../services/api.js'
 
 const initialProfile = {
   name: '',
