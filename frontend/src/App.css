@@ -60,6 +60,9 @@
 .delivery-empty { padding:70px 24px; text-align:center; border:1px dashed var(--color-border); border-radius:20px; color:var(--color-ink-soft); }
 .delivery-partner-public { margin:20px 0; padding:20px; border:1px solid var(--color-border); border-radius:16px; }
 .form-error { margin:16px 0; padding:12px; color:#ffb2a4; border:1px solid #9d4b3d; border-radius:10px; }
+.inline-retry { margin-left:10px; padding:3px 8px; border:1px solid currentColor; border-radius:7px; background:transparent; color:inherit; font-weight:700; cursor:pointer; }
+.admin-page { min-height:100vh; display:grid; grid-template-columns:230px minmax(0,1fr); }
+.admin-page > .admin-main { padding:36px; width:100%; max-width:1400px; margin:0 auto; }
 
 @media (max-width: 800px) {
   .delivery-nav { align-items:flex-start; flex-direction:column; }
@@ -68,6 +71,8 @@
   .delivery-card,.delivery-title,.admin-title { align-items:flex-start; flex-direction:column; }
   .delivery-actions { justify-content:flex-start; }
   .vehicle-option-cards { grid-template-columns:1fr; }
+  .admin-page { display:block; }
+  .admin-page > .admin-main { padding:25px 16px; }
 }
 
 @media (max-width: 800px) {

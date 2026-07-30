@@ -95,6 +95,8 @@ async def register_delivery_partner(
             "total_deliveries": 0, "total_earnings": 0.0, "created_at": now, "updated_at": now,
         }
         partner_id = database.delivery_partners.insert_one(partner).inserted_id
+        for admin in database.users.find({"role": "admin", "account_status": "active"}, {"_id": 1}):
+            create_notification(database, admin["_id"], "delivery_partner_application", "New Delivery Partner application", f"{user['full_name']} submitted an application for approval.", partner_id)
     except DuplicateKeyError as error:
         raise HTTPException(status_code=409, detail="Email or phone number already exists") from error
     return {"success": True, "message": "Application submitted. You can log in after Admin approval.", "data": {"id": str(partner_id), "approval_status": "pending"}}
@@ -113,6 +115,11 @@ def update_delivery_profile(payload: DeliveryProfileUpdate, user: dict = Depends
     changes = payload.model_dump(exclude_none=True)
     if not changes:
         raise HTTPException(status_code=400, detail="No profile changes supplied")
+    ownership = changes.get("has_vehicle", user["delivery_partner"].get("has_vehicle", "no"))
+    if ownership == "yes" and not (changes.get("vehicle_type", user["delivery_partner"].get("vehicle_type")) and changes.get("vehicle_number", user["delivery_partner"].get("vehicle_number"))):
+        raise HTTPException(status_code=422, detail="Vehicle type and vehicle number are required when you have a vehicle")
+    if ownership == "no":
+        changes.update({"vehicle_type": None, "vehicle_number": None})
     changes["updated_at"] = datetime.now(UTC)
     database.delivery_partners.update_one({"_id": user["delivery_partner"]["_id"]}, {"$set": changes})
     if "phone" in changes:
