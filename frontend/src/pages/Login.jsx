@@ -34,9 +34,9 @@ export default function Login() {
       const { data } = await api.post('/auth/login', form)
       saveSession(data.data)
       const role = data.data.user.role
-      const roleHome = role === 'admin' ? '/admin/dashboard' : role === 'home_cook' ? '/cook/foods' : '/customer/dashboard'
+      const roleHome = role === 'admin' ? '/admin/dashboard' : role === 'home_cook' ? '/cook/foods' : role === 'delivery_partner' ? '/delivery/dashboard' : '/customer/dashboard'
       const returnTo = location.state?.from || new URLSearchParams(location.search).get('from')
-      const canReturn = returnTo && ((returnTo.startsWith('/cook/') && role === 'home_cook') || (returnTo.startsWith('/admin/') && role === 'admin') || (!returnTo.startsWith('/cook/') && !returnTo.startsWith('/admin/') && role === 'customer'))
+      const canReturn = returnTo && ((returnTo.startsWith('/cook/') && role === 'home_cook') || (returnTo.startsWith('/admin/') && role === 'admin') || (returnTo.startsWith('/delivery/') && role === 'delivery_partner') || (!returnTo.startsWith('/cook/') && !returnTo.startsWith('/admin/') && !returnTo.startsWith('/delivery/') && role === 'customer'))
       navigate(canReturn ? returnTo : roleHome, { replace: true })
     } catch (error) {
       setErrors({ form: apiError(error) })

@@ -17,6 +17,7 @@ from app.api.routes.notifications import router as notifications_router
 from app.api.routes.orders import router as orders_router
 from app.api.routes.profiles import router as profiles_router
 from app.api.routes.reports import router as reports_router
+from app.api.routes.delivery_partners import router as delivery_partners_router
 from app.core.config import BACKEND_DIR, settings
 from app.database.mongodb import close_database, connect_database, get_database
 
@@ -51,6 +52,7 @@ app.include_router(cook_router)
 app.include_router(complaints_router)
 app.include_router(reports_router)
 app.include_router(admin_router)
+app.include_router(delivery_partners_router)
 
 
 @app.get("/api/health")

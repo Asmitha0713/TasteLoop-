@@ -93,6 +93,8 @@ def dashboard(_user: dict = Depends(admin_user), database: Database = Depends(ge
         "users": database.users.count_documents({}),
         "customers": database.users.count_documents({"role": "customer"}),
         "home_cooks": database.users.count_documents({"role": "home_cook"}),
+        "delivery_partners": database.users.count_documents({"role": "delivery_partner"}),
+        "pending_delivery_partners": database.delivery_partners.count_documents({"approval_status": "pending"}),
         "pending_users": database.users.count_documents({"account_status": "pending_approval"}),
         "foods": database.foods.count_documents({}),
         "pending_foods": database.foods.count_documents({"moderation_status": "pending"}),

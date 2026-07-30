@@ -15,13 +15,25 @@ from app.services.notification_service import create_notification
 router = APIRouter(prefix="/api/orders", tags=["Orders"])
 DELIVERY_FEE = 300
 COOK_STATUS_TRANSITIONS = {
-    "confirmed": {"preparing", "cancelled"},
-    "preparing": {"ready", "cancelled"},
-    "ready": {"out_for_delivery"},
-    "out_for_delivery": {"delivered"},
+    "confirmed": {"accepted", "rejected", "cancelled"},
+    "pending": {"accepted", "rejected", "cancelled"},
+    "accepted": {"preparing", "cancelled"},
+    "preparing": {"ready_for_pickup", "ready", "cancelled"},
+    "ready": {"ready_for_pickup"},
     "delivered": set(),
     "cancelled": set(),
 }
+
+
+def _with_delivery(database: Database, order: dict) -> dict:
+    value = serialize(order)
+    delivery = database.deliveries.find_one({"order_id": order["_id"]})
+    if delivery:
+        value["delivery_tracking"] = serialize(delivery)
+        partner = database.delivery_partners.find_one({"_id": delivery.get("delivery_partner_id")}) if delivery.get("delivery_partner_id") else None
+        if partner:
+            value["delivery_partner"] = {"id": str(partner["_id"]), "full_name": partner.get("full_name"), "phone": partner.get("phone"), "vehicle_type": partner.get("vehicle_type"), "vehicle_number": partner.get("vehicle_number")}
+    return value
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
@@ -126,7 +138,7 @@ def order_detail(order_id: str, user: dict = Depends(require_roles("customer")),
     order = database.orders.find_one({"_id": object_id(order_id, "order"), "customer_id": user["_id"]})
     if order is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
-    return {"success": True, "data": serialize(order)}
+    return {"success": True, "data": _with_delivery(database, order)}
 
 
 @router.get("")
@@ -138,7 +150,7 @@ def my_orders(
     filters: dict = {"customer_id": user["_id"]}
     if order_status:
         filters["status"] = order_status
-    return {"success": True, "data": [serialize(order) for order in database.orders.find(filters).sort("created_at", DESCENDING)]}
+    return {"success": True, "data": [_with_delivery(database, order) for order in database.orders.find(filters).sort("created_at", DESCENDING)]}
 
 
 @router.get("/cook")
@@ -157,17 +169,17 @@ def accept_order(
     now = datetime.now(UTC)
     order = database.orders.find_one_and_update(
         {"_id": order_object_id, "items.cook_id": user["_id"], "status": "confirmed"},
-        {"$set": {"status": "preparing", "updated_at": now}, "$push": {"status_history": {"status": "preparing", "at": now}}},
+        {"$set": {"status": "preparing", "accepted_at": now, "updated_at": now}, "$push": {"status_history": {"status": "preparing", "at": now}}},
         return_document=ReturnDocument.AFTER,
     )
     if order is None:
         owned_order = database.orders.find_one({"_id": order_object_id, "items.cook_id": user["_id"]})
         if owned_order is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Only confirmed orders can be accepted")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Only pending orders can be accepted")
     create_notification(
         database, order["customer_id"], "order_accepted", "Order accepted",
-        f"Your order {order['order_number']} was accepted and is being prepared.", order["_id"],
+        f"Your order {order['order_number']} was accepted.", order["_id"],
     )
     return {"success": True, "message": "Order accepted", "data": serialize(order)}
 
@@ -194,8 +206,26 @@ def update_order_status(
     if result.matched_count == 0:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
     updated_order = database.orders.find_one({"_id": filters["_id"]})
+    if payload.status in {"ready_for_pickup", "ready"} and updated_order:
+        cook_id = next((item.get("cook_id") for item in updated_order.get("items", []) if item.get("cook_id") == user.get("_id")), None)
+        delivery_address = updated_order.get("delivery", {})
+        database.deliveries.update_one(
+            {"order_id": updated_order["_id"]},
+            {"$setOnInsert": {"order_id": updated_order["_id"], "delivery_partner_id": None, "home_cook_id": cook_id,
+             "customer_id": updated_order["customer_id"], "pickup_address": user.get("address") or user.get("location") or "Contact Home Cook",
+             "delivery_address": delivery_address.get("address", ""), "delivery_fee": updated_order.get("delivery_fee", 0),
+             "estimated_distance_km": None, "estimated_arrival_minutes": None,
+             "status": "ready_for_pickup", "assigned_at": None, "accepted_at": None, "picked_up_at": None,
+             "delivered_at": None, "status_history": [{"status": "ready_for_pickup", "at": now}], "created_at": now, "updated_at": now}},
+            upsert=True,
+        )
+        if payload.status == "ready":
+            database.orders.update_one({"_id": updated_order["_id"]}, {"$set": {"status": "ready_for_pickup"}})
+            updated_order["status"] = "ready_for_pickup"
     notification_copy = {
         "preparing": ("Order is being prepared", "Your home cook has started preparing your meal."),
+        "accepted": ("Order accepted", "Your home cook accepted your order."),
+        "ready_for_pickup": ("Order is ready for pickup", "Your meal is waiting for a Delivery Partner."),
         "ready": ("Order is ready", "Your meal is ready for delivery."),
         "out_for_delivery": ("Order is on the way", "Your meal is out for delivery."),
         "delivered": ("Order delivered", "Your order has been marked as delivered. Enjoy your meal!"),
@@ -208,3 +238,16 @@ def update_order_status(
             f"{message} Order {updated_order['order_number']}", updated_order["_id"],
         )
     return {"success": True, "message": "Order status updated", "data": serialize(updated_order)}
+
+
+@router.post("/{order_id}/confirm-received")
+def confirm_received(order_id: str, user: dict = Depends(require_roles("customer")), database: Database = Depends(get_database)) -> dict:
+    now = datetime.now(UTC)
+    order = database.orders.find_one_and_update(
+        {"_id": object_id(order_id, "order"), "customer_id": user["_id"], "status": "delivered"},
+        {"$set": {"status": "completed", "completed_at": now, "updated_at": now}, "$push": {"status_history": {"status": "completed", "at": now}}},
+        return_document=ReturnDocument.AFTER,
+    )
+    if not order: raise HTTPException(status_code=409, detail="Only delivered orders can be confirmed")
+    database.deliveries.update_one({"order_id": order["_id"], "status": "delivered"}, {"$set": {"status": "completed", "completed_at": now, "updated_at": now}})
+    return {"success": True, "message": "Order receipt confirmed", "data": serialize(order)}

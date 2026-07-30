@@ -28,10 +28,16 @@ import MyComplaints from './pages/MyComplaints.jsx'
 import OrderDetails from './pages/OrderDetails.jsx'
 import AdminComplaints from './pages/AdminComplaints.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
+import DeliveryPartnerRegister from './pages/DeliveryPartnerRegister.jsx'
+import DeliveryDashboard from './pages/DeliveryDashboard.jsx'
+import DeliveryProfile from './pages/DeliveryProfile.jsx'
+import AdminDeliveryPartners from './pages/AdminDeliveryPartners.jsx'
+import CookOrders from './pages/CookOrders.jsx'
 
 const customer = (element) => <ProtectedRoute roles={['customer']}>{element}</ProtectedRoute>
 const cook = (element) => <ProtectedRoute roles={['home_cook']}>{element}</ProtectedRoute>
 const admin = (element) => <ProtectedRoute roles={['admin']}>{element}</ProtectedRoute>
+const delivery = (element) => <ProtectedRoute roles={['delivery_partner']}>{element}</ProtectedRoute>
 
 export default function App() {
   return (
@@ -43,6 +49,9 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/choose-role" element={<ChooseRole />} />
+      <Route path="/delivery/register" element={<DeliveryPartnerRegister />} />
+      <Route path="/delivery/dashboard" element={delivery(<DeliveryDashboard />)} />
+      <Route path="/delivery/profile" element={delivery(<DeliveryProfile />)} />
       <Route path="/customer/dashboard" element={customer(<CustomerDashboard />)} />
       <Route path="/customer/profile" element={customer(<CustomerProfile />)} />
       <Route path="/favorites" element={customer(<Favorites />)} />
@@ -61,12 +70,15 @@ export default function App() {
       <Route path="/cook/earnings" element={cook(<Earnings />)} />
       <Route path="/cook/complaints" element={cook(<MyComplaints />)} />
       <Route path="/cook/profile" element={cook(<CookProfile />)} />
+      <Route path="/cook/orders" element={cook(<CookOrders />)} />
       <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
       <Route path="/admin/dashboard" element={admin(<AdminDashboard />)} />
       <Route path="/admin/users" element={admin(<AdminUsers />)} />
       <Route path="/admin/foods" element={admin(<AdminFoods />)} />
       <Route path="/admin/reports" element={admin(<AdminReports />)} />
       <Route path="/admin/complaints" element={admin(<AdminComplaints />)} />
+      <Route path="/admin/delivery-management" element={admin(<AdminDeliveryPartners />)} />
+      <Route path="/admin/delivery-partners" element={<Navigate to="/admin/delivery-management" replace />} />
       <Route path="/addfood" element={<Navigate to="/cook/add-food" replace />} />
       <Route path="/managefoods" element={<Navigate to="/cook/foods" replace />} />
       <Route path="/cook/manage-foods" element={<Navigate to="/cook/foods" replace />} />

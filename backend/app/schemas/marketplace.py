@@ -81,7 +81,7 @@ class CheckoutRequest(BaseModel):
 
 
 class OrderStatusUpdate(BaseModel):
-    status: Literal["confirmed", "preparing", "ready", "out_for_delivery", "delivered", "cancelled"]
+    status: Literal["pending", "accepted", "preparing", "ready_for_pickup", "delivery_assigned", "picked_up", "out_for_delivery", "delivered", "completed", "rejected", "cancelled", "ready"]
 
 
 class BankDetailsCreate(BaseModel):

@@ -62,6 +62,10 @@ def connect_database() -> None:
     database.complaints.create_index([("customer_id", ASCENDING), ("created_at", DESCENDING)])
     database.complaints.create_index([("complaint_status", ASCENDING), ("created_at", DESCENDING)])
     database.complaints.create_index([("order_id", ASCENDING), ("complaint_status", ASCENDING)])
+    database.delivery_partners.create_index([("user_id", ASCENDING)], unique=True)
+    database.delivery_partners.create_index([("approval_status", ASCENDING), ("availability", ASCENDING)])
+    database.deliveries.create_index([("order_id", ASCENDING)], unique=True)
+    database.deliveries.create_index([("delivery_partner_id", ASCENDING), ("status", ASCENDING), ("assigned_at", DESCENDING)])
 
 
 def close_database() -> None:

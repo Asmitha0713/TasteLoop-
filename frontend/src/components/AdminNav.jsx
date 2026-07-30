@@ -7,6 +7,7 @@ const links = [
   { to: '/admin/foods', label: 'Foods', icon: '♨' },
   { to: '/admin/reports', label: 'Reports', icon: '⚑' },
   { to: '/admin/complaints', label: 'Complaints', icon: '!' },
+  { to: '/admin/delivery-management', label: 'Delivery', icon: '➜' },
 ]
 
 export default function AdminNav() {
