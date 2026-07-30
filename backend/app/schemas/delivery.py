@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field, field_validator
 class DeliveryProfileUpdate(BaseModel):
     phone: str | None = Field(default=None, min_length=9, max_length=20)
     address: str | None = Field(default=None, min_length=5, max_length=300)
+    has_vehicle: Literal["yes", "no"] | None = None
     vehicle_type: str | None = Field(default=None, min_length=2, max_length=60)
     vehicle_number: str | None = Field(default=None, min_length=2, max_length=40)
 
