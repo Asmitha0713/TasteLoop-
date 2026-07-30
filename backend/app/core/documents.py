@@ -3,6 +3,8 @@ from datetime import datetime
 from bson import ObjectId
 from fastapi import HTTPException, status
 
+from app.services.image_storage import storage_url
+
 
 def object_id(value: str, label: str = "resource") -> ObjectId:
     if not ObjectId.is_valid(value):
@@ -17,7 +19,9 @@ def serialize(document: dict | None) -> dict | None:
     if "_id" in result:
         result["id"] = str(result.pop("_id"))
     for key, value in list(result.items()):
-        if isinstance(value, ObjectId):
+        if key in {"image_url", "evidence_image_url", "profile_image_url"} and isinstance(value, str):
+            result[key] = storage_url(value)
+        elif isinstance(value, ObjectId):
             result[key] = str(value)
         elif isinstance(value, datetime):
             result[key] = value.isoformat()

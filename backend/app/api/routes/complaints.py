@@ -2,6 +2,7 @@ from datetime import UTC, datetime
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from bson import ObjectId
 from pymongo import DESCENDING
 from pymongo.database import Database
 from pydantic import ValidationError
@@ -17,7 +18,7 @@ from app.services.notification_service import create_notification
 from app.services.refund_service import process_mock_refund
 
 router = APIRouter(tags=["Complaints"])
-customer_user = require_roles("customer")
+complaint_user = require_roles("customer", "home_cook")
 admin_user = require_roles("admin")
 
 
@@ -26,6 +27,9 @@ def _complaint_view(database: Database, complaint: dict, include_private: bool =
     data["evidence_image_url"] = evidence_url(complaint.get("evidence_image_url", ""))
     order = database.orders.find_one({"_id": complaint["order_id"]})
     data["order"] = serialize(order)
+    submitter = database.users.find_one({"_id": complaint["submitted_by_id"]}, {"password_hash": 0}) if complaint.get("submitted_by_id") else None
+    data["submitted_by"] = serialize(submitter)
+    data["admin_response"] = complaint.get("admin_response") or complaint.get("admin_notes")
     if include_private:
         customer = database.users.find_one({"_id": complaint["customer_id"]}, {"password_hash": 0})
         cook = database.users.find_one({"_id": complaint["cook_id"]}, {"password_hash": 0}) if complaint.get("cook_id") else None
@@ -39,9 +43,9 @@ async def create_complaint(
     order_id: str = Form(...),
     issue_type: str = Form(...),
     description: str = Form(...),
-    requested_solution: str = Form(...),
-    evidence_image: UploadFile = File(...),
-    user: dict = Depends(customer_user),
+    requested_solution: str = Form("resolution"),
+    evidence_image: UploadFile | None = File(None),
+    user: dict = Depends(complaint_user),
     database: Database = Depends(get_database),
 ) -> dict:
     try:
@@ -51,26 +55,31 @@ async def create_complaint(
         )
     except ValidationError as error:
         raise HTTPException(status_code=422, detail=error.errors(include_context=False)) from error
-    order_object_id = object_id(payload.order_id, "order")
-    order = database.orders.find_one({"_id": order_object_id, "customer_id": user["_id"]})
+    order_reference = {"_id": ObjectId(payload.order_id)} if ObjectId.is_valid(payload.order_id) else {"order_number": payload.order_id}
+    ownership = {**order_reference, "customer_id": user["_id"]} if user["role"] == "customer" else {**order_reference, "items.cook_id": user["_id"]}
+    order = database.orders.find_one(ownership)
     if order is None:
         raise HTTPException(status_code=404, detail="Order not found")
-    if order.get("status") != "delivered":
+    order_object_id = order["_id"]
+    if user["role"] == "customer" and order.get("status") != "delivered":
         raise HTTPException(status_code=409, detail="Only delivered orders can be reported")
-    duplicate = database.complaints.find_one({"order_id": order_object_id, "customer_id": user["_id"], "complaint_status": {"$ne": "rejected"}})
+    duplicate = database.complaints.find_one({"order_id": order_object_id, "submitted_by_id": user["_id"], "complaint_status": {"$ne": "rejected"}})
     if duplicate:
         raise HTTPException(status_code=409, detail="An active complaint already exists for this order")
 
-    evidence_url = await store_evidence(evidence_image)
+    stored_evidence_url = await store_evidence(evidence_image) if evidence_image else None
     now = datetime.now(UTC)
     cook_id = order.get("items", [{}])[0].get("cook_id")
     complaint = {
         "order_id": order_object_id,
-        "customer_id": user["_id"],
+        "customer_id": order["customer_id"],
         "cook_id": cook_id,
         "issue_type": payload.issue_type,
         "description": payload.description,
-        "evidence_image_url": evidence_url,
+        "submitted_by_id": user["_id"],
+        "submitted_by_name": user.get("full_name", ""),
+        "submitted_by_role": user["role"],
+        "evidence_image_url": stored_evidence_url,
         "requested_solution": payload.requested_solution,
         "complaint_status": "pending",
         "refund_amount": 0.0,
@@ -89,14 +98,14 @@ async def create_complaint(
 
 
 @router.get("/api/complaints/my")
-def my_complaints(user: dict = Depends(customer_user), database: Database = Depends(get_database)) -> dict:
-    rows = database.complaints.find({"customer_id": user["_id"]}).sort("created_at", DESCENDING)
+def my_complaints(user: dict = Depends(complaint_user), database: Database = Depends(get_database)) -> dict:
+    rows = database.complaints.find({"$or": [{"submitted_by_id": user["_id"]}, {"customer_id": user["_id"], "submitted_by_id": {"$exists": False}}]}).sort("created_at", DESCENDING)
     return {"success": True, "data": [_complaint_view(database, row) for row in rows]}
 
 
 @router.get("/api/complaints/{complaint_id}")
-def complaint_detail(complaint_id: str, user: dict = Depends(customer_user), database: Database = Depends(get_database)) -> dict:
-    complaint = database.complaints.find_one({"_id": object_id(complaint_id, "complaint"), "customer_id": user["_id"]})
+def complaint_detail(complaint_id: str, user: dict = Depends(complaint_user), database: Database = Depends(get_database)) -> dict:
+    complaint = database.complaints.find_one({"_id": object_id(complaint_id, "complaint"), "$or": [{"submitted_by_id": user["_id"]}, {"customer_id": user["_id"], "submitted_by_id": {"$exists": False}}]})
     if complaint is None:
         raise HTTPException(status_code=404, detail="Complaint not found")
     return {"success": True, "data": _complaint_view(database, complaint)}
@@ -109,6 +118,7 @@ def admin_complaints(user: dict = Depends(admin_user), database: Database = Depe
     return {"success": True, "data": [_complaint_view(database, row, True) for row in rows]}
 
 
+@router.patch("/api/admin/complaints/{complaint_id}")
 @router.patch("/api/admin/complaints/{complaint_id}/status")
 def update_complaint_status(
     complaint_id: str, payload: ComplaintStatusUpdate,
@@ -122,12 +132,14 @@ def update_complaint_status(
         raise HTTPException(status_code=422, detail="Use the refund or replacement action to apply this status")
     now = datetime.now(UTC)
     changes = {"complaint_status": payload.complaint_status, "updated_at": now, "updated_by": user["_id"]}
-    if payload.admin_notes is not None:
-        changes["admin_notes"] = payload.admin_notes
+    response = payload.admin_response if payload.admin_response is not None else payload.admin_notes
+    if response is not None:
+        changes["admin_notes"] = response
+        changes["admin_response"] = response
     database.complaints.update_one({"_id": complaint_object_id}, {"$set": changes})
-    labels = {"under_review": "Your complaint is under review", "approved": "Your complaint was approved", "rejected": "Your complaint was rejected"}
+    labels = {"in_progress": "Your complaint is in progress", "resolved": "Your complaint was resolved", "under_review": "Your complaint is under review", "approved": "Your complaint was approved", "rejected": "Your complaint was rejected"}
     if payload.complaint_status in labels:
-        create_notification(database, complaint["customer_id"], f"complaint_{payload.complaint_status}", labels[payload.complaint_status], payload.admin_notes or "Open My Complaints for details.", complaint["order_id"], complaint_object_id)
+        create_notification(database, complaint.get("submitted_by_id", complaint["customer_id"]), f"complaint_{payload.complaint_status}", labels[payload.complaint_status], response or "Open My Complaints for details.", complaint["order_id"], complaint_object_id)
     updated = database.complaints.find_one({"_id": complaint_object_id})
     return {"success": True, "message": "Complaint status updated", "data": _complaint_view(database, updated, True)}
 

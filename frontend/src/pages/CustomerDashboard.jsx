@@ -4,7 +4,7 @@ import CustomerNav from '../components/CustomerNav.jsx'
 import Footer from '../components/Footer.jsx'
 import FoodCard from '../components/FoodCard.jsx'
 import { orders } from '../data/customerData.js'
-import api, { apiError } from '../services/api.js'
+import api, { apiError, currentUser, firstName } from '../services/api.js'
 
 export default function CustomerDashboard() {
   const activeOrder = orders[0]
@@ -12,6 +12,7 @@ export default function CustomerDashboard() {
   const [foodError, setFoodError] = useState('')
   const [favorites, setFavorites] = useState([])
   const [favoritesError, setFavoritesError] = useState('')
+  const [customerName, setCustomerName] = useState(() => currentUser()?.full_name || '')
 
   useEffect(() => {
     api.get('/foods', { params: { limit: 3 } })
@@ -20,6 +21,9 @@ export default function CustomerDashboard() {
     api.get('/favorites', { skipToast: true })
       .then(({ data }) => setFavorites(data.data.slice(0, 2)))
       .catch((error) => setFavoritesError(apiError(error)))
+    api.get('/profile', { skipToast: true })
+      .then(({ data }) => setCustomerName(data.data.full_name || ''))
+      .catch(() => {})
   }, [])
 
   return (
@@ -29,7 +33,7 @@ export default function CustomerDashboard() {
         <section style={styles.welcome}>
           <div className="container customer-hero-grid" style={styles.welcomeGrid}>
             <div>
-              <span className="eyebrow">Good afternoon, Ayesha</span>
+              <span className="eyebrow">Good afternoon, {firstName(customerName)}</span>
               <h1 style={styles.h1}>What feels like home today?</h1>
               <p style={styles.lead}>Fresh meals from talented cooks in your neighbourhood.</p>
               <Link to="/search" className="btn btn-primary">Find something delicious</Link>

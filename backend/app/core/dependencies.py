@@ -45,3 +45,14 @@ def require_roles(*roles: str) -> Callable:
         return user
 
     return dependency
+
+
+def require_approved_delivery_partner(
+    user: dict = Depends(require_roles("delivery_partner")),
+    database: Database = Depends(get_database),
+) -> dict:
+    partner = database.delivery_partners.find_one({"user_id": user["_id"]})
+    if not partner or partner.get("approval_status") != "approved" or partner.get("status") != "active":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Delivery Partner account is not approved and active")
+    user["delivery_partner"] = partner
+    return user

@@ -5,7 +5,9 @@ import NotificationBell from './NotificationBell.jsx'
 const links = [
   { to: '/cook/foods', label: 'My Foods' },
   { to: '/cook/add-food', label: 'Add Food' },
+  { to: '/cook/orders', label: 'Orders' },
   { to: '/cook/earnings', label: 'Earnings' },
+  { to: '/cook/complaints', label: 'Complaints' },
   { to: '/cook/profile', label: 'Profile' },
 ]
 

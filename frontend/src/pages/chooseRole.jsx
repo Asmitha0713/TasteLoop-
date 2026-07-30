@@ -16,6 +16,17 @@ const roles = [
     accentTint: 'var(--color-forest-tint)',
   },
   {
+    id: 'delivery',
+    title: "I'm a Delivery Partner",
+    emoji: '🛵',
+    text: 'Deliver fresh homemade meals, manage your availability, and track your earnings.',
+    points: ['Choose when you are online', 'Receive nearby delivery requests', 'Track delivery earnings'],
+    cta: 'Apply as Delivery Partner',
+    to: '/delivery/register',
+    accent: 'var(--color-mustard)',
+    accentTint: 'var(--color-mustard-tint)',
+  },
+  {
     id: 'homecook',
     title: "I'm a Home Cook",
     emoji: '👩‍🍳',
@@ -113,9 +124,9 @@ const styles = {
   sub: { fontSize: 14, marginBottom: 44 },
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
     gap: 24,
-    maxWidth: 780,
+    maxWidth: 1080,
     margin: '0 auto',
   },
   roleCard: {

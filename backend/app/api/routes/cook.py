@@ -201,3 +201,42 @@ def earnings(
     summary["average_order"] = round(summary["earned"] / summary["order_count"], 2) if summary["order_count"] else 0
     summary["period"] = period
     return {"success": True, "data": summary}
+
+
+@router.get("/orders/recent")
+def recent_customer_orders(
+    user: dict = Depends(require_roles("home_cook")),
+    database: Database = Depends(get_database),
+) -> dict:
+    """Return recent orders with the registered customer name and this cook's items only."""
+    rows = []
+    cursor = database.orders.find({"items.cook_id": user["_id"]}).sort("created_at", DESCENDING).limit(10)
+    for order in cursor:
+        customer = database.users.find_one({"_id": order["customer_id"]}, {"full_name": 1})
+        cook_items = [item for item in order.get("items", []) if item.get("cook_id") == user["_id"]]
+        rows.append(serialize({
+            "_id": order["_id"],
+            "order_number": order.get("order_number"),
+            "customer_name": customer.get("full_name", "Customer") if customer else "Customer",
+            "items": cook_items,
+            "status": order.get("status", "confirmed"),
+            "payment_status": order.get("payment_status", "pending"),
+            "amount": sum(float(item.get("total", 0)) for item in cook_items),
+            "created_at": order.get("created_at"),
+        }))
+    return {"success": True, "data": rows}
+
+
+@router.get("/orders")
+def all_cook_orders(user: dict = Depends(require_roles("home_cook")), database: Database = Depends(get_database)) -> dict:
+    rows = []
+    for order in database.orders.find({"items.cook_id": user["_id"]}).sort("created_at", DESCENDING):
+        customer = database.users.find_one({"_id": order["customer_id"]}, {"full_name": 1, "phone_number": 1})
+        delivery = database.deliveries.find_one({"order_id": order["_id"]})
+        partner = database.delivery_partners.find_one({"_id": delivery.get("delivery_partner_id")}) if delivery and delivery.get("delivery_partner_id") else None
+        item = serialize(order)
+        item["customer"] = {"full_name": customer.get("full_name"), "phone": customer.get("phone_number")} if customer else None
+        item["delivery_tracking"] = serialize(delivery) if delivery else None
+        item["delivery_partner"] = {"full_name": partner.get("full_name"), "phone": partner.get("phone"), "vehicle_type": partner.get("vehicle_type"), "vehicle_number": partner.get("vehicle_number")} if partner else None
+        rows.append(item)
+    return {"success": True, "data": rows}

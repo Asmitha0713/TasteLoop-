@@ -1,35 +1,16 @@
 from datetime import UTC, datetime
-from pathlib import Path
-from uuid import uuid4
-
 from bson import ObjectId
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
 from pymongo import ASCENDING, DESCENDING
 from pymongo.database import Database
 
 from app.core.dependencies import require_roles
-from app.core.config import BACKEND_DIR
 from app.core.documents import object_id, serialize
 from app.database.mongodb import get_database
 from app.schemas.marketplace import FoodAvailabilityUpdate, FoodCreate, FoodUpdate, ReviewCreate
+from app.services.image_storage import _valid_signature as _valid_image_signature, store_image
 
 router = APIRouter(prefix="/api/foods", tags=["Foods"])
-UPLOAD_DIR = BACKEND_DIR / "uploads" / "foods"
-MAX_IMAGE_SIZE = 5 * 1024 * 1024
-IMAGE_SIGNATURES = {
-    "image/jpeg": ((b"\xff\xd8\xff",), ".jpg"),
-    "image/png": ((b"\x89PNG\r\n\x1a\n",), ".png"),
-    "image/webp": ((b"RIFF",), ".webp"),
-}
-
-
-def _valid_image_signature(content_type: str, content: bytes) -> bool:
-    signatures, _extension = IMAGE_SIGNATURES[content_type]
-    if content_type == "image/webp":
-        return content.startswith(signatures[0]) and content[8:12] == b"WEBP"
-    return any(content.startswith(signature) for signature in signatures)
-
-
 @router.get("")
 def list_foods(
     query: str | None = None,
@@ -68,21 +49,9 @@ async def upload_food_image(
     image: UploadFile = File(...),
     _user: dict = Depends(require_roles("home_cook")),
 ) -> dict:
-    if image.content_type not in IMAGE_SIGNATURES:
-        raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail="Only JPEG, PNG, and WebP images are allowed")
-    content = await image.read(MAX_IMAGE_SIZE + 1)
-    await image.close()
-    if not content:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Image file is empty")
-    if len(content) > MAX_IMAGE_SIZE:
-        raise HTTPException(status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, detail="Image must not exceed 5 MB")
-    if not _valid_image_signature(image.content_type, content):
-        raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail="File content does not match its image type")
-    extension = IMAGE_SIGNATURES[image.content_type][1]
-    filename = f"{uuid4().hex}{extension}"
-    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-    (UPLOAD_DIR / filename).write_bytes(content)
-    return {"success": True, "message": "Food image uploaded", "data": {"image_url": f"/uploads/foods/{filename}"}}
+    image_url = await store_image(image, "foods", "Food image")
+    storage = "s3" if image_url.startswith("s3://") or image_url.startswith("http") else "local"
+    return {"success": True, "message": f"Food image uploaded to {storage}", "data": {"image_url": image_url, "storage": storage}}
 
 
 @router.get("/{food_id}")

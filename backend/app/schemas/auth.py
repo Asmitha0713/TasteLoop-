@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, mo
 class UserRole(str, Enum):
     CUSTOMER = "customer"
     HOME_COOK = "home_cook"
+    DELIVERY_PARTNER = "delivery_partner"
 
 
 class RegisterRequest(BaseModel):
@@ -74,7 +75,7 @@ class UserResponse(BaseModel):
     full_name: str
     email: EmailStr
     phone_number: str
-    role: Literal["customer", "home_cook", "admin"]
+    role: Literal["customer", "home_cook", "delivery_partner", "admin"]
     account_status: str
     created_at: str
 
