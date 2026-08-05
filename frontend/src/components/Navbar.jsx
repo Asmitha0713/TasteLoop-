@@ -1,4 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
+import LanguageSwitcher from './LanguageSwitcher.jsx'
+import { useTranslation } from '../i18n/LanguageContext.jsx'
 
 const links = [
   { to: '/', label: 'Home' },
@@ -8,6 +10,7 @@ const links = [
 
 export default function Navbar() {
   const { pathname } = useLocation()
+  const { t } = useTranslation()
 
   return (
     <header style={styles.header}>
@@ -27,14 +30,15 @@ export default function Navbar() {
                 fontWeight: pathname === l.to ? 700 : 500,
               }}
             >
-              {l.label}
+              {t(l.label)}
             </Link>
           ))}
         </nav>
 
         <div style={styles.actions}>
-          <Link to="/login" className="btn btn-secondary btn-sm">Log In</Link>
-          <Link to="/choose-role" className="btn btn-primary btn-sm">Get Started</Link>
+          <LanguageSwitcher />
+          <Link to="/login" className="btn btn-secondary btn-sm">{t('Log In')}</Link>
+          <Link to="/choose-role" className="btn btn-primary btn-sm">{t('Get Started')}</Link>
         </div>
       </div>
     </header>

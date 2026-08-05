@@ -1,6 +1,7 @@
 import api from './api.js'
 
 export const registerDeliveryPartner = (form) => api.post('/delivery-partners/register', form)
+export const getDeliveryApplicationStatus = (id, email) => api.get(`/delivery-partners/applications/${id}/status`, { params: { email }, skipToast: true })
 export const getDeliveryProfile = () => api.get('/delivery-partners/profile')
 export const updateDeliveryProfile = (data) => api.patch('/delivery-partners/profile', data)
 export const updateDeliveryProfileImage = (data) => api.patch('/delivery-partners/profile/image', data)

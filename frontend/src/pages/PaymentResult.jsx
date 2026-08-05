@@ -30,7 +30,7 @@ export default function PaymentResult() {
     <div style={{ ...styles.icon, background: paid ? 'var(--color-forest-tint)' : 'var(--color-mustard-tint)' }}>{paid ? '✓' : cancelled ? '×' : '…'}</div>
     <span className="eyebrow">Card payment</span>
     <h1>{paid ? 'Payment successful' : cancelled ? 'Payment cancelled' : waiting ? 'Confirming your payment' : 'Payment not completed'}</h1>
-    {error ? <p>{error}</p> : <p>{paid ? `Order #${result.order_number} is confirmed.` : waiting ? 'PayHere is still confirming the transaction. This page updates automatically.' : 'No money was confirmed for this order.'}</p>}
+    {error ? <p>{error}</p> : <p>{paid ? `Order #${result.order_number} is confirmed.` : waiting ? 'Stripe is still confirming the transaction. This page updates automatically.' : 'No money was confirmed for this order.'}</p>}
     <div style={styles.actions}><Link className="btn btn-primary" to="/orders">View my orders</Link>{!paid && <Link className="btn btn-secondary" to="/search">Browse food</Link>}</div>
   </div></section></main><Footer /></div>
 }

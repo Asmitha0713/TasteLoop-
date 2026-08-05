@@ -3,6 +3,8 @@ import { Link, useLocation } from 'react-router-dom'
 import LogoutButton from './LogoutButton.jsx'
 import NotificationBell from './NotificationBell.jsx'
 import api, { currentUser, userInitials } from '../services/api.js'
+import LanguageSwitcher from './LanguageSwitcher.jsx'
+import { useTranslation } from '../i18n/LanguageContext.jsx'
 
 const links = [
   { to: '/customer/dashboard', label: 'Dashboard' },
@@ -15,6 +17,7 @@ const links = [
 
 export default function CustomerNav() {
   const { pathname } = useLocation()
+  const { t } = useTranslation()
   const [name, setName] = useState(() => currentUser()?.full_name || '')
 
   useEffect(() => {
@@ -30,13 +33,14 @@ export default function CustomerNav() {
         <nav className="hide-mobile" style={styles.nav}>
           {links.map((link) => (
             <Link key={link.to} to={link.to} style={{ ...styles.link, color: pathname === link.to ? 'var(--color-forest)' : 'var(--color-ink-soft)' }}>
-              {link.label}
+              {link.label.startsWith('👤') ? `👤 ${t('Profile')}` : t(link.label)}
             </Link>
           ))}
         </nav>
         <div style={styles.actions}>
+          <LanguageSwitcher compact />
           <NotificationBell />
-          <Link to="/cart" className="btn btn-secondary btn-sm">🛒 Cart <span style={styles.badge}>2</span></Link>
+          <Link to="/cart" className="btn btn-secondary btn-sm">🛒 {t('Cart')} <span style={styles.badge}>2</span></Link>
           <Link to="/customer/profile" style={styles.avatar} title={name || 'My profile'} aria-label={`Open ${name || 'my'} profile`}>{userInitials(name)}</Link>
           <LogoutButton compact />
         </div>

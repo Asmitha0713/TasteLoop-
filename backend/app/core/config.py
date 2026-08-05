@@ -26,9 +26,9 @@ class Settings:
     smtp_from_email: str = os.getenv("SMTP_FROM_EMAIL", "")
     smtp_use_tls: bool = os.getenv("SMTP_USE_TLS", "true").lower() == "true"
     backend_public_url: str = os.getenv("BACKEND_PUBLIC_URL", "http://localhost:5000").rstrip("/")
-    payhere_merchant_id: str = os.getenv("PAYHERE_MERCHANT_ID", "")
-    payhere_merchant_secret: str = os.getenv("PAYHERE_MERCHANT_SECRET", "")
-    payhere_sandbox: bool = os.getenv("PAYHERE_SANDBOX", "true").lower() == "true"
+    stripe_secret_key: str = os.getenv("STRIPE_SECRET_KEY", "")
+    stripe_publishable_key: str = os.getenv("STRIPE_PUBLISHABLE_KEY", "")
+    stripe_webhook_secret: str = os.getenv("STRIPE_WEBHOOK_SECRET", "")
     aws_access_key_id: str = os.getenv("AWS_ACCESS_KEY_ID", "")
     aws_secret_access_key: str = os.getenv("AWS_SECRET_ACCESS_KEY", "")
     aws_region: str = os.getenv("AWS_REGION", "ap-south-1")

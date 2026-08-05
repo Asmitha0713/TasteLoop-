@@ -9,6 +9,14 @@ from app.database.mongodb import get_database
 from app.schemas.marketplace import CartItemRequest, CartQuantityUpdate
 
 router = APIRouter(prefix="/api/cart", tags=["Cart"])
+MIXED_COOK_MESSAGE = "Your cart already contains food from another cook. Please clear the cart before adding this item."
+
+
+def _cart_cook_ids(database: Database, cart: dict | None) -> set:
+    food_ids = [item["food_id"] for item in (cart or {}).get("items", [])]
+    if not food_ids:
+        return set()
+    return {food["cook_id"] for food in database.foods.find({"_id": {"$in": food_ids}}, {"cook_id": 1}) if food.get("cook_id")}
 
 
 def _expanded_cart(database: Database, customer_id) -> dict:
@@ -39,13 +47,16 @@ def add_item(payload: CartItemRequest, user: dict = Depends(require_roles("custo
     if not food:
         raise HTTPException(status_code=404, detail="Food is not available")
     cart = database.carts.find_one({"customer_id": user["_id"]})
+    cart_cook_ids = _cart_cook_ids(database, cart)
+    if cart_cook_ids and (len(cart_cook_ids) > 1 or food.get("cook_id") not in cart_cook_ids):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=MIXED_COOK_MESSAGE)
     current = next((x["quantity"] for x in (cart or {}).get("items", []) if x["food_id"] == food_id), 0)
     if current + payload.quantity > food.get("portions", 0):
         raise HTTPException(status_code=409, detail="Requested quantity is not available")
     now = datetime.now(UTC)
-    result = database.carts.update_one({"customer_id": user["_id"], "items.food_id": food_id}, {"$inc": {"items.$.quantity": payload.quantity}, "$set": {"updated_at": now}})
+    result = database.carts.update_one({"customer_id": user["_id"], "items.food_id": food_id}, {"$inc": {"items.$.quantity": payload.quantity}, "$set": {"cook_id": food["cook_id"], "updated_at": now}})
     if result.matched_count == 0:
-        database.carts.update_one({"customer_id": user["_id"]}, {"$setOnInsert": {"created_at": now}, "$set": {"updated_at": now}, "$push": {"items": {"food_id": food_id, "quantity": payload.quantity}}}, upsert=True)
+        database.carts.update_one({"customer_id": user["_id"]}, {"$setOnInsert": {"created_at": now}, "$set": {"cook_id": food["cook_id"], "updated_at": now}, "$push": {"items": {"food_id": food_id, "quantity": payload.quantity}}}, upsert=True)
     return {"success": True, "message": "Item added to cart", "data": _expanded_cart(database, user["_id"])}
 
 
@@ -64,10 +75,13 @@ def update_item(food_id: str, payload: CartQuantityUpdate, user: dict = Depends(
 @router.delete("/items/{food_id}")
 def remove_item(food_id: str, user: dict = Depends(require_roles("customer")), database: Database = Depends(get_database)) -> dict:
     database.carts.update_one({"customer_id": user["_id"]}, {"$pull": {"items": {"food_id": object_id(food_id, "food")}}, "$set": {"updated_at": datetime.now(UTC)}})
+    cart = database.carts.find_one({"customer_id": user["_id"]})
+    if not cart or not cart.get("items"):
+        database.carts.update_one({"customer_id": user["_id"]}, {"$unset": {"cook_id": ""}})
     return {"success": True, "message": "Item removed", "data": _expanded_cart(database, user["_id"])}
 
 
 @router.delete("")
 def clear_cart(user: dict = Depends(require_roles("customer")), database: Database = Depends(get_database)) -> dict:
-    database.carts.update_one({"customer_id": user["_id"]}, {"$set": {"items": [], "updated_at": datetime.now(UTC)}})
+    database.carts.update_one({"customer_id": user["_id"]}, {"$set": {"items": [], "updated_at": datetime.now(UTC)}, "$unset": {"cook_id": ""}})
     return {"success": True, "message": "Cart cleared"}

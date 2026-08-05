@@ -2,7 +2,7 @@ import re
 from datetime import UTC, datetime, timedelta
 
 from bson import ObjectId
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
 from pymongo import DESCENDING, ReturnDocument
 from pymongo.database import Database
 from pymongo.errors import DuplicateKeyError
@@ -100,6 +100,20 @@ async def register_delivery_partner(
     except DuplicateKeyError as error:
         raise HTTPException(status_code=409, detail="Email or phone number already exists") from error
     return {"success": True, "message": "Application submitted. You can log in after Admin approval.", "data": {"id": str(partner_id), "approval_status": "pending"}}
+
+
+@router.get("/api/delivery-partners/applications/{partner_id}/status")
+def delivery_application_status(
+    partner_id: str, email: str = Query(..., min_length=5, max_length=254),
+    database: Database = Depends(get_database),
+) -> dict:
+    partner = database.delivery_partners.find_one({"_id": object_id(partner_id, "application")})
+    if not partner:
+        raise HTTPException(status_code=404, detail="Application not found")
+    user = database.users.find_one({"_id": partner["user_id"], "email": email.strip().lower()})
+    if not user:
+        raise HTTPException(status_code=404, detail="Application not found")
+    return {"success": True, "data": {"application_id": str(partner["_id"]), "full_name": partner.get("full_name"), "approval_status": partner.get("approval_status", "pending"), "account_status": user.get("account_status", "pending_approval"), "updated_at": partner.get("updated_at")}}
 
 
 @router.get("/api/delivery-partners/profile")

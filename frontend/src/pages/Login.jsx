@@ -4,8 +4,10 @@ import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
 import api, { apiError, saveSession } from '../services/api.js'
 import PasswordEye from '../components/PasswordEye.jsx'
+import { useTranslation } from '../i18n/LanguageContext.jsx'
 
 export default function Login() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
   const [form, setForm] = useState({ identifier: '', password: '' })
@@ -17,9 +19,9 @@ export default function Login() {
 
   const validate = () => {
     const next = {}
-    if (!form.identifier.trim()) next.identifier = 'Enter your email or phone number.'
-    if (!form.password) next.password = 'Enter your password.'
-    else if (form.password.length < 6) next.password = 'Password must be at least 6 characters.'
+    if (!form.identifier.trim()) next.identifier = t('Enter your email or phone number.')
+    if (!form.password) next.password = t('Enter your password.')
+    else if (form.password.length < 6) next.password = t('Password must be at least 6 characters.')
     return next
   }
 
@@ -53,15 +55,15 @@ export default function Login() {
         <section style={styles.wrap}>
           <div className="container" style={styles.inner}>
             <div className="card" style={styles.formCard}>
-              <span className="eyebrow">Welcome back</span>
-              <h1 style={styles.h1}>Log in to TasteLoop</h1>
-              <p style={styles.sub}>Pick up where you left off — order, cook, or check your kitchen.</p>
+              <span className="eyebrow">{t('Welcome back')}</span>
+              <h1 style={styles.h1}>{t('Log in to TasteLoop')}</h1>
+              <p style={styles.sub}>{t('Pick up where you left off — order, cook, or check your kitchen.')}</p>
 
               <form onSubmit={handleSubmit} noValidate>
                 {location.state?.message && <p style={styles.notice}>{location.state.message}</p>}
                 {errors.form && <p style={styles.error}>{errors.form}</p>}
                 <div className="field">
-                  <label htmlFor="identifier">Email or phone number</label>
+                  <label htmlFor="identifier">{t('Email or phone number')}</label>
                   <input
                     id="identifier"
                     type="text"
@@ -75,8 +77,8 @@ export default function Login() {
 
                 <div className="field">
                   <div style={styles.labelRow}>
-                    <label htmlFor="password" style={{ margin: 0 }}>Password</label>
-                    <Link to="#" style={styles.forgot}>Forgot password?</Link>
+                    <label htmlFor="password" style={{ margin: 0 }}>{t('Password')}</label>
+                    <Link to="#" style={styles.forgot}>{t('Forgot password?')}</Link>
                   </div>
                   <div style={styles.passwordWrap}>
                     <input
@@ -88,26 +90,26 @@ export default function Login() {
                       aria-invalid={!!errors.password}
                       style={styles.passwordInput}
                     />
-                    <button type="button" style={styles.passwordToggle} onClick={() => setShowPassword(current => !current)} aria-label={showPassword ? 'Hide password' : 'Show password'} title={showPassword ? 'Hide password' : 'Show password'}><PasswordEye visible={showPassword} /></button>
+                    <button type="button" style={styles.passwordToggle} onClick={() => setShowPassword(current => !current)} aria-label={t(showPassword ? 'Hide password' : 'Show password')} title={t(showPassword ? 'Hide password' : 'Show password')}><PasswordEye visible={showPassword} /></button>
                   </div>
                   {errors.password && <p style={styles.error}>{errors.password}</p>}
                 </div>
 
                 <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
-                  {submitting ? 'Logging in…' : 'Log In'}
+                  {submitting ? t('Logging in…') : t('Log In')}
                 </button>
               </form>
 
               <div style={styles.divider}>
                 <span style={styles.dividerLine} />
-                <span style={styles.dividerText}>or continue with</span>
+                <span style={styles.dividerText}>{t('or continue with')}</span>
                 <span style={styles.dividerLine} />
               </div>
 
              
               <p style={styles.footNote}>
-                New to TasteLoop?{' '}
-                <Link to="/register" style={styles.link}>Create an account</Link>
+                {t('New to TasteLoop?')}{' '}
+                <Link to="/register" style={styles.link}>{t('Create an account')}</Link>
               </p>
             </div>
           </div>

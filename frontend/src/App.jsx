@@ -33,6 +33,7 @@ import DeliveryDashboard from './pages/DeliveryDashboard.jsx'
 import DeliveryProfile from './pages/DeliveryProfile.jsx'
 import AdminDeliveryPartners from './pages/AdminDeliveryPartners.jsx'
 import CookOrders from './pages/CookOrders.jsx'
+import DeliveryApprovalPending from './pages/DeliveryApprovalPending.jsx'
 
 const customer = (element) => <ProtectedRoute roles={['customer']}>{element}</ProtectedRoute>
 const cook = (element) => <ProtectedRoute roles={['home_cook']}>{element}</ProtectedRoute>
@@ -50,6 +51,7 @@ export default function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/choose-role" element={<ChooseRole />} />
       <Route path="/delivery/register" element={<DeliveryPartnerRegister />} />
+      <Route path="/delivery/approval-pending" element={<DeliveryApprovalPending />} />
       <Route path="/delivery/dashboard" element={delivery(<DeliveryDashboard />)} />
       <Route path="/delivery/profile" element={delivery(<DeliveryProfile />)} />
       <Route path="/customer/dashboard" element={customer(<CustomerDashboard />)} />

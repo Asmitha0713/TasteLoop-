@@ -1,6 +1,7 @@
 from pymongo import ASCENDING, DESCENDING, MongoClient
 from pymongo.database import Database
 from pymongo.errors import ConfigurationError, OperationFailure, ServerSelectionTimeoutError
+from time import sleep
 
 from app.core.config import settings
 
@@ -16,25 +17,39 @@ def connect_database() -> None:
     if not settings.jwt_secret:
         raise RuntimeError("JWT_SECRET is not configured")
 
-    client = MongoClient(settings.mongodb_uri, serverSelectionTimeoutMS=5000)
-    try:
-        client.admin.command("ping")
-    except OperationFailure as error:
-        client.close()
-        client = None
-        if error.code == 8000 or "authentication failed" in str(error).lower():
+    connection_error = None
+    for attempt in range(3):
+        client = MongoClient(settings.mongodb_uri, serverSelectionTimeoutMS=7000)
+        try:
+            client.admin.command("ping")
+            connection_error = None
+            break
+        except OperationFailure as error:
+            client.close()
+            client = None
+            if error.code == 8000 or "authentication failed" in str(error).lower():
+                raise RuntimeError(
+                    "MongoDB Atlas authentication failed. Check the database user's username and password in "
+                    "MONGODB_URI (Atlas Database Access, not your Atlas website login). URL-encode special "
+                    "characters in the password."
+                ) from error
+            raise RuntimeError(f"MongoDB rejected the connection: {error}") from error
+        except (ConfigurationError, ServerSelectionTimeoutError) as error:
+            client.close()
+            client = None
+            connection_error = error
+            if attempt < 2:
+                sleep(1)
+    if connection_error is not None:
+        message = str(connection_error).lower()
+        if "nameserver" in message or "srv" in message or "dns" in message:
             raise RuntimeError(
-                "MongoDB Atlas authentication failed. Check the database user's username and password in "
-                "MONGODB_URI (Atlas Database Access, not your Atlas website login). URL-encode special "
-                "characters in the password."
-            ) from error
-        raise RuntimeError(f"MongoDB rejected the connection: {error}") from error
-    except (ConfigurationError, ServerSelectionTimeoutError) as error:
-        client.close()
-        client = None
+                "MongoDB Atlas hostname could not be resolved after 3 attempts. Check your internet/DNS "
+                "connection, then try again. The configured MONGODB_URI format is valid."
+            ) from connection_error
         raise RuntimeError(
-            "Could not connect to MongoDB. Check MONGODB_URI and allow your current IP in Atlas Network Access."
-        ) from error
+            "Could not connect to MongoDB after 3 attempts. Check Atlas Network Access and your internet connection."
+        ) from connection_error
     database = client[settings.mongodb_db]
     database.users.create_index([("email", ASCENDING)], unique=True)
     database.users.create_index([("phone_number", ASCENDING)], unique=True)
@@ -57,6 +72,7 @@ def connect_database() -> None:
     database.orders.create_index([("customer_id", ASCENDING), ("created_at", ASCENDING)])
     database.orders.create_index([("items.cook_id", ASCENDING), ("created_at", ASCENDING)])
     database.orders.create_index([("order_number", ASCENDING)], unique=True)
+    database.orders.create_index([("stripe_payment_intent_id", ASCENDING)], unique=True, sparse=True)
     database.carts.create_index([("user_id", ASCENDING)], unique=True)
     database.reports.create_index([("status", ASCENDING), ("created_at", ASCENDING)])
     database.complaints.create_index([("customer_id", ASCENDING), ("created_at", DESCENDING)])

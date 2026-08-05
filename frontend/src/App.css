@@ -39,6 +39,7 @@
 .delivery-password-eye { position:absolute; top:50%; right:13px; transform:translateY(-50%); display:grid; place-items:center; padding:5px; border:0; background:transparent; color:var(--color-olive); cursor:pointer; }
 .delivery-password-eye:hover { color:var(--color-peach); }
 .delivery-password-eye:focus-visible { outline:2px solid var(--color-peach); outline-offset:2px; border-radius:6px; }
+.language-switcher{display:inline-flex;align-items:center;gap:5px;height:38px;padding:0 8px;border:1px solid var(--color-border-strong);border-radius:10px;background:var(--color-surface);color:var(--color-ink);font-size:12px}.language-switcher select{border:0;outline:0;background:transparent;color:inherit;font:inherit;font-weight:700;cursor:pointer}.language-switcher select option{background:var(--color-surface);color:var(--color-ink)}.language-switcher.compact{height:32px;padding:0 6px}.language-switcher.compact>span{display:none}@media(max-width:760px){.language-switcher>span{display:none}.language-switcher{padding:0 4px}}
 .profile-columns .delivery-form { max-width:none; }
 .delivery-title,.admin-title { display:flex; justify-content:space-between; align-items:center; gap:20px; margin-bottom:26px; }
 .delivery-title h1,.admin-title h1 { margin:8px 0 0; }
@@ -63,6 +64,23 @@
 .inline-retry { margin-left:10px; padding:3px 8px; border:1px solid currentColor; border-radius:7px; background:transparent; color:inherit; font-weight:700; cursor:pointer; }
 .admin-page { min-height:100vh; display:grid; grid-template-columns:230px minmax(0,1fr); }
 .admin-page > .admin-main { padding:36px; width:100%; max-width:1400px; margin:0 auto; }
+.approval-page { width:min(760px,calc(100% - 32px)); margin:auto; padding:70px 0 90px; display:grid; place-items:center; }
+.approval-card { width:100%; padding:clamp(28px,6vw,56px); text-align:center; }
+.approval-card h1 { margin:12px 0; }
+.approval-card > p { max-width:580px; margin:0 auto 24px; }
+.approval-icon { width:78px; height:78px; display:grid; place-items:center; margin:0 auto 22px; border-radius:50%; background:rgba(122,132,80,.16); color:var(--color-olive); font-size:34px; }
+.approval-icon.rejected { background:rgba(232,146,124,.14); color:var(--color-peach); }
+.approval-status-row { display:flex; justify-content:space-between; gap:20px; margin:24px 0; padding:16px 18px; border:1px solid var(--color-border); border-radius:13px; text-align:left; }
+.approval-status-row strong { color:var(--color-olive); text-transform:capitalize; }
+.approval-status-row strong.rejected { color:var(--color-peach); }
+.approval-actions { display:flex; justify-content:center; flex-wrap:wrap; gap:12px; margin:24px 0 18px; }
+.approval-help { color:var(--color-peach); font-size:13px; }
+.stripe-modal { position:fixed; inset:0; z-index:1000; display:grid; place-items:center; padding:20px; background:rgba(0,0,0,.72); backdrop-filter:blur(7px); }
+.stripe-modal-card { width:min(560px,100%); max-height:calc(100vh - 40px); overflow:auto; padding:30px; border:1px solid var(--color-border); border-radius:22px; background:#211b18; box-shadow:0 30px 90px rgba(0,0,0,.55); }
+.stripe-modal-head h2 { margin:8px 0 24px; color:#fff8ee; }
+.stripe-payment-form { display:grid; gap:20px; }
+.stripe-payment-actions { display:flex; justify-content:flex-end; gap:12px; }
+.stripe-security { margin:20px 0 0; text-align:center; color:#c7bbb0; font-size:12px; }
 
 @media (max-width: 800px) {
   .delivery-nav { align-items:flex-start; flex-direction:column; }

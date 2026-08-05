@@ -32,8 +32,10 @@ export default function DeliveryPartnerRegister() {
     try {
       const body = new FormData()
       Object.entries(form).forEach(([key, value]) => { if (value !== undefined && value !== null && value !== '') body.append(key, value) })
-      await registerDeliveryPartner(body)
-      navigate('/login', { state: { message: 'Application submitted. Admin approval is required before login.' } })
+      const { data } = await registerDeliveryPartner(body)
+      const application = { id: data.data.id, email: form.email }
+      sessionStorage.setItem('delivery-partner-application', JSON.stringify(application))
+      navigate('/delivery/approval-pending', { state: application })
     } catch (requestError) { setError(apiError(requestError)) } finally { setLoading(false) }
   }
 

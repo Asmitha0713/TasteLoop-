@@ -8,6 +8,7 @@ export default function AdminUsers() {
   const [role, setRole] = useState('All roles')
   const [status, setStatus] = useState('All statuses')
   const [showAddUser, setShowAddUser] = useState(false)
+  const [removingUserId, setRemovingUserId] = useState('')
   const [newUser, setNewUser] = useState({ name: '', email: '', phone: '', password: '', role: 'Customer', status: 'Active' })
   const [error, setError] = useState('')
   const visible = useMemo(() => users.filter(u =>
@@ -15,11 +16,25 @@ export default function AdminUsers() {
     (status === 'All statuses' || u.status === status) &&
     `${u.name} ${u.email}`.toLowerCase().includes(query.toLowerCase())
   ), [users, query, role, status])
-  const display = user => ({ ...user, name: user.full_name, role: user.role === 'home_cook' ? 'Home Cook' : user.role === 'admin' ? 'Admin' : 'Customer', status: user.account_status === 'pending_approval' ? 'Pending' : user.account_status[0].toUpperCase() + user.account_status.slice(1), joined: new Date(user.created_at).toLocaleDateString(), avatar: user.full_name.split(/\s+/).slice(0,2).map(part=>part[0]).join('').toUpperCase(), color: '#dfece4' })
+  const display = user => ({ ...user, name: user.full_name, role: user.role === 'home_cook' ? 'Home Cook' : user.role === 'delivery_partner' ? 'Delivery Partner' : user.role === 'admin' ? 'Admin' : 'Customer', status: user.account_status === 'pending_approval' ? 'Pending' : user.account_status[0].toUpperCase() + user.account_status.slice(1), joined: new Date(user.created_at).toLocaleDateString(), avatar: user.full_name.split(/\s+/).slice(0,2).map(part=>part[0]).join('').toUpperCase(), color: '#dfece4' })
   useEffect(() => { api.get('/admin/users').then(({data}) => setUsers(data.data.map(display))).catch(requestError => setError(apiError(requestError))) }, [])
   const changeStatus = async (id, status) => {
     try { await api.patch(`/admin/users/${id}/status`, { account_status: status === 'Pending' ? 'pending_approval' : status.toLowerCase() }); setUsers(current => current.map(user => user.id === id ? {...user, status} : user)) }
     catch (requestError) { setError(apiError(requestError)) }
+  }
+
+  const removeUser = async (user) => {
+    if (!window.confirm(`Remove ${user.name}? They will no longer be able to sign in. This action cannot be undone.`)) return
+    setRemovingUserId(user.id)
+    setError('')
+    try {
+      await api.delete(`/admin/users/${user.id}`)
+      setUsers(current => current.filter(item => item.id !== user.id))
+    } catch (requestError) {
+      setError(apiError(requestError))
+    } finally {
+      setRemovingUserId('')
+    }
   }
 
   const addUser = (event) => {
@@ -39,8 +54,9 @@ export default function AdminUsers() {
 
   return <AdminLayout title="Manage users" eyebrow="Community management" action={<button className="btn btn-primary" onClick={() => setShowAddUser(true)}>＋ Add User</button>}>
     <div className="admin-summary-row"><span><strong>{users.length}</strong> Total users</span><span><strong>{users.filter(u=>u.role==='Home Cook').length}</strong> Home cooks</span><span><strong>{users.filter(u=>u.status==='Pending').length}</strong> Pending approval</span></div>
-    <section className="card admin-table-card"><div className="admin-toolbar"><label className="admin-search">⌕<input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search name or email…" /></label><div><select value={role} onChange={e=>setRole(e.target.value)} className="admin-select"><option>All roles</option><option>Customer</option><option>Home Cook</option></select><select value={status} onChange={e=>setStatus(e.target.value)} className="admin-select"><option>All statuses</option><option>Active</option><option>Pending</option><option>Suspended</option></select></div></div>
-      <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>User</th><th>Role</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead><tbody>{visible.map(user => <tr key={user.id}><td><div className="admin-user-cell"><i style={{background:user.color}}>{user.avatar}</i><div><strong>{user.name}</strong><small>{user.email}</small></div></div></td><td><span className="role-chip">{user.role}</span></td><td>{user.joined}</td><td><span className={`admin-status ${user.status.toLowerCase()}`}>{user.status}</span></td><td><select className="row-select" value={user.status} onChange={e=>changeStatus(user.id,e.target.value)} aria-label={`Change status for ${user.name}`}><option>Active</option><option>Pending</option><option>Suspended</option></select></td></tr>)}</tbody></table></div>{!visible.length&&<div className="admin-empty">No matching users found.</div>}
+    <section className="card admin-table-card"><div className="admin-toolbar"><label className="admin-search">⌕<input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search name or email…" /></label><div><select value={role} onChange={e=>setRole(e.target.value)} className="admin-select"><option>All roles</option><option>Customer</option><option>Home Cook</option><option>Delivery Partner</option><option>Admin</option></select><select value={status} onChange={e=>setStatus(e.target.value)} className="admin-select"><option>All statuses</option><option>Active</option><option>Pending</option><option>Suspended</option></select></div></div>
+      <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>User</th><th>Role</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead><tbody>{visible.map(user => <tr key={user.id}><td><div className="admin-user-cell"><i style={{background:user.color}}>{user.avatar}</i><div><strong>{user.name}</strong><small>{user.email}</small></div></div></td><td><span className="role-chip">{user.role}</span></td><td>{user.joined}</td><td><span className={`admin-status ${user.status.toLowerCase()}`}>{user.status}</span></td><td><div className="user-row-actions"><select className="row-select" value={user.status} onChange={e=>changeStatus(user.id,e.target.value)} aria-label={`Change status for ${user.name}`}><option>Active</option><option>Pending</option><option>Suspended</option></select><button type="button" className="remove-user-button" onClick={() => removeUser(user)} disabled={removingUserId === user.id} aria-label={`Remove ${user.name}`} title="Remove user">{removingUserId === user.id ? '…' : '🗑'}</button></div></td></tr>)}</tbody></table></div>{!visible.length&&<div className="admin-empty">No matching users found.</div>}
+      {error && <p className="admin-table-error">{error}</p>}
     </section>
     {showAddUser && <div className="admin-modal-backdrop" role="presentation" onMouseDown={() => setShowAddUser(false)}>
       <section className="card admin-modal" role="dialog" aria-modal="true" aria-labelledby="add-user-title" onMouseDown={event => event.stopPropagation()}>

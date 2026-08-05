@@ -98,7 +98,7 @@ def dashboard(_user: dict = Depends(admin_user), database: Database = Depends(ge
         "pending_users": database.users.count_documents({"account_status": "pending_approval"}),
         "foods": database.foods.count_documents({}),
         "pending_foods": database.foods.count_documents({"moderation_status": "pending"}),
-        "open_reports": database.reports.count_documents({"status": {"$ne": "resolved"}}),
+        "open_reports": database.reports.count_documents({"status": {"$in": ["open", "investigating"]}}),
         **sales,
     }}
 
@@ -108,7 +108,7 @@ def users(
     query: str | None = None, role: str | None = None, account_status: str | None = None,
     _user: dict = Depends(admin_user), database: Database = Depends(get_database),
 ) -> dict:
-    filters: dict = {}
+    filters: dict = {"account_status": {"$ne": "deleted"}}
     if query:
         filters["$or"] = [{"full_name": {"$regex": query, "$options": "i"}}, {"email": {"$regex": query, "$options": "i"}}]
     if role:
@@ -139,6 +139,70 @@ def change_user_status(user_id: str, payload: AccountStatusUpdate, _user: dict =
     return {"success": True, "message": "User status updated"}
 
 
+@router.delete("/users/{user_id}")
+def remove_user(
+    user_id: str,
+    current_admin: dict = Depends(admin_user),
+    database: Database = Depends(get_database),
+) -> dict:
+    target_id = object_id(user_id, "user")
+    if target_id == current_admin["_id"]:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You cannot remove your own admin account")
+
+    user = database.users.find_one({"_id": target_id, "account_status": {"$ne": "deleted"}})
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    active_statuses = [
+        "pending", "confirmed", "accepted", "preparing", "ready_for_pickup",
+        "delivery_assigned", "picked_up", "out_for_delivery", "delivered",
+    ]
+    order_filter: dict = {"status": {"$in": active_statuses}}
+    if user.get("role") == "customer":
+        order_filter["customer_id"] = target_id
+    elif user.get("role") == "home_cook":
+        order_filter["items.cook_id"] = target_id
+    else:
+        order_filter = {}
+    if order_filter and database.orders.find_one(order_filter, {"_id": 1}):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="This user has an active order. Complete or cancel it before removing the account.",
+        )
+
+    partner = database.delivery_partners.find_one({"user_id": target_id}, {"_id": 1})
+    if partner and database.deliveries.find_one({
+        "delivery_partner_id": partner["_id"],
+        "status": {"$nin": ["delivered", "completed", "cancelled", "rejected"]},
+    }, {"_id": 1}):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="This delivery partner has an active delivery. Complete or reassign it before removing the account.",
+        )
+
+    now = datetime.now(UTC)
+    database.users.update_one({"_id": target_id}, {"$set": {
+        "full_name": "Deleted User",
+        "email": f"deleted-{target_id}@deleted.tasteloop.local",
+        "phone_number": f"deleted-{target_id}",
+        "password_hash": "",
+        "account_status": "deleted",
+        "deleted_at": now,
+        "deleted_by": current_admin["_id"],
+        "updated_at": now,
+    }})
+    database.refresh_tokens.delete_many({"user_id": target_id})
+    database.carts.delete_many({"$or": [{"customer_id": target_id}, {"user_id": target_id}]})
+    database.addresses.delete_many({"user_id": target_id})
+    database.favorites.delete_many({"user_id": target_id})
+    database.notifications.delete_many({"user_id": target_id})
+    database.bank_details.delete_many({"cook_id": target_id})
+    database.delivery_partners.delete_many({"user_id": target_id})
+    if user.get("role") == "home_cook":
+        database.foods.update_many({"cook_id": target_id}, {"$set": {"is_active": False, "updated_at": now}})
+    return {"success": True, "message": "User removed successfully"}
+
+
 @router.get("/foods")
 def foods(
     moderation_status: str | None = Query(default=None, alias="status"),
@@ -159,9 +223,12 @@ def moderate_food(food_id: str, payload: FoodModerationUpdate, _user: dict = Dep
 @router.get("/reports")
 def reports(
     report_status: str | None = Query(default=None, alias="status"),
+    active_only: bool = False,
     _user: dict = Depends(admin_user), database: Database = Depends(get_database),
 ) -> dict:
     filters = {"status": report_status} if report_status else {}
+    if active_only and not report_status:
+        filters["status"] = {"$in": ["open", "investigating"]}
     return {"success": True, "data": [serialize(report) for report in database.reports.find(filters).sort("created_at", DESCENDING)]}
 
 
