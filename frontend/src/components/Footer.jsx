@@ -44,8 +44,8 @@ export default function Footer() {
         <div>
           <h4 style={styles.heading}>Contact Us</h4>
           <ul style={styles.list}>
-            <li>asmithathavaradnam@gmail.com</li>
-            <li>0740625386</li>
+            <li>Tasteloop@gmail.com</li>
+            <li>0740526186</li>
             <li>Kilinochchi, Sri Lanka</li>
           </ul>
           <div style={styles.social}>

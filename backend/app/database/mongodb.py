@@ -19,8 +19,15 @@ def connect_database() -> None:
 
     connection_error = None
     for attempt in range(3):
-        client = MongoClient(settings.mongodb_uri, serverSelectionTimeoutMS=7000)
         try:
+            # connect=False prevents mongodb+srv DNS resolution from escaping this
+            # retry block during MongoClient construction.
+            client = MongoClient(
+                settings.mongodb_uri,
+                serverSelectionTimeoutMS=7000,
+                connectTimeoutMS=7000,
+                connect=False,
+            )
             client.admin.command("ping")
             connection_error = None
             break
@@ -35,7 +42,8 @@ def connect_database() -> None:
                 ) from error
             raise RuntimeError(f"MongoDB rejected the connection: {error}") from error
         except (ConfigurationError, ServerSelectionTimeoutError) as error:
-            client.close()
+            if client is not None:
+                client.close()
             client = None
             connection_error = error
             if attempt < 2:
@@ -67,6 +75,8 @@ def connect_database() -> None:
     database.favorites.create_index([("customer_id", ASCENDING), ("food_id", ASCENDING)], unique=True)
     database.favorites.create_index([("customer_id", ASCENDING), ("created_at", DESCENDING)])
     database.notifications.create_index([("user_id", ASCENDING), ("read", ASCENDING), ("created_at", DESCENDING)])
+    database.reviews.create_index([("food_id", ASCENDING), ("customer_id", ASCENDING)], unique=True)
+    database.reviews.create_index([("food_id", ASCENDING), ("created_at", DESCENDING)])
     database.foods.create_index([("cook_id", ASCENDING)])
     database.foods.create_index([("moderation_status", ASCENDING), ("available", ASCENDING)])
     database.orders.create_index([("customer_id", ASCENDING), ("created_at", ASCENDING)])

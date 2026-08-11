@@ -72,7 +72,11 @@ def review_food(food_id: str, payload: ReviewCreate, user: dict = Depends(requir
     food = database.foods.find_one({"_id": fid, "moderation_status": "approved"})
     if not food:
         raise HTTPException(status_code=404, detail="Food not found")
-    delivered = database.orders.find_one({"customer_id": user["_id"], "items.food_id": fid, "status": "delivered"})
+    delivered = database.orders.find_one({
+        "customer_id": user["_id"],
+        "items.food_id": fid,
+        "status": {"$in": ["delivered", "completed"]},
+    })
     if not delivered:
         raise HTTPException(status_code=403, detail="Only customers who received this food can review it")
     now = datetime.now(UTC)
