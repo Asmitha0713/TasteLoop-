@@ -16,7 +16,7 @@ class AvailabilityUpdate(BaseModel):
 
 
 class DeliveryStatusUpdate(BaseModel):
-    status: Literal["arrived_at_pickup", "picked_up", "out_for_delivery", "delivered"]
+    status: Literal["picked_up", "out_for_delivery", "delivered"]
 
 
 class PartnerApprovalUpdate(BaseModel):

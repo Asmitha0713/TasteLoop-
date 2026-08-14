@@ -12,7 +12,7 @@ export default function OrderHistory() {
   const [error, setError] = useState('')
   const [reportOrder, setReportOrder] = useState(null)
   useEffect(() => { api.get('/orders').then(({ data }) => setOrders(data.data.map(order => ({ ...order, date: new Date(order.created_at).toLocaleDateString(), cook: order.items[0]?.cook_name || 'Home Cook', item_summary: order.items.map(item => `${item.quantity} × ${item.name}`).join(', '), image_url: order.items[0]?.image_url, emoji: order.items[0]?.emoji || '🍽️', color: order.items[0]?.color || '#f4dfb8', display_status: order.status[0].toUpperCase() + order.status.slice(1).replaceAll('_', ' ') })))).catch(requestError => setError(apiError(requestError))) }, [])
-  const shown = tab === 'All' ? orders : orders.filter((order) => tab === 'Active' ? !['delivered','cancelled'].includes(order.status) : ['delivered','cancelled'].includes(order.status))
+  const shown = tab === 'All' ? orders : orders.filter((order) => tab === 'Active' ? !['delivered','rejected','cancelled'].includes(order.status) : ['delivered','rejected','cancelled'].includes(order.status))
   return (
     <div className="page"><CustomerNav /><main className="page-content"><section className="container" style={styles.wrap}>
       <span className="eyebrow">Your meals</span><div style={styles.heading}><div><h1 style={styles.h1}>Order history</h1><p style={styles.lead}>Track current orders or revisit a meal you loved.</p></div><Link to="/search" className="btn btn-primary">Browse food</Link></div>

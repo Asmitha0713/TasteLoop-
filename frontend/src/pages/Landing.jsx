@@ -6,6 +6,7 @@ import SteamDivider from '../components/SteamDivider.jsx'
 import FoodCard from '../components/FoodCard.jsx'
 import CookCard from '../components/CookCard.jsx'
 import api, { assetUrl } from '../services/api.js'
+import { useTranslation } from '../i18n/LanguageContext.jsx'
 
 const features = [
   { icon: '🍲', title: 'Real Home Cooking', text: 'Every dish is made fresh, in a real kitchen, by a real neighbour — not a commercial line.' },
@@ -15,6 +16,7 @@ const features = [
 ]
 
 export default function Landing() {
+  const { t } = useTranslation()
   const [foods, setFoods] = useState([])
   const [cooks, setCooks] = useState([])
   const [query, setQuery] = useState('')
@@ -35,15 +37,15 @@ export default function Landing() {
         <section className="landing-hero" style={styles.hero}>
           <div className="container hero-marketplace-grid" style={styles.heroInner}>
             <div>
-              <span className="eyebrow">Homecook marketplace</span>
-              <h1 style={styles.h1}>Delicious Homemade Food,<br />Made with Love.</h1>
-              <p style={styles.heroText}>Skip the commercial kitchens. Order real home-cooked meals from trusted cooks in your neighbourhood — or turn your own kitchen into a source of income.</p>
-              <div style={styles.searchBar}><span style={{ opacity: 0.5 }}>🔍</span><input value={query} onChange={event => setQuery(event.target.value)} onKeyDown={event => event.key === 'Enter' && search()} placeholder="Search homemade food…" style={styles.searchInput} /><button className="btn btn-primary btn-sm" onClick={search}>Search</button></div>
-              <div style={styles.heroActions}><Link to="/browse" className="btn btn-primary">Order Food</Link><Link to="/choose-role" className="btn btn-secondary">Become a Home Cook</Link></div>
+              <span className="eyebrow">{t('Homecook marketplace')}</span>
+              <h1 style={styles.h1}>{t('Delicious Homemade Food,')}<br />{t('Made with Love.')}</h1>
+              <p style={styles.heroText}>{t('Skip the commercial kitchens. Order real home-cooked meals from trusted cooks in your neighbourhood — or turn your own kitchen into a source of income.')}</p>
+              <div style={styles.searchBar}><span style={{ opacity: 0.5 }}>🔍</span><input value={query} onChange={event => setQuery(event.target.value)} onKeyDown={event => event.key === 'Enter' && search()} placeholder={t('Search homemade food…')} style={styles.searchInput} /><button className="btn btn-primary btn-sm" onClick={search}>{t('Search')}</button></div>
+              <div style={styles.heroActions}><Link to="/browse" className="btn btn-primary landing-order-cta">{t('Order Food')}</Link><Link to="/choose-role" className="btn btn-secondary">{t('Become a Home Cook')}</Link></div>
             </div>
             <div style={styles.heroVisual}>
               {foods[0]?.image_url ? <img src={assetUrl(foods[0].image_url)} alt={foods[0].name} style={styles.heroImage} /> : <span style={styles.heroEmoji}>🍲</span>}
-              <div className="landing-hero-badge" style={styles.heroBadge}><span>Fresh today</span><strong>{foods[0]?.name || 'Homemade with care'}</strong></div>
+              <div className="landing-hero-badge" style={styles.heroBadge}><span>{t('Fresh today')}</span><strong>{foods[0]?.name || t('Homemade with care')}</strong></div>
             </div>
           </div>
         </section>
@@ -56,16 +58,16 @@ export default function Landing() {
         <section className="landing-why" style={styles.whySection}>
           <div className="container">
             <div style={styles.sectionHead}>
-              <span className="eyebrow" style={{ color: 'var(--color-mustard)' }}>Why TasteLoop</span>
-              <h2 style={{ color: '#3E362E' }}>A kitchen you can trust, two doors away</h2>
+              <span className="eyebrow" style={{ color: 'var(--color-mustard)' }}>{t('Why TasteLoop')}</span>
+              <h2 style={{ color: '#3E362E' }}>{t('A kitchen you can trust, two doors away')}</h2>
             </div>
 
             <div className="grid-4" style={styles.featureGrid}>
               {features.map((f) => (
                 <div key={f.title} className="card" style={styles.featureCard}>
                   <div style={styles.featureIcon}>{f.icon}</div>
-                  <h4 style={{ margin: '10px 0 6px', color: 'var(--color-forest)' }}>{f.title}</h4>
-                  <p style={{ fontSize: 13.5, margin: 0, color: 'var(--color-ink-soft)' }}>{f.text}</p>
+                  <h4 style={{ margin: '10px 0 6px', color: 'var(--color-forest)' }}>{t(f.title)}</h4>
+                  <p style={{ fontSize: 13.5, margin: 0, color: 'var(--color-ink-soft)' }}>{t(f.text)}</p>
                 </div>
               ))}
             </div>
@@ -76,10 +78,10 @@ export default function Landing() {
         <section className="container" style={styles.section}>
           <div style={styles.sectionHeadRow}>
             <div>
-              <span className="eyebrow">Near you</span>
-              <h2>Popular Right Now</h2>
+              <span className="eyebrow">{t('Near you')}</span>
+              <h2>{t('Popular Right Now')}</h2>
             </div>
-            <Link to="/browse" className="btn btn-secondary btn-sm">View All</Link>
+            <Link to="/browse" className="btn btn-secondary btn-sm">{t('View All')}</Link>
           </div>
           <div className="grid-3" style={styles.foodGrid}>
             {foods.slice(0, 3).map((f) => <FoodCard key={f.id} food={f} />)}
@@ -89,8 +91,8 @@ export default function Landing() {
         {/* TOP HOME COOKS */}
         <section className="container" style={{ ...styles.section, paddingBottom: 80 }}>
           <div style={styles.sectionHead}>
-            <span className="eyebrow">Community favourites</span>
-            <h2>Top Home Cooks</h2>
+            <span className="eyebrow">{t('Community favourites')}</span>
+            <h2>{t('Top Home Cooks')}</h2>
           </div>
           <div className="grid-3" style={styles.cookGrid}>
             {cooks.map((c) => <CookCard key={c.id} cook={c} />)}

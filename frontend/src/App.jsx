@@ -42,8 +42,8 @@ const delivery = (element) => <ProtectedRoute roles={['delivery_partner']}>{elem
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Landing />} />
+    <Routes> 
+      <Route path="/"element={<Landing />} />
       <Route path="/about" element={<About />} />
       <Route path="/browse" element={<Browse />} />
       <Route path="/food/:id" element={<FoodDetails />} />

@@ -32,7 +32,7 @@ def _expanded_cart(database: Database, customer_id) -> dict:
         item["line_total"] = round(food["price"] * row["quantity"], 2)
         subtotal += item["line_total"]
         items.append(item)
-    return {"items": items, "subtotal": round(subtotal, 2), "delivery_fee": 300 if items else 0, "total": round(subtotal + (300 if items else 0), 2)}
+    return {"items": items, "subtotal": round(subtotal, 2), "delivery_fee": 200 if items else 0, "total": round(subtotal + (200 if items else 0), 2)}
 
 
 @router.get("")

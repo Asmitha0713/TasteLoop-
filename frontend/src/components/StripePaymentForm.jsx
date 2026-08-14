@@ -22,7 +22,8 @@ function PaymentForm({ orderId, onClose }) {
 }
 
 export default function StripePaymentForm({ payment, orderId, onClose }) {
-  const stripePromise = useMemo(() => loadStripe(payment.publishable_key),[payment.publishable_key])
-  const options = useMemo(() => ({ clientSecret:payment.client_secret, appearance:{theme:'night',variables:{colorPrimary:'#e8927c',colorBackground:'#211b18',colorText:'#fff8ee',colorDanger:'#ef5b4c',borderRadius:'12px',fontFamily:'Inter, sans-serif'}}}),[payment.client_secret])
+  const publishableKey = payment.publishable_key || import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
+  const stripePromise = useMemo(() => loadStripe(publishableKey),[publishableKey])
+  const options = useMemo(() => ({ clientSecret:payment.client_secret, appearance:{theme:'night',variables:{colorPrimary:'#704a34',colorBackground:'#211b18',colorText:'#fff8ee',colorDanger:'#ef5b4c',borderRadius:'12px',fontFamily:'Inter, sans-serif'}}}),[payment.client_secret])
   return <div className="stripe-modal" role="dialog" aria-modal="true" aria-labelledby="stripe-payment-title"><div className="stripe-modal-card"><div className="stripe-modal-head"><div><span className="eyebrow">Secure payment</span><h2 id="stripe-payment-title">Enter your card details</h2></div></div><Elements stripe={stripePromise} options={options}><PaymentForm orderId={orderId} onClose={onClose}/></Elements><p className="stripe-security">🔒 Card details are encrypted and sent directly to Stripe. TasteLoop never stores them.</p></div></div>
 }

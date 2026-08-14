@@ -154,8 +154,8 @@ def remove_user(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     active_statuses = [
-        "pending", "confirmed", "accepted", "preparing", "ready_for_pickup",
-        "delivery_assigned", "picked_up", "out_for_delivery", "delivered",
+        "pending_cook_confirmation", "cook_accepted", "awaiting_payment", "paid",
+        "preparing", "ready_for_delivery", "delivery_partner_assigned", "picked_up", "out_for_delivery", "delivered",
     ]
     order_filter: dict = {"status": {"$in": active_statuses}}
     if user.get("role") == "customer":

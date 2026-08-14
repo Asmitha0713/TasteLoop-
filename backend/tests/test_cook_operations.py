@@ -74,7 +74,7 @@ def test_food_availability_has_a_dedicated_update():
 class FakeOrders:
     def __init__(self, cook_id):
         self.order = {
-            "_id": ObjectId(), "order_number": "TL-ACCEPT", "status": "confirmed",
+            "_id": ObjectId(), "order_number": "TL-ACCEPT", "status": "pending_cook_confirmation",
             "customer_id": ObjectId(), "items": [{"cook_id": cook_id}], "created_at": datetime.now(UTC),
         }
 
@@ -88,15 +88,15 @@ class FakeOrders:
         return self.order
 
 
-def test_confirmed_order_can_be_explicitly_accepted():
+def test_pending_order_can_be_explicitly_accepted_before_payment():
     cook_id = ObjectId()
     notifications = type("Notifications", (), {"insert_one": lambda self, document: Result(ObjectId())})()
     database = type("Database", (), {"orders": FakeOrders(cook_id), "notifications": notifications})()
 
     response = accept_order(str(database.orders.order["_id"]), {"_id": cook_id}, database)
 
-    assert response["message"] == "Order accepted"
-    assert response["data"]["status"] == "preparing"
+    assert response["message"] == "Order accepted. Waiting for customer payment."
+    assert response["data"]["status"] == "awaiting_payment"
 
 
 class FakeBankDetails:

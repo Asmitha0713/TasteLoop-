@@ -3,14 +3,12 @@ import { Link, useNavigate } from 'react-router-dom'
 import CustomerNav from '../components/CustomerNav.jsx'
 import Footer from '../components/Footer.jsx'
 import api, { apiError } from '../services/api.js'
-import StripePaymentForm from '../components/StripePaymentForm.jsx'
 
 export default function Checkout() {
   const navigate = useNavigate()
-  const [payment, setPayment] = useState('cash')
+  const payment = 'card'
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [stripePayment, setStripePayment] = useState(null)
   const [cart, setCart] = useState({ items: [], subtotal: 0, delivery_fee: 0, total: 0 })
   const [delivery, setDelivery] = useState({ name: '', phone: '', address: '', city: '', landmark: '' })
   useEffect(() => {
@@ -35,11 +33,6 @@ export default function Checkout() {
         landmark: delivery.landmark || null,
         payment_method: payment,
       })
-      if (payment === 'card') {
-        setStripePayment({ payment:data.payment, orderId:data.data.id })
-        setSubmitting(false)
-        return
-      }
       navigate('/order-confirmation', { state: { order: data.data } })
     } catch (requestError) { setError(apiError(requestError)); setSubmitting(false) }
   }
@@ -50,14 +43,14 @@ export default function Checkout() {
       <div className="checkout-layout" style={styles.layout}><div>
         <section className="card" style={styles.section}><div style={styles.sectionHead}><span style={styles.number}>1</span><div><h2 style={styles.title}>Delivery details</h2><p style={styles.sub}>Where should we bring your meal?</p></div></div><div className="grid-2" style={styles.formGrid}><div className="field"><label htmlFor="name">Full name</label><input id="name" name="name" value={delivery.name} onChange={updateDelivery} required /></div><div className="field"><label htmlFor="phone">Phone number</label><input id="phone" name="phone" value={delivery.phone} onChange={updateDelivery} required /></div><div className="field" style={{ gridColumn: '1 / -1' }}><label htmlFor="address">Delivery address</label><input id="address" name="address" value={delivery.address} onChange={updateDelivery} required /></div><div className="field"><label htmlFor="city">City</label><input id="city" name="city" value={delivery.city} onChange={updateDelivery} required /></div><div className="field"><label htmlFor="landmark">Nearby landmark</label><input id="landmark" name="landmark" value={delivery.landmark} onChange={updateDelivery} placeholder="Optional" /></div></div></section>
         <section className="card" style={styles.section}><div style={styles.sectionHead}><span style={styles.number}>2</span><div><h2 style={styles.title}>Delivery time</h2><p style={styles.sub}>Choose when you would like it.</p></div></div><div className="grid-2" style={styles.optionGrid}><label style={styles.option}><input type="radio" name="time" defaultChecked /> <span><strong>As soon as possible</strong><small>35–45 minutes</small></span></label><label style={styles.option}><input type="radio" name="time" /> <span><strong>Schedule for later</strong><small>Choose a time</small></span></label></div></section>
-        <section className="card" style={styles.section}><div style={styles.sectionHead}><span style={styles.number}>3</span><div><h2 style={styles.title}>Payment method</h2><p style={styles.sub}>Select your preferred payment.</p></div></div><div style={styles.optionGrid}>{[['cash','💵','Cash on delivery'],['card','💳','Pay securely with Stripe']].map(([id, icon, label]) => <label key={id} style={{ ...styles.option, borderColor: payment === id ? 'var(--color-forest)' : 'var(--color-border)' }}><input type="radio" name="payment" checked={payment === id} onChange={() => setPayment(id)} /><span style={{ fontSize: 22 }}>{icon}</span><strong>{label}</strong></label>)}</div>{payment === 'card' && <p style={styles.paymentNote}>You will be redirected to Stripe Checkout to enter your card details securely. TasteLoop never receives or stores your card number or CVV.</p>}</section>
+        <section className="card" style={styles.section}><div style={styles.sectionHead}><span style={styles.number}>3</span><div><h2 style={styles.title}>Payment</h2><p style={styles.sub}>Payment opens after your Home Cook accepts.</p></div></div><div style={styles.option}><span style={{ fontSize: 22 }}>💳</span><strong>Pay securely with Stripe after acceptance</strong></div><p style={styles.paymentNote}>TasteLoop will notify you when payment becomes available. Your card is not charged when you place this order.</p></section>
       </div><aside className="card" style={styles.summary}><h2 style={styles.title}>Your order</h2>
         {[...new Set(cart.items.map((item) => item.cook_name).filter(Boolean))].map((name) => <p style={styles.cook} key={name}>{name}</p>)}
         {cart.items.map((item) => <div style={styles.item} key={item.id}><span>{item.quantity} × {item.name}</span><strong>Rs {Number(item.line_total).toLocaleString()}</strong></div>)}
         {cart.items.length === 0 && <p style={styles.empty}>Your cart is empty.</p>}
         <div style={styles.item}><span>Delivery fee</span><strong>Rs {Number(cart.delivery_fee).toLocaleString()}</strong></div>
-        <div style={styles.total}><span>Total</span><strong>Rs {Number(cart.total).toLocaleString()}</strong></div><button className="btn btn-primary btn-block" type="submit" disabled={cart.items.length === 0 || submitting}>{submitting ? payment === 'card' ? 'Opening Stripe…' : 'Placing order…' : payment === 'card' ? 'Pay with Stripe' : 'Place order'}</button><p style={styles.secure}>By ordering, you agree to TasteLoop’s order terms.</p></aside></div>
-    </form>{stripePayment && <StripePaymentForm payment={stripePayment.payment} orderId={stripePayment.orderId} onClose={() => setStripePayment(null)}/>}</main><Footer /></div>
+        <div style={styles.total}><span>Total</span><strong>Rs {Number(cart.total).toLocaleString()}</strong></div><button className="btn btn-primary btn-block" type="submit" disabled={cart.items.length === 0 || submitting}>{submitting ? 'Placing order…' : 'Place order'}</button><p style={styles.secure}>Payment is requested only after the Home Cook accepts.</p></aside></div>
+    </form></main><Footer /></div>
   )
 }
 

@@ -8,7 +8,7 @@ CURRENCY = "lkr"
 
 
 def configured() -> bool:
-    return bool(settings.stripe_secret_key and settings.stripe_publishable_key)
+    return bool(settings.stripe_secret_key)
 
 
 def webhook_configured() -> bool:

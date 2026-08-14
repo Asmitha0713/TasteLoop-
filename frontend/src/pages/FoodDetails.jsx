@@ -80,6 +80,10 @@ export default function FoodDetails() {
               {message && <p style={{ color: 'var(--color-chili)' }}>{message}</p>}
             </div>
           </div>
+          <section style={styles.reviews}>
+            <div style={styles.reviewHead}><div><span className="eyebrow">Customer reviews</span><h2>What customers say</h2></div><strong style={styles.reviewScore}>★ {food.rating || 0} <small>({food.review_count || 0})</small></strong></div>
+            {!food.reviews?.length ? <div className="card" style={styles.emptyReviews}>No customer reviews yet.</div> : <div style={styles.reviewGrid}>{food.reviews.map(review => <article className="card" style={styles.reviewCard} key={review.id}><div style={styles.reviewTop}><strong>{review.customer_name}</strong><span style={styles.rating}>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span></div>{review.comment && <p style={styles.reviewComment}>{review.comment}</p>}<small>{new Date(review.updated_at || review.created_at).toLocaleDateString()}</small></article>)}</div>}
+          </section>
         </div>
       </main>
 
@@ -118,6 +122,12 @@ const styles = {
     fontSize: 12.5,
     color: 'var(--color-ink-soft)',
   },
+  reviews: { marginTop: 48, paddingTop: 34, borderTop: '1px solid var(--color-border)' },
+  reviewHead: { display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 20, marginBottom: 20 },
+  reviewScore: { fontSize: 20, color: 'var(--color-mustard-dark)' },
+  reviewGrid: { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 16 },
+  reviewCard: { padding: 20 }, reviewTop: { display: 'flex', justifyContent: 'space-between', gap: 12 },
+  reviewComment: { margin: '12px 0', fontSize: 14 }, emptyReviews: { padding: 24, color: 'var(--color-ink-soft)' },
   orderBar: {
     display: 'flex',
     alignItems: 'center',

@@ -109,7 +109,7 @@ def dashboard_stats(
             "_id": None,
             "total_orders": {"$sum": 1},
             "pending_orders": {"$sum": {"$cond": [
-                {"$in": ["$status", ["confirmed", "preparing", "ready", "out_for_delivery"]]}, 1, 0
+                {"$in": ["$status", ["pending_cook_confirmation", "awaiting_payment", "paid", "preparing", "ready_for_delivery", "delivery_partner_assigned", "picked_up", "out_for_delivery"]]}, 1, 0
             ]}},
             "completed_orders": {"$sum": {"$cond": [{"$eq": ["$status", "delivered"]}, 1, 0]}},
             "cancelled_orders": {"$sum": {"$cond": [{"$eq": ["$status", "cancelled"]}, 1, 0]}},
@@ -219,8 +219,8 @@ def recent_customer_orders(
             "order_number": order.get("order_number"),
             "customer_name": customer.get("full_name", "Customer") if customer else "Customer",
             "items": cook_items,
-            "status": order.get("status", "confirmed"),
-            "payment_status": order.get("payment_status", "pending"),
+            "status": order.get("status", "pending_cook_confirmation"),
+            "payment_status": order.get("payment_status", "not_started"),
             "amount": sum(float(item.get("total", 0)) for item in cook_items),
             "created_at": order.get("created_at"),
         }))
