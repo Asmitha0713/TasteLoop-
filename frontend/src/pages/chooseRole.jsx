@@ -53,7 +53,7 @@ export default function ChooseRole() {
       <Navbar />
 
       <main className="page-content">
-        <section style={styles.wrap}>
+        <section className="landing-hero" style={styles.wrap}>
           <div className="container" style={{ textAlign: 'center' }}>
             <span className="eyebrow" style={{ justifyContent: 'center' }}>One last step</span>
             <h1 style={styles.h1}>How will you use TasteLoop?</h1>
@@ -117,23 +117,24 @@ export default function ChooseRole() {
 
 const styles = {
   wrap: {
-    background: 'linear-gradient(180deg, var(--color-mustard-tint) 0%, var(--color-bg) 45%)',
-    padding: '64px 0 80px',
+    background: 'var(--color-bg)',
+    padding: '82px 0 80px',
   },
-  h1: { fontSize: 34, margin: '10px 0 8px' },
-  sub: { fontSize: 14, marginBottom: 44 },
+  h1: { fontSize: 'clamp(42px, 5vw, 56px)', margin: '16px 0 12px' },
+  sub: { maxWidth: 560, margin: '0 auto 44px', fontSize: 17 },
   grid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
-    gap: 24,
-    maxWidth: 1080,
+    gap: 20,
+    maxWidth: 1120,
     margin: '0 auto',
   },
   roleCard: {
     position: 'relative',
     textAlign: 'left',
+    minHeight: 350,
     padding: '30px 26px',
-    borderWidth: 2,
+    borderWidth: 1,
     borderStyle: 'solid',
     background: 'var(--color-surface)',
     cursor: 'pointer',

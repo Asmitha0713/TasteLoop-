@@ -1689,8 +1689,6 @@ select option { color: var(--theme-text) !important; background: var(--theme-sur
 .landing-hero-badge { color: var(--theme-text) !important; background: var(--theme-surface) !important; border-color: var(--theme-border) !important; }
 .landing-why { background: var(--theme-surface-muted) !important; border-color: var(--theme-border) !important; }
 .landing-why .card { background: var(--theme-surface) !important; border-color: var(--theme-border) !important; }
-.about-eyebrow { color: var(--theme-secondary) !important; }
-.about-eyebrow::before { background: var(--theme-secondary) !important; }
 .landing-hero .landing-order-cta {
   color: #ffffff !important;
   background: #e30613 !important;
@@ -1770,7 +1768,7 @@ footer a:hover { color: var(--theme-primary) !important; }
 html[data-theme='dark'] body {
   background-color: #171411 !important;
   background-image:
-    linear-gradient(rgba(10, 9, 8, .58), rgba(10, 9, 8, .72)),
+    linear-gradient(rgba(10, 9, 8, .48), rgba(10, 9, 8, .62)),
     url('/tasteloop-dark-background.jpg');
   background-repeat: no-repeat;
   background-position: center top;

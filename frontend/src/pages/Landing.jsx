@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
-import SteamDivider from '../components/SteamDivider.jsx'
 import FoodCard from '../components/FoodCard.jsx'
 import CookCard from '../components/CookCard.jsx'
 import api, { assetUrl } from '../services/api.js'
@@ -49,10 +48,6 @@ export default function Landing() {
             </div>
           </div>
         </section>
-
-        <div style={{ color: 'var(--color-surface)' }}>
-          <SteamDivider />
-        </div>
 
         {/* WHY CHOOSE */}
         <section className="landing-why" style={styles.whySection}>

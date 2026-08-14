@@ -52,9 +52,9 @@ export default function Login() {
       <Navbar />
 
       <main className="page-content">
-        <section style={styles.wrap}>
+        <section className="landing-hero" style={styles.wrap}>
           <div className="container" style={styles.inner}>
-            <div className="card" style={styles.formCard}>
+            <div className="card auth-card" style={styles.formCard}>
               <span className="eyebrow">{t('Welcome back')}</span>
               <h1 style={styles.h1}>{t('Log in to TasteLoop')}</h1>
               <p style={styles.sub}>{t('Pick up where you left off — order, cook, or check your kitchen.')}</p>
@@ -123,8 +123,8 @@ export default function Login() {
 
 const styles = {
   wrap: {
-    background: 'linear-gradient(180deg, var(--color-mustard-tint) 0%, var(--color-bg) 45%)',
-    padding: '64px 0 80px',
+    background: 'var(--color-bg)',
+    padding: '82px 0 80px',
   },
   inner: {
     display: 'flex',
@@ -132,12 +132,12 @@ const styles = {
   },
   formCard: {
     width: '100%',
-    maxWidth: 440,
-    padding: '40px 36px',
+    maxWidth: 520,
+    padding: '44px 40px',
     textAlign: 'left',
   },
-  h1: { fontSize: 30, margin: '10px 0 6px' },
-  sub: { fontSize: 14, marginBottom: 26 },
+  h1: { fontSize: 'clamp(34px, 4vw, 42px)', margin: '16px 0 10px' },
+  sub: { fontSize: 16, marginBottom: 30 },
   labelRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 },
   forgot: { fontSize: 12.5, fontWeight: 600, color: 'var(--color-chili)' },
   error: { color: 'var(--color-chili)', fontSize: 12.5, marginTop: 6, marginBottom: 0 },

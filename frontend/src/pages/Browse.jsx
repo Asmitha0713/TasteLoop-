@@ -40,7 +40,7 @@ export default function Browse() {
       <Navbar />
 
       <main className="page-content">
-        <section style={styles.hero}>
+        <section className="landing-hero" style={styles.hero}>
           <div className="container">
             <span className="eyebrow">Browse Foods</span>
             <h1 style={styles.h1}>What are you craving today?</h1>
@@ -48,7 +48,7 @@ export default function Browse() {
             <div style={styles.searchBar}>
               <span style={{ opacity: 0.5 }}>🔍</span>
               <input value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => event.key === 'Enter' && loadFoods()} placeholder="Search dishes or cooks…" style={styles.searchInput} />
-              <button className="btn btn-forest btn-sm" onClick={loadFoods}>Search</button>
+              <button className="btn btn-primary btn-sm" onClick={loadFoods}>Search</button>
             </div>
 
             <div style={styles.categoryRow}>
@@ -110,10 +110,10 @@ export default function Browse() {
 
 const styles = {
   hero: {
-    background: 'linear-gradient(180deg, var(--color-mustard-tint) 0%, var(--color-bg) 100%)',
-    padding: '56px 0 40px',
+    background: 'var(--color-bg)',
+    padding: '82px 0 70px',
   },
-  h1: { fontSize: 36, margin: '14px 0 24px' },
+  h1: { fontSize: 'clamp(42px, 5vw, 56px)', margin: '16px 0 24px' },
   searchBar: {
     display: 'flex',
     alignItems: 'center',
@@ -136,8 +136,8 @@ const styles = {
   },
   categoryRow: { display: 'flex', gap: 10, flexWrap: 'wrap' },
   categoryPill: { border: 'none', cursor: 'pointer', padding: '9px 16px', fontSize: 13 },
-  section: { padding: '48px 0 20px' },
-  sectionHeadRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 22 },
+  section: { padding: '60px 0 20px' },
+  sectionHeadRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 12, flexWrap: 'wrap', marginBottom: 28 },
   count: { fontSize: 13, color: 'var(--color-ink-faint)', fontWeight: 600 },
   foodGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 },
   cookGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20, marginTop: 22 },

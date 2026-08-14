@@ -27,7 +27,7 @@ export default function Navbar() {
               style={{
                 ...styles.navLink,
                 color: pathname === l.to ? 'var(--color-forest)' : 'var(--color-ink-soft)',
-                fontWeight: pathname === l.to ? 700 : 500,
+                fontWeight: 700,
               }}
             >
               {t(l.label)}
@@ -81,7 +81,7 @@ const styles = {
     gap: 28,
   },
   navLink: {
-    fontSize: 14.5,
+    fontSize: 17,
   },
   actions: {
     display: 'flex',
